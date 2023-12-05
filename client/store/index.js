@@ -6,8 +6,21 @@ export const useCounterStore = defineStore("store", {
   }),
   actions: {
     add(product) {
-      console.log(this.count);
-      const existingProduct = this.count.find(p => p._id === product._id);
+      const existingProduct = this.count.find(p => 
+        p.name == product.name && 
+        p.qalinligi == product.qalinligi &&
+        p.qalinligi_ortasi == product.qalinligi_ortasi && 
+        p.olchamlari == product.olchamlari && 
+        p.category == product.category &&
+        p.holati == product.holati && 
+        p.uzunligi == product.uzunligi &&
+        p.uzunligi_y == product.uzunligi_y && 
+        p.uzunligi_x == product.uzunligi_x &&
+        p.sklad == product.sklad &&
+        p.price == product.price && 
+        p.saledPrice == product.saledPrice
+      );
+    
       if (existingProduct) {
         existingProduct.quantity++;
       } else {
@@ -15,13 +28,50 @@ export const useCounterStore = defineStore("store", {
       }
     },
     deleteProduct(product) {
-      const existingProduct = this.count.find(p => p._id === product._id);
+      const existingProduct = this.count.find(p => 
+        p.name == product.name && 
+        p.qalinligi == product.qalinligi &&
+        p.qalinligi_ortasi == product.qalinligi_ortasi && 
+        p.olchamlari == product.olchamlari && 
+        p.category == product.category &&
+        p.holati == product.holati && 
+        p.uzunligi == product.uzunligi &&
+        p.uzunligi_y == product.uzunligi_y && 
+        p.uzunligi_x == product.uzunligi_x &&
+        p.sklad == product.sklad &&
+        p.price == product.price && 
+        p.saledPrice == product.saledPrice
+      );
       if (existingProduct) {
         existingProduct.quantity--;
         if (existingProduct.quantity === 0) {
           const index = this.count.indexOf(existingProduct);
           this.count.splice(index, 1);
         }
+      }else{
+        console.log("Product not found");
+      }
+    },
+    productDelete(product) {
+      const existingProduct = this.count.find(p => 
+        p.name == product.name && 
+        p.qalinligi == product.qalinligi &&
+        p.qalinligi_ortasi == product.qalinligi_ortasi && 
+        p.olchamlari == product.olchamlari && 
+        p.category == product.category &&
+        p.holati == product.holati && 
+        p.uzunligi == product.uzunligi &&
+        p.uzunligi_y == product.uzunligi_y && 
+        p.uzunligi_x == product.uzunligi_x &&
+        p.sklad == product.sklad &&
+        p.price == product.price && 
+        p.saledPrice == product.saledPrice
+      );
+      if (existingProduct) {
+        const index = this.count.indexOf(existingProduct);
+        this.count.splice(index, 1);
+      }else{
+        console.log("Product not found");
       }
     },
     reset(product){
@@ -36,7 +86,26 @@ export const useCounterStore = defineStore("store", {
     },
     get(){
       return this.count;
-    }
+    },
+    update(product){
+      const existingProduct = this.count.find(p => 
+        p.name == product.name && 
+        p.qalinligi == product.qalinligi &&
+        p.qalinligi_ortasi == product.qalinligi_ortasi && 
+        p.olchamlari == product.olchamlari && 
+        p.category == product.category &&
+        p.holati == product.holati && 
+        p.uzunligi == product.uzunligi &&
+        p.uzunligi_y == product.uzunligi_y && 
+        p.uzunligi_x == product.uzunligi_x &&
+        p.sklad == product.sklad
+      );
+      if (existingProduct) {
+        existingProduct.saledPrice = product.saledPrice;
+      } else {
+        return console.log("Product not found");
+      }
+    },
   },
   persist: {
     storage: persistedState.localStorage

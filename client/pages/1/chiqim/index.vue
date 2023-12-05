@@ -4,78 +4,141 @@
       <div class="mb-2">
         <span class="text-2xl font-semibold">Chiqim</span>
       </div>
-      {{ storeItems }}
       <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
-        <div class="flex gap-10">
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Temir Mahsulot Turi</label
-            >
-            <select
-              v-model="mahsulotTuri"
-              @change="handleChangeMahsulotTuri"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option
-                v-for="(item, id) in MahsulotName"
-                :key="id"
-                :value="item"
+        <div class="flex justify-between text-center">
+          <div class="flex gap-10">
+            <div class="mb-6">
+              <label class="block mb-2 text-sm font-medium text-gray-900"
+                >Temir Mahsulot Turi</label
               >
-                {{ item }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Kategoriyasi</label
-            >
-            <select
-              v-model="category"
-              @change="handleChangeCategory"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option v-for="(item, id) in categories" :key="id" :value="item">
-                {{ item }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Qalinligi</label
-            >
-            <select
-              v-model="qalinligi"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option
-                v-for="(item, id) in qalinliglari"
-                :key="id"
-                :value="item"
+              <select
+                v-model="mahsulotTuri"
+                @change="handleChangeMahsulotTuri"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               >
-                {{ item }}
-              </option>
-            </select>
+                <option>Hammasi</option>
+                <option
+                  v-for="(item, id) in MahsulotName"
+                  :key="id"
+                  :value="item"
+                >
+                  {{ item }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-6">
+              <label class="block mb-2 text-sm font-medium text-gray-900"
+                >Kategoriyasi</label
+              >
+              <select
+                v-model="category"
+                @change="handleChangeCategory"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              >
+                <option>Hammasi</option>
+                <option
+                  v-for="(item, id) in categories"
+                  :key="id"
+                  :value="item"
+                >
+                  {{ item }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-6">
+              <label class="block mb-2 text-sm font-medium text-gray-900"
+                >Qalinligi</label
+              >
+              <select
+                v-model="qalinligi"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              >
+                <option>Hammasi</option>
+                <option
+                  v-for="(item, id) in qalinliglari"
+                  :key="id"
+                  :value="item"
+                >
+                  {{ item }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-6">
+              <label class="block mb-2 text-sm font-medium text-gray-900"
+                >Holati</label
+              >
+              <select
+                v-model="holati"
+                @change="handleChangeMahsulotTuri"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              >
+                <option>Hammasi</option>
+                <option>Yangi</option>
+                <option>Eski</option>
+                <option>B/U</option>
+              </select>
+            </div>
           </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Holati</label
-            >
-            <select
-              v-model="holati"
-              @change="handleChangeMahsulotTuri"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option>Yangi</option>
-              <option>Eski</option>
-              <option>B/U</option>
-            </select>
+          <div class="mt-7">
+            <template v-if="totalQuantity == 0">
+              <button
+                type="button"
+                class="opacity-50 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+              >
+                Umumiy Soni {{ totalQuantity }} ta
+              </button>
+              <button
+                type="button"
+                class="opacity-50 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+              >
+                Umumiy Summasi
+                {{
+                  totalSummary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}
+                so'm
+              </button>
+              <button
+                type="button"
+                class="hover:shadow-2xl text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 me-2 mb-2 focus:outline-none"
+              >
+                <Icon
+                  name="fluent:text-bullet-list-square-48-regular"
+                  size="1.5rem"
+                />
+              </button>
+            </template>
+            <template v-else>
+              <button
+                type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+              >
+                Umumiy Soni {{ totalQuantity }} ta
+              </button>
+              <button
+                type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+              >
+                Umumiy Summasi
+                {{
+                  totalSummary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}
+                so'm
+              </button>
+              <NuxtLink to="/1/chiqim/cart">
+                <button
+                  type="button"
+                  class="hover:shadow-2xl text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 me-2 mb-2 focus:outline-none"
+                >
+                  <Icon
+                    name="fluent:text-bullet-list-square-48-regular"
+                    size="1.5rem"
+                  />
+                </button>
+              </NuxtLink>
+            </template>
           </div>
         </div>
-        <div class="text-[14px]">
+        <div class="text-[13px]">
           <!-- DVUXTAVR -->
           <div
             class="bg-white border border-gray-50 shadow-2xl"
@@ -114,7 +177,7 @@
                     Umumiy Uzunligi
                   </th>
                   <th class="px-5 py-3 text-left border-y border-gray-300">
-                    1 m Uchun Tan Narxi
+                    1 m Uchun Sotuv Narxi
                   </th>
                   <th class="px-5 py-3 text-left border-y border-gray-300">
                     Batafsil
@@ -189,23 +252,95 @@
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
                     <div class="print-text">
-                      <button
+                      <template
                         v-if="
-                          storeItems &&
-                          storeItems.length > 0 &&
-                          storeItems.find(
-                            (items) => items._id.name === item.name
-                          ) &&
-                          storeItems.find(
-                            (items) => items._id.name === item.name
-                          ).quantity
+                          storeItems.some((p) => {
+                            if (
+                              p.name == item.name &&
+                              p.qalinligi == item.qalinligi &&
+                              p.qalinligi_ortasi == item.qalinligi_ortasi &&
+                              p.olchamlari == item.olchamlari &&
+                              p.category == item.category &&
+                              p.holati == item.holati &&
+                              p.uzunligi == item.uzunligi &&
+                              p.uzunligi_y == item.uzunligi_y &&
+                              p.uzunligi_x == item.uzunligi_x &&
+                              p.sklad == item.sklad &&
+                              p.price == item.price &&
+                              p.saledPrice == item.saledPrice
+                            ) {
+                              return true;
+                            } else {
+                              return false;
+                            }
+                          })
                         "
-                        @click="add(item)"
-                        type="button"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
                       >
-                        Qo'shish
-                      </button>
+                        <div
+                          class="flex items-center justify-center gap-2 text-center"
+                        >
+                          <button
+                            @click="deleteProduct(item._id)"
+                            type="button"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+                          >
+                            -
+                          </button>
+                          <div class="mr-2 mb-1">
+                            {{
+                              storeItems.find(
+                                (p) =>
+                                  p.name == item.name &&
+                                  p.qalinligi == item.qalinligi &&
+                                  p.qalinligi_ortasi == item.qalinligi_ortasi &&
+                                  p.olchamlari == item.olchamlari &&
+                                  p.category == item.category &&
+                                  p.holati == item.holati &&
+                                  p.uzunligi == item.uzunligi &&
+                                  p.uzunligi_y == item.uzunligi_y &&
+                                  p.uzunligi_x == item.uzunligi_x &&
+                                  p.sklad == item.sklad &&
+                                  p.price == item.price &&
+                                  p.saledPrice == item.saledPrice
+                              ).quantity
+                            }}
+                          </div>
+                          <button
+                            @click="add(item._id)"
+                            type="button"
+                            :disabled="
+                              item.quantity ==
+                              storeItems.find(
+                                (p) =>
+                                  p.name == item.name &&
+                                  p.qalinligi == item.qalinligi &&
+                                  p.qalinligi_ortasi == item.qalinligi_ortasi &&
+                                  p.olchamlari == item.olchamlari &&
+                                  p.category == item.category &&
+                                  p.holati == item.holati &&
+                                  p.uzunligi == item.uzunligi &&
+                                  p.uzunligi_y == item.uzunligi_y &&
+                                  p.uzunligi_x == item.uzunligi_x &&
+                                  p.sklad == item.sklad &&
+                                  p.price == item.price &&
+                                  p.saledPrice == item.saledPrice
+                              ).quantity
+                            "
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <button
+                          @click="add(item._id)"
+                          type="button"
+                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+                        >
+                          Qo'shish
+                        </button>
+                      </template>
                     </div>
                   </td>
                 </tr>
@@ -817,7 +952,18 @@ let storeItems = ref();
 const add = (product) => {
   counterStore.add(product);
 };
-
+const deleteProduct = (product) => {
+  counterStore.deleteProduct(product);
+};
+const totalQuantity = computed(() => {
+  return storeItems.value.reduce((total, item) => total + item.quantity, 0);
+});
+const totalSummary = computed(() => {
+  return storeItems.value.reduce(
+    (total, item) => total + item.uzunligi * item.saledPrice * item.quantity,
+    0
+  );
+});
 let loading = ref(true);
 let mahsulotTuri = ref("Hammasi");
 let products = ref([]);
@@ -841,8 +987,6 @@ let category = ref("Hammasi");
 let holati = ref("Hammasi");
 let qalinliglari = ref([]);
 let qalinligi = ref("Hammasi");
-let clients = ref([]);
-let client = ref("");
 let saledType = ref("");
 
 onMounted(async () => {
@@ -862,8 +1006,6 @@ onMounted(async () => {
         : `${item.qalinligi}`
     );
     qalinliglari.value = [...new Set(qalinliglari.value)];
-    const clientRes = await $host.get("/clients");
-    clients.value = clientRes.data;
   } catch (error) {
     console.log(error);
   }

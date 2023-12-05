@@ -11,6 +11,8 @@ const Sklads = require('../models/Sklad');
 const Products = require('../models/Products');
 const { padWithZero } = require('../functions/padZero');
 const Clients = require('../models/Clients');
+const Saleds = require('../models/Saleds');
+const Debts = require('../models/Debts');
 require('dotenv').config();
 
 exports.index = async (req, res) => {
@@ -74,10 +76,6 @@ exports.userGetInfo = async (req, res) => {
 };
 exports.harajatPut = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const harajat = new Harajats({
       name: req.body.name,
       amount: req.body.amount,
@@ -100,10 +98,6 @@ exports.harajatGet = async (req, res) => {
 };
 exports.harajatPost = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const { date } = req.body;
     const harajat = await Harajats.find({
       date: {
@@ -119,10 +113,6 @@ exports.harajatPost = async (req, res) => {
 };
 exports.harajatDelete = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const harajat = await Harajats.findById(req.params.id);
     if (!harajat) {
       return res.status(404).json({ message: 'Harajat not found' });
@@ -145,10 +135,6 @@ exports.harajatDelete = async (req, res) => {
 };
 exports.harajatPatch = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const harajat = await Harajats.findById(req.params.id);
     if (!harajat) {
       return res.status(404).json({ message: 'Harajat not found' });
@@ -221,11 +207,6 @@ exports.aggregateHarajatwithYear = async (req, res) => {
 };
 exports.harajatFinder = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
-
     const regexPattern = new RegExp(req.body.search, 'i');
 
     const startDate = req.body.startDate || { day: 1, month: 1, year: 2021 };
@@ -254,10 +235,6 @@ exports.harajatFinder = async (req, res) => {
 };
 exports.harajatExcel = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const cellStyle = {
       font: { bold: true },
       alignment: { horizontal: 'center', vertical: 'middle' },
@@ -414,10 +391,6 @@ exports.harajatExcel = async (req, res) => {
 };
 exports.skladGet = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const sklad = await Sklads.find();
     return res.json(sklad);
   } catch (error) {
@@ -443,10 +416,6 @@ exports.skladPut = async (req, res) => {
 };
 exports.skladDelete = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const sklad = await Sklads.findById(req.params.id);
     if (!sklad) {
       return res.status(404).json({ message: 'Sklad not found' });
@@ -459,10 +428,6 @@ exports.skladDelete = async (req, res) => {
 };
 exports.skladPatch = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const sklad = await Sklads.findById(req.params.id);
     if (!sklad) {
       return res.status(404).json({ message: 'Sklad not found' });
@@ -476,10 +441,6 @@ exports.skladPatch = async (req, res) => {
 };
 exports.skladFinder = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const regexPattern = new RegExp(req.body.search, 'i');
     const results = await Sklads.find({
       name: regexPattern,
@@ -492,11 +453,6 @@ exports.skladFinder = async (req, res) => {
 };
 exports.productsGet = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
-
     const aggregatedProducts = await Products.aggregate([
       {
         $match: { sklad: new mongoose.Types.ObjectId(req.params.id), saled: false },
@@ -547,10 +503,6 @@ exports.productsGet = async (req, res) => {
 };
 exports.productsPatch = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const product = await Products.findById(req.params.id).populate('saledClient');
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -562,10 +514,6 @@ exports.productsPatch = async (req, res) => {
 };
 exports.productsGetAll = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const products = await Products.aggregate([
       {
         $match: { saled: false },
@@ -591,7 +539,6 @@ exports.productsGetAll = async (req, res) => {
       },
       {
         $project: {
-          _id: '$_id',
           name: '$_id.name',
           qalinligi: '$_id.qalinligi',
           qalinligi_ortasi: '$_id.qalinligi_ortasi',
@@ -615,10 +562,6 @@ exports.productsGetAll = async (req, res) => {
 };
 exports.productsPut = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     for (let i = 0; i < req.body.quantity; i += 1) {
       try {
         const newProduct = new Products({
@@ -650,34 +593,28 @@ exports.productsPut = async (req, res) => {
 };
 exports.productsGetClients = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
-
-    const productsDate = await Products.aggregate([
+    const productsDate = await Saleds.aggregate([
       {
         $match: {
-          saled: true,
-          saledClient: new mongoose.Types.ObjectId(req.params.id),
+          clientId: new mongoose.Types.ObjectId(req.params.id),
         },
       },
       {
         $lookup: {
           from: 'clients',
-          localField: 'saledClient',
+          localField: 'clientId',
           foreignField: '_id',
-          as: 'saledClient',
+          as: 'clientId',
         },
       },
       {
-        $unwind: '$saledClient',
+        $unwind: '$clientId',
       },
       {
         $sort: {
-          'saledDate.year': -1,
-          'saledDate.month': -1,
-          'saledDate.day': -1,
+          'date.year': -1,
+          'date.month': -1,
+          'date.day': -1,
         },
       },
       {
@@ -686,10 +623,9 @@ exports.productsGetClients = async (req, res) => {
     ]);
 
     const uniqueDates = Array.from(new Set(productsDate.map((product) => {
-      const { day, month, year } = product.saledDate;
+      const { day, month, year } = product.date;
       return `${day}-${month}-${year}`;
     })));
-
     return res.json({ dates: uniqueDates, products: productsDate });
   } catch (error) {
     return res.status(500).json(error);
@@ -698,19 +634,14 @@ exports.productsGetClients = async (req, res) => {
 
 exports.productsGetClientsByDate = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
-    const products = await Products.find({
-      saled: true,
-      saledClient: new mongoose.Types.ObjectId(req.params.id),
-      saledDate: {
+    const products = await Saleds.find({
+      clientId: new mongoose.Types.ObjectId(req.params.id),
+      date: {
         day: req.body.date.day,
         month: req.body.date.month,
         year: req.body.date.year,
       },
-    });
+    }).populate('clientId');
     return res.json(products);
   } catch (error) {
     return res.status(500).json(error);
@@ -718,10 +649,6 @@ exports.productsGetClientsByDate = async (req, res) => {
 };
 exports.productsGetSaled = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const products = await Products.find({
       saled: true,
       saledClient: new mongoose.Types.ObjectId(req.params.id),
@@ -732,12 +659,89 @@ exports.productsGetSaled = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.getProductId = async (req, res) => {
+  try {
+    const product = await Products.findOne(req.body);
+    return res.json(product);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.productPut = async (req, res) => {
+  try {
+    const product = await Products.findOne(req.body.product);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    const productData = { ...product.toObject() };
+    const filter = { ...productData };
+    delete filter._id;
+    delete filter.date;
+    delete filter.time;
+    for (let i = 0; i < req.body.quantity; i += 1) {
+      try {
+        const pr = await Products.findOne(filter);
+        pr.saledPrice = req.body.saledPrice;
+        await pr.save();
+      } catch (error) {
+        return res.status(500).json(error);
+      }
+    }
+    return res.json({ saved: true });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.getProductsWithDebts = async (req, res) => {
+  try {
+    const productsDate = await Debts.aggregate([
+      {
+        $match: {
+          clientId: new mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'clients',
+          localField: 'clientId',
+          foreignField: '_id',
+          as: 'clientId',
+        },
+      },
+      {
+        $unwind: '$clientId',
+      },
+      {
+        $sort: {
+          'date.year': -1,
+          'date.month': -1,
+          'date.day': -1,
+        },
+      },
+      {
+        $limit: 50,
+      },
+    ]);
+
+    const uniqueDates = Array.from(new Set(productsDate.map((product) => {
+      const { day, month, year } = product.date;
+      return `${day}-${month}-${year}`;
+    })));
+    return res.json({ dates: uniqueDates, products: productsDate });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.postProductsInfo = async (req, res) => {
+  try {
+    const saled = await Saleds.findById(req.params.id).populate('clientId');
+    return res.json(saled);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
 exports.skladExcelGet = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const cellStyle = {
       font: { bold: true },
       alignment: { horizontal: 'center', vertical: 'middle' },
@@ -837,10 +841,6 @@ exports.skladExcelGet = async (req, res) => {
 };
 exports.clientsGet = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const clients = await Clients.find();
     return res.json(clients);
   } catch (error) {
@@ -861,10 +861,6 @@ exports.clientsGetById = async (req, res) => {
 };
 exports.clientsPut = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const newClient = new Clients({
       name: req.body.name,
       phone: req.body.phone,
@@ -879,10 +875,6 @@ exports.clientsPut = async (req, res) => {
 };
 exports.clientsDelete = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     await Clients.findByIdAndDelete(req.params.id);
     return res.json({ message: 'Client deleted' });
   } catch (error) {
@@ -891,10 +883,6 @@ exports.clientsDelete = async (req, res) => {
 };
 exports.clientsPost = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
-    }
     const client = await Clients.findById(req.params.id);
     client.name = req.body.name;
     client.phone = req.body.phone;
@@ -906,19 +894,47 @@ exports.clientsPost = async (req, res) => {
 };
 exports.sellPost = async (req, res) => {
   try {
-    const user = await Users.findById(req.userId);
-    if (user.user_level !== 1) {
-      return res.status(400).json({ message: 'You are not admin' });
+    if (req.body.saledType !== 'Qarz') {
+      const newSaled = new Saleds({
+        clientId: req.body.client,
+        products: req.body.products,
+        allAmount: req.body.total,
+        type: req.body.saledType,
+        date: dateFunction.getCurrentDateTimeInJSON().date,
+        time: dateFunction.getCurrentDateTimeInJSON().time,
+      });
+      await newSaled.save();
+    } else {
+      const newDebts = new Debts({
+        clientId: req.body.client,
+        products: req.body.products,
+        allAmount: req.body.total,
+        date: dateFunction.getCurrentDateTimeInJSON().date,
+        time: dateFunction.getCurrentDateTimeInJSON().time,
+      });
+      await newDebts.save();
     }
-    const product = await Products.findById(req.body.id);
-    product.saled = true;
-    product.saledPrice = req.body.saledPrice;
-    product.saledClient = new mongoose.Types.ObjectId(req.body.client);
-    product.saledDate = dateFunction.getCurrentDateTimeInJSON().date;
-    product.saledTime = dateFunction.getCurrentDateTimeInJSON().time;
-    product.saledType = req.body.saledType;
-    await product.save();
-    return res.json(product);
+    for (let i = 0; i < req.body.products.length; i += 1) {
+      const { quantity } = req.body.products[i];
+      req.body.products[i].quantity = 1;
+      req.body.products[i].saled = false;
+      const product = await Products.findOne(req.body.products[i]);
+      const productData = { ...product.toObject() };
+      const filter = { ...productData, saled: false };
+      delete filter._id;
+      const update = {
+        saled: true,
+        saledPrice: req.body.products[i].saledPrice,
+        saledClient: req.body.client,
+        saledType: req.body.saledType,
+        saledDate: dateFunction.getCurrentDateTimeInJSON().date,
+        saledTime: dateFunction.getCurrentDateTimeInJSON().time,
+      };
+      for (let j = 0; j < quantity; j += 1) {
+        await Products.findOneAndUpdate(filter, update, { new: true });
+      }
+    }
+    return res.json({ saved: true });
   } catch (error) {
     return res.status(500).json(error);
   }

@@ -14,5 +14,7 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-param-reassign': ['warn', { props: false }],
     'linebreak-style': 0,
+    'no-underscore-dangle': 0,
+    'no-await-in-loop': 0,
   },
 };

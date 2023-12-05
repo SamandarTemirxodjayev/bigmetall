@@ -35,6 +35,10 @@ router.put('/products', UserMiddleware, userController.productsPut);
 router.post('/products/:id', UserMiddleware, userController.productsGetClients);
 router.post('/products/client/:id', UserMiddleware, userController.productsGetClientsByDate);
 router.get('/products/saled', UserMiddleware, userController.productsGetSaled);
+router.post('/productId', UserMiddleware, userController.getProductId);
+router.put('/product', UserMiddleware, userController.productPut);
+router.post('/products/:id/debts', UserMiddleware, userController.getProductsWithDebts);
+router.post('/products/info/:id', UserMiddleware, userController.postProductsInfo);
 
 router.get('/clients', UserMiddleware, userController.clientsGet);
 router.get('/client/:id', UserMiddleware, userController.clientsGetById);

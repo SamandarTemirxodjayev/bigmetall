@@ -1,7 +1,7 @@
 <template>
   <div>
     <aside
-      class="fixed left-0 w-24 top-16 h-full transition-transform -translate-x-full sm:translate-x-0 border-r border-gray-300 shadow-inner"
+      class="bg-white fixed left-0 w-24 top-16 h-full transition-transform -translate-x-full sm:translate-x-0 border-r border-gray-300 shadow-inner"
     >
       <ul class="mt-4">
         <li>

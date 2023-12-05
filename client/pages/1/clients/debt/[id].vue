@@ -2,7 +2,9 @@
   <div v-if="!loading">
     <NewLayout>
       <div class="mb-2">
-        <span class="text-2xl font-semibold">Mijoz - {{ client.name }}</span>
+        <span class="text-2xl font-semibold"
+          >Mijoz - {{ client.name }} - Qarz</span
+        >
       </div>
       <div class="shadow items-center bg-white shadow-xl rounded-md">
         <div class="flex p-4 justify-between">
@@ -47,6 +49,12 @@
                 Umumiy Summasi
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
+                To'langan Summasi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Qolgan Summasi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
                 Sotilgan Sanasi va Vaqti
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -80,6 +88,26 @@
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   {{
+                    item.payedAmount
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                  }}
+                  so'm
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">
+                  {{
+                    (item.allAmount - item.payedAmount)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                  }}
+                  so'm
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">
+                  {{
                     `${padWithZero(item.date.day)}.${padWithZero(
                       item.date.month
                     )}.${padWithZero(item.date.year)} ${padWithZero(
@@ -91,20 +119,17 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.type }}
-                </div>
+                <div class="print-text">Qarz</div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  <NuxtLink :to="`/1/clients/info/${item._id}`">
-                    <button
-                      type="button"
-                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    >
-                      Batafsil
-                    </button>
-                  </NuxtLink>
+                  <button
+                    @click="handleAboutClick(item)"
+                    type="button"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  >
+                    Batafsil
+                  </button>
                 </div>
               </td>
             </tr>
@@ -136,7 +161,7 @@ onMounted(async () => {
       window.location.href = "/";
     }
     client.value = (await $host.get("/client/" + route.params.id)).data;
-    const resProducts = await $host.post("/products/" + route.params.id);
+    const resProducts = await $host.post(`/products/${route.params.id}/debts`);
     dates.value = resProducts.data.dates;
     products.value = resProducts.data.products;
   } catch (error) {
@@ -203,7 +228,7 @@ const summaryQuantity = (items) => {
 
   table {
     visibility: visible;
-    position: relative;
+    top: 0;
     margin-left: -15%;
   }
 

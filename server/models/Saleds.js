@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const debtsSchema = new mongoose.Schema({
+const saledsSchema = new mongoose.Schema({
   clientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'client',
@@ -11,12 +11,8 @@ const debtsSchema = new mongoose.Schema({
   allAmount: {
     type: Number,
   },
-  payedAmount: {
-    type: Number,
-    default: 0,
-  },
-  historyAmount: {
-    type: Array,
+  type: {
+    type: String,
   },
   date: {
     day: {
@@ -41,6 +37,6 @@ const debtsSchema = new mongoose.Schema({
     },
   },
 });
-const Debts = mongoose.model('debts', debtsSchema);
+const Saleds = mongoose.model('saled', saledsSchema);
 
-module.exports = Debts;
+module.exports = Saleds;

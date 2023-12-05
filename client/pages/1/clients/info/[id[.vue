@@ -2,36 +2,7 @@
   <div v-if="!loading">
     <NewLayout>
       <div class="mb-2">
-        <span class="text-2xl font-semibold">Mijoz - {{ client.name }}</span>
-      </div>
-      <div class="shadow items-center bg-white shadow-xl rounded-md">
-        <div class="flex p-4 justify-between">
-          <div class="flex">
-            <div
-              class="px-5 flex items-center border border-gray-500 rounded-lg px-2 mr-3"
-            >
-              <select
-                class="text-gray-900 text-sm block w-full p-2.5 outline-none"
-                placeholder="Qidiruv"
-                v-model="search"
-                @change="handleChangeSearch"
-              >
-                <option value="Hammasi">Hammasi</option>
-                <option v-for="(item, id) in dates" :key="id" :value="item">
-                  {{ item }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <button
-              @click="handleClickDownloadExcel"
-              class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
-            >
-              Excelda Yuklab Olish
-            </button>
-          </div>
-        </div>
+        <span class="text-2xl font-semibold">Mahsulotlar Haqida</span>
       </div>
       <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
         <table class="w-full text-[14px]">
@@ -41,71 +12,92 @@
                 Mijoz Ismi
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Soni
+                Mahsulot Nomi
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Summasi
+                O'lchamlari
               </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Qalinligi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Kategoriyasi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Holati
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                1m uchun tan narxi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Sotilgan Sanasi va Vaqti
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 To'lov Turi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Ma'lumotlar
-              </th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
             <tr class="hover:bg-gray-200 cursor-pointer w-full">
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.clientId.name }}</div>
+                <div class="print-text">{{ pro.clientId.name }}</div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ summaryQuantity(item.products) }}
+                  {{ item.name }}
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.allAmount
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                  }}
+                  {{ item.olchamlari }}
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">
+                  <template v-if="item.name == 'Dvuxtavr'">
+                    O'rta: {{ item.qalinligi_ortasi }}mm <br />
+                    Chet: {{ item.qalinligi }}mm
+                  </template>
+                  <template v-else> {{ item.qalinligi }}mm </template>
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">
+                  {{ item.category }}
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">
+                  {{ item.holati }}
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">
+                  {{ item.saledPrice }}
                   so'm
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
+                  {{ item.quantity }}
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">
                   {{
-                    `${padWithZero(item.date.day)}.${padWithZero(
-                      item.date.month
-                    )}.${padWithZero(item.date.year)} ${padWithZero(
-                      item.time.hour
-                    )}:${padWithZero(item.time.minute)}:${padWithZero(
-                      item.time.second
+                    `${padWithZero(pro.date.day)}.${padWithZero(
+                      pro.date.month
+                    )}.${padWithZero(pro.date.year)} ${padWithZero(
+                      pro.time.hour
+                    )}:${padWithZero(pro.time.minute)}:${padWithZero(
+                      pro.time.second
                     )}`
                   }}
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.type }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <NuxtLink :to="`/1/clients/info/${item._id}`">
-                    <button
-                      type="button"
-                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    >
-                      Batafsil
-                    </button>
-                  </NuxtLink>
-                </div>
+                <div class="print-text">{{ pro.type }}</div>
               </td>
             </tr>
           </tbody>
@@ -123,11 +115,10 @@ const route = useRoute();
 
 let isPopupOpen = ref(false);
 let loading = ref(true);
-let dates = ref([]);
 let search = ref("Hammasi");
-let client = ref("");
 let products = ref([]);
 let product = ref({});
+let pro = ref({});
 
 onMounted(async () => {
   try {
@@ -135,10 +126,9 @@ onMounted(async () => {
     if (res.data.user.user_level != 1) {
       window.location.href = "/";
     }
-    client.value = (await $host.get("/client/" + route.params.id)).data;
-    const resProducts = await $host.post("/products/" + route.params.id);
-    dates.value = resProducts.data.dates;
+    const resProducts = await $host.post(`/products/info/${route.params.id}`);
     products.value = resProducts.data.products;
+    pro.value = resProducts.data;
   } catch (error) {
     console.log(error);
   }
@@ -203,7 +193,7 @@ const summaryQuantity = (items) => {
 
   table {
     visibility: visible;
-    position: relative;
+    top: 0;
     margin-left: -15%;
   }
 
