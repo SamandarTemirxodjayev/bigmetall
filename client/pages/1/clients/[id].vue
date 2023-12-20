@@ -23,14 +23,6 @@
               </select>
             </div>
           </div>
-          <div>
-            <button
-              @click="handleClickDownloadExcel"
-              class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
-            >
-              Excelda Yuklab Olish
-            </button>
-          </div>
         </div>
       </div>
       <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
@@ -79,15 +71,7 @@
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    `${padWithZero(item.date.day)}.${padWithZero(
-                      item.date.month
-                    )}.${padWithZero(item.date.year)} ${padWithZero(
-                      item.time.hour
-                    )}:${padWithZero(item.time.minute)}:${padWithZero(
-                      item.time.second
-                    )}`
-                  }}
+                  {{ formatTime(item.date) }}
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
@@ -144,23 +128,6 @@ onMounted(async () => {
   }
   loading.value = false;
 });
-const handleClickDownloadExcel = async () => {
-  loading.value = true;
-  try {
-    const res = await $host.get(`/sklad/${route.params.id}/excel`, {
-      responseType: "blob",
-    });
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `sklad-${datetime}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
-  } catch (error) {
-    console.log(error);
-  }
-  loading.value = false;
-};
 const handleChangeSearch = async () => {
   loading.value = true;
   try {

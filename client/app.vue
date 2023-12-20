@@ -9,3 +9,8 @@
   font-family: "Poppins", sans-serif;
 }
 </style>
+<script setup>
+useHead({
+  title: "Big Metall CRM",
+});
+</script>

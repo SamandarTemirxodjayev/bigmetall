@@ -17,29 +17,10 @@ const harajatSchema = new mongoose.Schema({
       type: Number,
     },
   },
-  date: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
-  },
-  time: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
-  },
 });
+
+harajatSchema.set('timestamps', true);
+
 const HarajatHistoryEdited = mongoose.model('harajatHistoryEdited', harajatSchema);
 
 module.exports = HarajatHistoryEdited;

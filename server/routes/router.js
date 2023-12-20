@@ -13,13 +13,11 @@ router.get('/user', UserMiddleware, userController.userGetInfo);
 
 router.put('/harajat', UserMiddleware, userController.harajatPut);
 router.get('/harajat', UserMiddleware, userController.harajatGet);
-router.post('/harajat', UserMiddleware, userController.harajatPost);
 router.delete('/harajat/:id', UserMiddleware, userController.harajatDelete);
 router.patch('/harajat/:id', UserMiddleware, userController.harajatPatch);
 router.post('/harajat/find', UserMiddleware, userController.harajatFinder);
 router.get('/harajat/excel', UserMiddleware, userController.harajatExcel);
-
-router.post('/filter/harajat', UserMiddleware, userController.aggregateHarajatwithYear);
+router.get('/harajat/excel-by-date', UserMiddleware, userController.harajatExcelByDate);
 
 router.get('/sklad', UserMiddleware, userController.skladGet);
 router.put('/sklad', UserMiddleware, userController.skladPut);
@@ -39,6 +37,10 @@ router.post('/productId', UserMiddleware, userController.getProductId);
 router.put('/product', UserMiddleware, userController.productPut);
 router.post('/products/:id/debts', UserMiddleware, userController.getProductsWithDebts);
 router.post('/products/info/:id', UserMiddleware, userController.postProductsInfo);
+router.post('/products/debt/:id', UserMiddleware, userController.postProductsDebt);
+router.put('/products/debt/:id', UserMiddleware, userController.putProductsDebt);
+router.get('/products/seller/:id', UserMiddleware, userController.productsGetSeller);
+router.post('/products/seller/:id', UserMiddleware, userController.productsPostSeller);
 
 router.get('/clients', UserMiddleware, userController.clientsGet);
 router.get('/client/:id', UserMiddleware, userController.clientsGetById);
@@ -47,5 +49,15 @@ router.delete('/client/:id', UserMiddleware, userController.clientsDelete);
 router.post('/client/:id', UserMiddleware, userController.clientsPost);
 
 router.post('/sell', UserMiddleware, userController.sellPost);
+
+router.get('/sellers', UserMiddleware, userController.sellerGet);
+router.get('/seller/:id', UserMiddleware, userController.getSellerById);
+router.put('/sellers', UserMiddleware, userController.sellerPut);
+router.delete('/sellers/:id', UserMiddleware, userController.sellerDelete);
+router.post('/sellers/:id', UserMiddleware, userController.sellerPost);
+
+router.post('/seller/:id/products', UserMiddleware, userController.getSellerProducts);
+
+router.post('/cut', UserMiddleware, userController.cutPost);
 
 module.exports = router;

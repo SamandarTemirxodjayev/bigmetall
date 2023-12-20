@@ -47,7 +47,7 @@
                 Ma'lumotlar
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
-                Tizimga Kiritilgan Sana
+                Tizimga Kiritilgan Vaqti
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
@@ -102,11 +102,7 @@
               <td class="px-5 py-3 border-b border-gray-300">
                 <NuxtLink :to="`/1/clients/${item._id}`">
                   <div class="print-text">
-                    {{
-                      `${padWithZero(item.date.day)}.${padWithZero(
-                        item.date.month
-                      )}.${padWithZero(item.date.year)}`
-                    }}
+                    {{ formatTime(item.date) }}
                   </div>
                 </NuxtLink>
               </td>

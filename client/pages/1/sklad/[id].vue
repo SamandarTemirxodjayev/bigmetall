@@ -82,7 +82,14 @@
               v-if="item.name == 'Dvuxtavr'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -171,7 +178,14 @@
               v-if="item.name == 'Shvellir'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -257,7 +271,14 @@
               v-if="item.name == 'Ugalok'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -343,7 +364,14 @@
               v-if="item.name == 'Truba'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -428,7 +456,14 @@
               v-if="item.name == 'List'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -520,7 +555,14 @@
               v-if="item.name == 'Armatura'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -608,7 +650,14 @@
               v-if="item.name == 'Kvadrat prut'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -701,7 +750,14 @@
               v-if="item.name == 'Kvadrad profil'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -793,7 +849,14 @@
               v-if="item.name == 'Palasa'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -882,7 +945,14 @@
               v-if="item.name == 'Prut'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>
@@ -968,7 +1038,14 @@
               v-if="item.name == 'Planka'"
             >
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.name }}</div>
+                <div class="print-text">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.olchamlari }}</div>

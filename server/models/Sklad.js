@@ -5,28 +5,13 @@ const harajatSchema = new mongoose.Schema({
     type: String,
   },
   date: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
-  },
-  time: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
+    type: Date,
+    default: Date.now,
   },
 });
+
+harajatSchema.set('timestamps', true);
+
 const Sklads = mongoose.model('sklad', harajatSchema);
 
 module.exports = Sklads;

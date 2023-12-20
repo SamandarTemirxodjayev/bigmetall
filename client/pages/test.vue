@@ -1,16 +1,15 @@
 <template>
-  <input ref="autoNumericInput" class="bg-black text-white" />
+  <VueDatePicker v-model="date" range />
 </template>
 
 <script setup>
-import AutoNumeric from "autonumeric";
-
-const autoNumericInput = ref(null);
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+const date = ref();
 
 onMounted(() => {
-  const options = {
-    decimalPlaces: 0,
-  };
-  new AutoNumeric(autoNumericInput.value, options);
+  const startDate = new Date();
+  const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
+  date.value = [startDate, endDate];
 });
 </script>

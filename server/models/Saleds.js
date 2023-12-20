@@ -5,6 +5,10 @@ const saledsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'client',
   },
+  sellerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'seller',
+  },
   products: {
     type: Array,
   },
@@ -15,28 +19,17 @@ const saledsSchema = new mongoose.Schema({
     type: String,
   },
   date: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
+    type: Date,
+    default: Date.now,
   },
-  time: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
+  debt: {
+    type: Array,
+    default: [],
   },
 });
+
+saledsSchema.set('timestamps', true);
+
 const Saleds = mongoose.model('saled', saledsSchema);
 
 module.exports = Saleds;

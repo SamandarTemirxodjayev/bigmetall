@@ -5,6 +5,10 @@ const debtsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'client',
   },
+  sellerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'seller',
+  },
   products: {
     type: Array,
   },
@@ -17,30 +21,20 @@ const debtsSchema = new mongoose.Schema({
   },
   historyAmount: {
     type: Array,
+    default: [],
   },
   date: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
+    type: Date,
+    default: Date.now,
   },
-  time: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
+  active: {
+    type: Boolean,
+    default: true,
   },
 });
+
+debtsSchema.set('timestamps', true);
+
 const Debts = mongoose.model('debts', debtsSchema);
 
 module.exports = Debts;

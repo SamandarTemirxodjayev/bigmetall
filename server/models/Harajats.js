@@ -8,28 +8,13 @@ const harajatSchema = new mongoose.Schema({
     type: Number,
   },
   date: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
-  },
-  time: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
+    type: Date,
+    default: Date.now,
   },
 });
+
+harajatSchema.set('timestamps', true);
+
 const Harajats = mongoose.model('harajat', harajatSchema);
 
 module.exports = Harajats;

@@ -48,14 +48,16 @@
                 Ombor Nomi
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
-                Yaratilgan Sanasi va Vaqti
+                Yaratilgan Vaqti
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Ma'lomutlar
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="(item, i) in sklads"
+              v-for="(item, i) in filteredSklads"
               :key="item._id"
               class="hover:bg-gray-200 cursor-pointer"
             >
@@ -70,21 +72,12 @@
               <td class="px-5 py-3 border-b border-gray-300">
                 <NuxtLink :to="`/1/sklad/${item._id}`">
                   <div class="print-text">
-                    {{
-                      `${padWithZero(item.date.day)}.${padWithZero(
-                        item.date.month
-                      )}.${padWithZero(item.date.year)}`
-                    }}
-                    {{
-                      `${padWithZero(item.time.hour)}:${padWithZero(
-                        item.time.minute
-                      )}:${padWithZero(item.time.second)}`
-                    }}
+                    {{ formatTime(item.date) }}
                   </div>
                 </NuxtLink>
               </td>
               <td
-                class="px-5 py-3 border-b border-gray-300 text-right w-[10%] text-gray-400"
+                class="px-5 py-3 border-b border-gray-300 text-right w-[10%] text-gray-500"
               >
                 <div>
                   <Icon
@@ -266,19 +259,12 @@ const handleEditOmbor = async (e) => {
     console.log(error);
   }
 };
-const handleSearchSubmit = async (e) => {
-  e.preventDefault();
-  loading.value = true;
-  try {
-    const res = await $host.post("/sklad/find", {
-      search: search.value,
-    });
-    sklads.value = res.data;
-  } catch (error) {
-    console.log(error);
-  }
-  loading.value = false;
-};
+let filteredSklads = computed(() => {
+  if (!search.value) return sklads.value;
+  return sklads.value.filter((sklad) =>
+    sklad.name.toLowerCase().includes(search.value.toLowerCase())
+  );
+});
 </script>
 <style scoped>
 @media print {

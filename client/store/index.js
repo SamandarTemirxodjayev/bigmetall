@@ -18,7 +18,8 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi_x == product.uzunligi_x &&
         p.sklad == product.sklad &&
         p.price == product.price && 
-        p.saledPrice == product.saledPrice
+        p.saledPrice == product.saledPrice &&
+        p.cut == product.cut
       );
     
       if (existingProduct) {
@@ -40,7 +41,8 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi_x == product.uzunligi_x &&
         p.sklad == product.sklad &&
         p.price == product.price && 
-        p.saledPrice == product.saledPrice
+        p.saledPrice == product.saledPrice &&
+        p.cut == product.cut
       );
       if (existingProduct) {
         existingProduct.quantity--;
@@ -65,7 +67,8 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi_x == product.uzunligi_x &&
         p.sklad == product.sklad &&
         p.price == product.price && 
-        p.saledPrice == product.saledPrice
+        p.saledPrice == product.saledPrice &&
+        p.cut == product.cut
       );
       if (existingProduct) {
         const index = this.count.indexOf(existingProduct);
@@ -98,7 +101,8 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi == product.uzunligi &&
         p.uzunligi_y == product.uzunligi_y && 
         p.uzunligi_x == product.uzunligi_x &&
-        p.sklad == product.sklad
+        p.sklad == product.sklad &&
+        p.cut == product.cut
       );
       if (existingProduct) {
         existingProduct.saledPrice = product.saledPrice;

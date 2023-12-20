@@ -8,28 +8,13 @@ const clientsSchema = new mongoose.Schema({
     type: String,
   },
   date: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
-  },
-  time: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
+    type: Date,
+    default: Date.now,
   },
 });
+
+clientsSchema.set('timestamps', true);
+
 const Clients = mongoose.model('client', clientsSchema);
 
 module.exports = Clients;

@@ -1,17 +1,17 @@
 <template>
-  <div>
+  <div class="hidden-print">
     <template v-if="!loading">
       <NewLayout>
         <div class="mb-2">
           <span class="text-2xl font-semibold">Chiqim</span>
         </div>
         <div
-          class="mt-8 text-[13px] bg-white border borer-gray-50 shadow-2xl p-4"
+          class="mt-8 text-[13px] bg-white border borer-gray-50 shadow-2xl p-4 print-table"
         >
           <div class="border border-gray-50">
             <table class="w-full">
               <thead>
-                <tr class="sticky top-16">
+                <tr>
                   <th class="px-5 py-3 text-left border-y border-gray-300">
                     Mahsulot Nomi
                   </th>
@@ -42,7 +42,9 @@
                   <th class="px-5 py-3 text-left border-y border-gray-300">
                     Umumiy Narxi
                   </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
+                  <th
+                    class="px-5 py-3 text-left border-y border-gray-300 hidden-print"
+                  >
                     O'zgartirish
                   </th>
                 </tr>
@@ -50,18 +52,23 @@
               <tbody v-for="item in products" :key="item._id">
                 <tr class="hover:bg-gray-200 cursor-pointer w-full">
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">{{ item.name }}</div>
+                    <template v-if="item.cut">
+                      {{ item.name }} (kesilgan)
+                    </template>
+                    <template v-else>
+                      {{ item.name }}
+                    </template>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">{{ item.olchamlari }}</div>
+                    <div>{{ item.olchamlari }}</div>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">
+                    <div>
                       {{ item.category }}
                     </div>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">
+                    <div>
                       <div v-if="item.qalinligi_ortasi">
                         O'rta: {{ item.qalinligi_ortasi }}mm<br />
                         Chet: {{ item.qalinligi }}mm
@@ -70,24 +77,54 @@
                     </div>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">
+                    <div>
                       {{ item.holati }}
                     </div>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">{{ item.uzunligi }}m</div>
+                    <template
+                      v-if="
+                        item.name == 'Palasa' ||
+                        item.name == 'Kvadrat prut' ||
+                        item.name == 'Kvadrad profil'
+                      "
+                    >
+                      <div>
+                        Uzunligi: {{ item.uzunligi }}m <br />
+                        Bo'yi: {{ item.uzunligi_x }}sm <br />
+                        Eni: {{ item.uzunligi_y }}sm
+                      </div>
+                    </template>
+                    <template v-else-if="item.uzunligi">
+                      <div>{{ item.uzunligi }}m</div>
+                    </template>
+                    <template v-else>
+                      <div>
+                        Bo'yi: {{ item.uzunligi_x }}sm <br />
+                        Eni: {{ item.uzunligi_y }}sm
+                      </div>
+                    </template>
                   </td>
 
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">{{ item.quantity }}ta</div>
+                    <div>{{ item.quantity }}ta</div>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">
-                      {{ item.uzunligi * item.quantity }}m
-                    </div>
+                    <template v-if="item.uzunligi">
+                      <div>{{ item.uzunligi * item.quantity }}m</div>
+                    </template>
+                    <template v-else>
+                      <div>
+                        {{
+                          (item.uzunligi_y * item.uzunligi_x * item.quantity) /
+                          10000
+                        }}
+                        m<sup>2</sup>
+                      </div>
+                    </template>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">
+                    <div>
                       {{
                         item.saledPrice == null
                           ? "Narx belgilanmagan"
@@ -98,18 +135,40 @@
                     </div>
                   </td>
                   <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">
-                      {{
-                        item.saledPrice == null
-                          ? "Narx belgilanmagan"
-                          : `${(item.saledPrice * item.uzunligi * item.quantity)
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
-                      }}
-                    </div>
+                    <template v-if="item.uzunligi">
+                      <div>
+                        {{
+                          item.saledPrice == null
+                            ? "Narx belgilanmagan"
+                            : `${(
+                                item.saledPrice *
+                                item.uzunligi *
+                                item.quantity
+                              )
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                        }}
+                      </div>
+                    </template>
+                    <template v-else>
+                      <div>
+                        {{
+                          item.saledPrice == null
+                            ? "Narx belgilanmagan"
+                            : `${(
+                                ((item.saledPrice *
+                                  (item.uzunligi_x * item.uzunligi_y)) /
+                                  10000) *
+                                item.quantity
+                              )
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                        }}
+                      </div>
+                    </template>
                   </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <div class="print-text">
+                  <td class="px-5 py-3 border-b border-gray-300 hidden-print">
+                    <div>
                       <Icon
                         name="clarity:pencil-line"
                         class="hover:text-black text-gray-400"
@@ -134,6 +193,22 @@
                 for="name"
                 class="block mb-2 text-sm font-medium text-gray-700"
               >
+                Sotuvchi</label
+              >
+              <select
+                v-model="seller"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              >
+                <option v-for="(item, id) in sellers" :key="id" :value="item">
+                  {{ item.name }} ({{ item.phone }})
+                </option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-700"
+              >
                 Mijoz</label
               >
               <select
@@ -141,7 +216,7 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               >
                 <option v-for="(item, id) in clients" :key="id" :value="item">
-                  {{ item.name }}
+                  {{ item.name }} ({{ item.phone }})
                 </option>
               </select>
             </div>
@@ -173,10 +248,10 @@
                 :value="formatNumberWithSpaces(total)"
                 type="text"
                 disabled
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            <div>
+            <div class="hidden-print">
               <label
                 for="name"
                 class="block mb-2 text-sm font-medium text-gray-700"
@@ -186,7 +261,7 @@
               <button
                 @click="submitAll"
                 type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-2 me-2 mb-2 focus:outline-none"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-2.5 me-2 mb-2 focus:outline-none"
               >
                 Tasdiqlash
               </button>
@@ -250,6 +325,8 @@ const counterStore = useCounterStore();
 let loading = ref(true);
 let products = reactive({});
 let clients = reactive({});
+let sellers = reactive({});
+let seller = ref("");
 let client = ref("");
 let saledType = ref("");
 let isPopupOpen = ref(false);
@@ -263,7 +340,9 @@ onMounted(async () => {
       window.location.href = "/";
     }
     const clientRes = await $host.get("/clients");
-    clients = clientRes.data;
+    clients = clientRes.data.sort((a, b) => a.name.localeCompare(b.name));
+    const sellerRes = await $host.get("/sellers");
+    sellers = sellerRes.data.sort((a, b) => a.name.localeCompare(b.name));
     products = counterStore.get();
   } catch (error) {
     console.log(error);
@@ -279,9 +358,19 @@ const total = computed(() => {
     }
 
     return products.reduce((total, product) => {
-      return (
-        total + (product.saledPrice || 0) * product.quantity * product.uzunligi
-      );
+      if (product.name === "List") {
+        return (
+          total +
+          ((product.uzunligi_y * product.uzunligi_x) / 10000) *
+            product.saledPrice *
+            product.quantity
+        );
+      } else {
+        return (
+          total +
+          (product.saledPrice || 0) * product.quantity * product.uzunligi
+        );
+      }
     }, 0);
   } else {
     return;
@@ -332,6 +421,13 @@ const submitAll = async () => {
         title: "Xatolik",
       });
     }
+    if (seller.value == "") {
+      loading.value = false;
+      return Swal.fire({
+        icon: "error",
+        title: "Xatolik",
+      });
+    }
     if (!client.value) {
       loading.value = false;
       return Swal.fire({
@@ -354,13 +450,13 @@ const submitAll = async () => {
         "error"
       );
     }
-    const res = await $host.post("/sell", {
+    await $host.post("/sell", {
+      seller: seller.value,
       products: products,
       client: client.value,
       saledType: saledType.value,
       total: total.value,
     });
-    console.log(res.data);
     await counterStore.resetAll();
     await Swal.fire(
       "Muvaffiqatli",
@@ -380,3 +476,18 @@ const formatNumberWithSpaces = (number) => {
   return number;
 };
 </script>
+<style scoped>
+@media print {
+  .hidden-print {
+    visibility: hidden;
+  }
+  .print-table {
+    font-size: 12px;
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+</style>

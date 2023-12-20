@@ -12,7 +12,7 @@
             >
               <input
                 type="text"
-                class="text-gray-900 text-sm block w-full p-2.5 outline-none"
+                class="text-gray-900 text-sm block w-full p-2.5 outline-none min-w-[200px]"
                 placeholder="Qidiruv"
                 v-model="search"
               />
@@ -20,17 +20,13 @@
                 <Icon name="iconamoon:search-thin" size="1.5rem" />
               </div>
             </div>
-            <div class="flex items-center">
-              <input
-                type="date"
-                v-model="startDate"
-                class="border border-gray-400 rounded-md p-2"
-              />
-              <div class="mx-3">-</div>
-              <input
-                type="date"
-                v-model="endDate"
-                class="border border-gray-400 rounded-md p-2"
+            <div class="items-center pt-0.5 w-full">
+              <VueDatePicker
+                class="border border-gray-500 rounded-[5px] min-w-[350px]"
+                v-model="date"
+                range
+                :max-date="new Date()"
+                time-picker-inline
               />
             </div>
             <button
@@ -40,10 +36,10 @@
               Qidirish
             </button>
             <button
-              @click="clearSearch"
-              class="bg-white text-blue-500 border border-2 border-blue-500 font-semibold rounded-xl px-3 mx-2"
+              @click="handleExcelDownloadByDate"
+              class="bg-blue-500 text-white font-semibold rounded-xl px-3 mx-2"
             >
-              Tozalash
+              Excel
             </button>
           </div>
           <div>
@@ -86,10 +82,7 @@
                 Summasi
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
-                Sanasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Vaqti
+                Qo'shilgan Vaqti
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
@@ -115,20 +108,7 @@
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    `${padWithZero(item.date.day)}.${padWithZero(
-                      item.date.month
-                    )}.${padWithZero(item.date.year)}`
-                  }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    `${padWithZero(item.time.hour)}:${padWithZero(
-                      item.time.minute
-                    )}:${padWithZero(item.time.second)}`
-                  }}
+                  {{ formatTime(item.date) }}
                 </div>
               </td>
               <td
@@ -190,6 +170,7 @@
                 >
                 <input
                   v-model="amount"
+                  min="0"
                   required
                   step="0.01"
                   type="number"
@@ -273,6 +254,8 @@
 <script setup>
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 let isPopupOpen = ref(false);
 let isPopupEditOpen = ref(false);
@@ -285,8 +268,6 @@ let search = ref("");
 let editName = ref("");
 let editAmount = ref("");
 let harajatId = ref("");
-let startDate = ref(null);
-let endDate = ref(null);
 let count = ref(0);
 onMounted(async () => {
   try {
@@ -330,24 +311,14 @@ const handleSubmit = async (e) => {
 const handleSearch = async (e) => {
   loading.value = true;
   try {
-    const parts = startDate.value ? startDate.value.split("-") : [];
-    const partsend = endDate.value ? endDate.value.split("-") : [];
-
     const searchParams = {
       search: search.value,
     };
-
-    if (parts.length === 3 || partsend.length === 3) {
-      searchParams.startDate = {
-        year: parseInt(parts[0]),
-        month: parseInt(parts[1]),
-        day: parseInt(parts[2]),
-      };
-      searchParams.endDate = {
-        year: parseInt(partsend[0]),
-        month: parseInt(partsend[1]),
-        day: parseInt(partsend[2]),
-      };
+    if (date.value && date.value[0]) {
+      searchParams.startDate = date.value[0];
+    }
+    if (date.value && date.value[1]) {
+      searchParams.endDate = date.value[1];
     }
 
     const res = await $host.post(
@@ -398,11 +369,6 @@ const handleEditHarajatForm = async () => {
     loading.value = false;
   }
 };
-const clearSearch = () => {
-  search.value = "";
-  startDate.value = null;
-  endDate.value = null;
-};
 const countHandleChange = async () => {
   localStorage.setItem("count", count.value);
   loading.value = true;
@@ -419,6 +385,27 @@ const handleExcelDownload = async () => {
   try {
     const res = await $host.get(`/harajat/excel`, {
       responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `harajatlar-${datetime}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    console.log(error);
+  }
+  loading.value = false;
+};
+const handleExcelDownloadByDate = async () => {
+  loading.value = true;
+  try {
+    const res = await $host.get(`/harajat/excel-by-date`, {
+      responseType: "blob",
+      params: {
+        startDate: date.value && date.value[0] ? date.value[0] : null,
+        endDate: date.value && date.value[1] ? date.value[1] : null,
+      },
     });
     const url = window.URL.createObjectURL(new Blob([res.data]));
     const link = document.createElement("a");

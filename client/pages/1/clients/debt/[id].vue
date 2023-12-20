@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div v-if="!loading">
     <NewLayout>
       <div class="mb-2">
@@ -107,15 +107,7 @@
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    `${padWithZero(item.date.day)}.${padWithZero(
-                      item.date.month
-                    )}.${padWithZero(item.date.year)} ${padWithZero(
-                      item.time.hour
-                    )}:${padWithZero(item.time.minute)}:${padWithZero(
-                      item.time.second
-                    )}`
-                  }}
+                  {{ formatTime(item.date) }}
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
@@ -123,13 +115,14 @@
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  <button
-                    @click="handleAboutClick(item)"
-                    type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                  >
-                    Batafsil
-                  </button>
+                  <NuxtLink :to="`/1/clients/debtInfo/${item._id}`">
+                    <button
+                      type="button"
+                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                      Batafsil
+                    </button>
+                  </NuxtLink>
                 </div>
               </td>
             </tr>
@@ -143,7 +136,7 @@
   </div>
 </template>
 
-<script setup>
+  <script setup>
 const route = useRoute();
 
 let isPopupOpen = ref(false);
@@ -220,7 +213,7 @@ const summaryQuantity = (items) => {
   return total;
 };
 </script>
-<style scoped>
+  <style scoped>
 @media print {
   body * {
     visibility: hidden;

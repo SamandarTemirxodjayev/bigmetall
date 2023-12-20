@@ -4,6 +4,10 @@ const productSchema = new mongoose.Schema({
   name: {
     type: String,
   },
+  sellerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'seller',
+  },
   qalinligi: {
     type: Number,
   },
@@ -53,26 +57,7 @@ const productSchema = new mongoose.Schema({
     type: String,
   },
   saledDate: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
-  },
-  saledTime: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
+    type: Date,
   },
   saled: {
     type: Boolean,
@@ -83,28 +68,13 @@ const productSchema = new mongoose.Schema({
     default: false,
   },
   date: {
-    day: {
-      type: Number,
-    },
-    month: {
-      type: Number,
-    },
-    year: {
-      type: Number,
-    },
-  },
-  time: {
-    hour: {
-      type: Number,
-    },
-    minute: {
-      type: Number,
-    },
-    second: {
-      type: Number,
-    },
+    type: Date,
+    default: Date.now,
   },
 });
+
+productSchema.set('timestamps', true);
+
 const Products = mongoose.model('products', productSchema);
 
 module.exports = Products;
