@@ -1,1094 +1,1047 @@
 <template>
   <div v-if="!loading">
-    <NewLayout>
-      <div class="mb-2">
-        <span class="text-2xl font-semibold"
-          >Ombordagi Mahsulotlar Ro'yxati</span
-        >
-      </div>
-      <div class="shadow items-center bg-white shadow-xl rounded-md">
-        <div class="flex p-4 justify-between">
-          <form @submit="handleSearchSubmit">
-            <div class="flex">
-              <div
-                class="px-5 flex items-center border border-gray-500 rounded-lg px-2 mr-3"
-              >
-                <select
-                  class="text-gray-900 text-sm block w-full p-2.5 outline-none"
-                  placeholder="Qidiruv"
-                  v-model="search"
-                >
-                  <option value="Hammasi">Hammasi</option>
-                  <option
-                    v-for="(item, id) in MahsulotName"
-                    :key="id"
-                    :value="item"
-                  >
-                    {{ item }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </form>
-          <div>
-            <button
-              @click="handleClickDownloadExcel"
-              class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
+    <div class="mb-2">
+      <span class="text-2xl font-semibold">Ombordagi Mahsulotlar Ro'yxati</span>
+    </div>
+    <div class="shadow items-center bg-white shadow-xl rounded-md">
+      <div class="flex p-4 justify-between">
+        <form @submit="handleSearchSubmit">
+          <div class="flex">
+            <div
+              class="px-5 flex items-center border border-gray-500 rounded-lg px-2 mr-3"
             >
-              Excelda Yuklab Olish
-            </button>
+              <select
+                class="text-gray-900 text-sm block w-full p-2.5 outline-none"
+                placeholder="Qidiruv"
+                v-model="search"
+              >
+                <option value="Hammasi">Hammasi</option>
+                <option
+                  v-for="(item, id) in MahsulotName"
+                  :key="id"
+                  :value="item"
+                >
+                  {{ item }}
+                </option>
+              </select>
+            </div>
           </div>
+        </form>
+        <div>
+          <button
+            @click="handleClickDownloadExcel"
+            class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
+          >
+            Excelda Yuklab Olish
+          </button>
         </div>
       </div>
-      <!-- DVUXTAVR -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Dvuxtavr'"
-      >
-        <div class="text-xl font-bold mb-2">Dvuxtavr</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Dvuxtavr'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                  Chet: {{ item.qalinligi }}mm
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
+    </div>
+    <!-- DVUXTAVR -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Dvuxtavr'"
+    >
+      <div class="text-xl font-bold mb-2">Dvuxtavr</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Dvuxtavr'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                O'rta: {{ item.qalinligi_ortasi }}mm<br />
+                Chet: {{ item.qalinligi }}mm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- SHVELLIR -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Shvellir'"
+    >
+      <div class="text-xl font-bold mb-2">Shvellir</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Shvellir'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
 
-      <!-- SHVELLIR -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Shvellir'"
-      >
-        <div class="text-xl font-bold mb-2">Shvellir</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Shvellir'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- UGALOK -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Ugalok'"
+    >
+      <div class="text-xl font-bold mb-2">Ugalok</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Ugalok'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
 
-      <!-- UGALOK -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Ugalok'"
-      >
-        <div class="text-xl font-bold mb-2">Ugalok</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Ugalok'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Truba -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Truba'"
+    >
+      <div class="text-xl font-bold mb-2">Truba</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Truba'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Truba -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Truba'"
-      >
-        <div class="text-xl font-bold mb-2">Truba</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Truba'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- LIST -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'List'"
+    >
+      <div class="text-xl font-bold mb-2">List</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Maydoni
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m<sup>2</sup> Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'List'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                Bo'yi: {{ item.uzunligi_x }}sm <br />
+                Eni: {{ item.uzunligi_y }}sm
+              </div>
+            </td>
 
-      <!-- LIST -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'List'"
-      >
-        <div class="text-xl font-bold mb-2">List</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Maydoni
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m<sup>2</sup> Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'List'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
-                </div>
-              </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  (item.uzunligi_y * item.uzunligi_x * item.quantity) / 10000
+                }}
+                m<sup>2</sup>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    (item.uzunligi_y * item.uzunligi_x * item.quantity) / 10000
-                  }}
-                  m<sup>2</sup>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Armatura -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Armatura'"
+    >
+      <div class="text-xl font-bold mb-2">Armatura</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Armatura'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Armatura -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Armatura'"
-      >
-        <div class="text-xl font-bold mb-2">Armatura</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Armatura'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Kvadrad prut -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Kvadrat prut'"
+    >
+      <div class="text-xl font-bold mb-2">Kvadrat prut</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Kvadrat prut'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.category }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                Bo'yi: {{ item.uzunligi_x }}sm <br />
+                Eni: {{ item.uzunligi_y }}sm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
 
-      <!-- Kvadrad prut -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Kvadrat prut'"
-      >
-        <div class="text-xl font-bold mb-2">Kvadrat prut</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Kvadrat prut'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.category }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Kvadrat Profil -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Kvadrad profil'"
+    >
+      <div class="text-xl font-bold mb-2">Kvadrat profil</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Kvadrad profil'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.category }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                Bo'yi: {{ item.uzunligi_x }}sm <br />
+                Eni: {{ item.uzunligi_y }}sm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Kvadrat Profil -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Kvadrad profil'"
-      >
-        <div class="text-xl font-bold mb-2">Kvadrat profil</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Kvadrad profil'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.category }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Palasa -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Palasa'"
+    >
+      <div class="text-xl font-bold mb-2">Palasa</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Palasa'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.category }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                Bo'yi: {{ item.uzunligi_x }}sm <br />
+                Eni: {{ item.uzunligi_y }}sm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Palasa -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Palasa'"
-      >
-        <div class="text-xl font-bold mb-2">Palasa</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Palasa'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.category }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Prut -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Prut'"
+    >
+      <div class="text-xl font-bold mb-2">Prut</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Prut'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
 
-      <!-- Prut -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Prut'"
-      >
-        <div class="text-xl font-bold mb-2">Prut</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Prut'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Planka -->
+    <div
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
+      v-if="search == 'Hammasi' || search == 'Planka'"
+    >
+      <div class="text-xl font-bold mb-2">Planka</div>
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Narx
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr
+            class="hover:bg-gray-200 cursor-pointer w-full"
+            v-if="item.name == 'Planka'"
+          >
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.qalinligi }}mm</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi }}m</div>
+            </td>
 
-      <!-- Planka -->
-      <div
-        class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
-        v-if="search == 'Hammasi' || search == 'Planka'"
-      >
-        <div class="text-xl font-bold mb-2">Planka</div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Mahsulot Nomi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Kategoriyasi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Qalinligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Holati
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                Umumiy Uzunligi
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
-            </tr>
-          </thead>
-          <tbody v-for="item in products" :key="item._id">
-            <tr
-              class="hover:bg-gray-200 cursor-pointer w-full"
-              v-if="item.name == 'Planka'"
-            >
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.olchamlari }}</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.category }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.qalinligi }}mm</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.holati }}
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
-              </td>
-
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.quantity }}ta</div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${item.saledPrice} so'm`
-                  }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </NewLayout>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice.toFixed(2)} so'm`
+                }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div v-else>
     <Loader />

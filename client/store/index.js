@@ -16,7 +16,7 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi == product.uzunligi &&
         p.uzunligi_y == product.uzunligi_y && 
         p.uzunligi_x == product.uzunligi_x &&
-        p.sklad == product.sklad &&
+        p.sklad[0].name == p.sklad[0].name &&
         p.price == product.price && 
         p.saledPrice == product.saledPrice &&
         p.cut == product.cut
@@ -39,7 +39,7 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi == product.uzunligi &&
         p.uzunligi_y == product.uzunligi_y && 
         p.uzunligi_x == product.uzunligi_x &&
-        p.sklad == product.sklad &&
+        p.sklad[0].name == product.sklad[0].name &&
         p.price == product.price && 
         p.saledPrice == product.saledPrice &&
         p.cut == product.cut
@@ -65,7 +65,7 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi == product.uzunligi &&
         p.uzunligi_y == product.uzunligi_y && 
         p.uzunligi_x == product.uzunligi_x &&
-        p.sklad == product.sklad &&
+        p.sklad[0].name == product.sklad[0].name &&
         p.price == product.price && 
         p.saledPrice == product.saledPrice &&
         p.cut == product.cut
@@ -101,7 +101,7 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi == product.uzunligi &&
         p.uzunligi_y == product.uzunligi_y && 
         p.uzunligi_x == product.uzunligi_x &&
-        p.sklad == product.sklad &&
+        p.sklad[0].name == product.sklad[0].name &&
         p.cut == product.cut
       );
       if (existingProduct) {

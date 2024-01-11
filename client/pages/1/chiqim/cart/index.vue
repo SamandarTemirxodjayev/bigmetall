@@ -1,317 +1,314 @@
 <template>
   <div class="hidden-print">
-    <template v-if="!loading">
-      <NewLayout>
-        <div class="mb-2">
-          <span class="text-2xl font-semibold">Chiqim</span>
-        </div>
-        <div
-          class="mt-8 text-[13px] bg-white border borer-gray-50 shadow-2xl p-4 print-table"
-        >
-          <div class="border border-gray-50">
-            <table class="w-full">
-              <thead>
-                <tr>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Mahsulot Nomi
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    O'lchamlari
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Kategoriyasi
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Qalinligi
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Holati
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Uzunligi
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Soni
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Umumiy Uzunligi
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    1 m Uchun Sotuv Narxi
-                  </th>
-                  <th class="px-5 py-3 text-left border-y border-gray-300">
-                    Umumiy Narxi
-                  </th>
-                  <th
-                    class="px-5 py-3 text-left border-y border-gray-300 hidden-print"
+    <div v-if="!loading">
+      <div class="mb-2">
+        <span class="text-2xl font-semibold">Chiqim</span>
+      </div>
+      <div
+        class="mt-8 text-[13px] bg-white border borer-gray-50 shadow-2xl p-4 print-table"
+      >
+        <div class="border border-gray-50">
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Mahsulot Nomi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  O'lchamlari
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Kategoriyasi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Qalinligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Holati
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Uzunligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Soni
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Umumiy Uzunligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  1 m Uchun Sotuv Narxi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Umumiy Narxi
+                </th>
+                <th
+                  class="px-5 py-3 text-left border-y border-gray-300 hidden-print"
+                >
+                  O'zgartirish
+                </th>
+              </tr>
+            </thead>
+            <tbody v-for="item in products" :key="item._id">
+              <tr class="hover:bg-gray-200 cursor-pointer w-full">
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>{{ item.olchamlari }}</div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{ item.category }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    <div v-if="item.qalinligi_ortasi">
+                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
+                      Chet: {{ item.qalinligi }}mm
+                    </div>
+                    <div v-else>{{ item.qalinligi }}mm</div>
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{ item.holati }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template
+                    v-if="
+                      item.name == 'Palasa' ||
+                      item.name == 'Kvadrat prut' ||
+                      item.name == 'Kvadrad profil'
+                    "
                   >
-                    O'zgartirish
-                  </th>
-                </tr>
-              </thead>
-              <tbody v-for="item in products" :key="item._id">
-                <tr class="hover:bg-gray-200 cursor-pointer w-full">
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <template v-if="item.cut">
-                      {{ item.name }} (kesilgan)
-                    </template>
-                    <template v-else>
-                      {{ item.name }}
-                    </template>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <div>{{ item.olchamlari }}</div>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
                     <div>
-                      {{ item.category }}
+                      Uzunligi: {{ item.uzunligi }}m <br />
+                      Bo'yi: {{ item.uzunligi_x }}sm <br />
+                      Eni: {{ item.uzunligi_y }}sm
                     </div>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
+                  </template>
+                  <template v-else-if="item.uzunligi">
+                    <div>{{ item.uzunligi }}m</div>
+                  </template>
+                  <template v-else>
                     <div>
-                      <div v-if="item.qalinligi_ortasi">
-                        O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                        Chet: {{ item.qalinligi }}mm
-                      </div>
-                      <div v-else>{{ item.qalinligi }}mm</div>
+                      Bo'yi: {{ item.uzunligi_x }}sm <br />
+                      Eni: {{ item.uzunligi_y }}sm
                     </div>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <div>
-                      {{ item.holati }}
-                    </div>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <template
-                      v-if="
-                        item.name == 'Palasa' ||
-                        item.name == 'Kvadrat prut' ||
-                        item.name == 'Kvadrad profil'
-                      "
-                    >
-                      <div>
-                        Uzunligi: {{ item.uzunligi }}m <br />
-                        Bo'yi: {{ item.uzunligi_x }}sm <br />
-                        Eni: {{ item.uzunligi_y }}sm
-                      </div>
-                    </template>
-                    <template v-else-if="item.uzunligi">
-                      <div>{{ item.uzunligi }}m</div>
-                    </template>
-                    <template v-else>
-                      <div>
-                        Bo'yi: {{ item.uzunligi_x }}sm <br />
-                        Eni: {{ item.uzunligi_y }}sm
-                      </div>
-                    </template>
-                  </td>
+                  </template>
+                </td>
 
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <div>{{ item.quantity }}ta</div>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <template v-if="item.uzunligi">
-                      <div>{{ item.uzunligi * item.quantity }}m</div>
-                    </template>
-                    <template v-else>
-                      <div>
-                        {{
-                          (item.uzunligi_y * item.uzunligi_x * item.quantity) /
-                          10000
-                        }}
-                        m<sup>2</sup>
-                      </div>
-                    </template>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>{{ item.quantity }}ta</div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template v-if="item.uzunligi">
+                    <div>{{ (item.uzunligi * item.quantity).toFixed() }}m</div>
+                  </template>
+                  <template v-else>
+                    <div>
+                      {{
+                        (item.uzunligi_y * item.uzunligi_x * item.quantity) /
+                        10000
+                      }}
+                      m<sup>2</sup>
+                    </div>
+                  </template>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{
+                      item.saledPrice == null
+                        ? "Narx belgilanmagan"
+                        : `${item.saledPrice
+                            .toFixed(2)
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                    }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template v-if="item.uzunligi">
                     <div>
                       {{
                         item.saledPrice == null
                           ? "Narx belgilanmagan"
-                          : `${item.saledPrice
+                          : `${(item.saledPrice * item.uzunligi * item.quantity)
+                              .toFixed(2)
                               .toString()
                               .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
                       }}
                     </div>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300">
-                    <template v-if="item.uzunligi">
-                      <div>
-                        {{
-                          item.saledPrice == null
-                            ? "Narx belgilanmagan"
-                            : `${(
-                                item.saledPrice *
-                                item.uzunligi *
-                                item.quantity
-                              )
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
-                        }}
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div>
-                        {{
-                          item.saledPrice == null
-                            ? "Narx belgilanmagan"
-                            : `${(
-                                ((item.saledPrice *
-                                  (item.uzunligi_x * item.uzunligi_y)) /
-                                  10000) *
-                                item.quantity
-                              )
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
-                        }}
-                      </div>
-                    </template>
-                  </td>
-                  <td class="px-5 py-3 border-b border-gray-300 hidden-print">
+                  </template>
+                  <template v-else>
                     <div>
-                      <Icon
-                        name="clarity:pencil-line"
-                        class="hover:text-black text-gray-400"
-                        size="1.5rem"
-                        @click="handleEditProductPrice(item)"
-                      />
-                      <Icon
-                        name="ant-design:delete-outlined"
-                        class="ml-2 hover:text-black text-gray-400"
-                        size="1.5rem"
-                        @click="handleDeleteProduct(item)"
-                      />
+                      {{
+                        item.saledPrice == null
+                          ? "Narx belgilanmagan"
+                          : `${(
+                              ((item.saledPrice *
+                                (item.uzunligi_x * item.uzunligi_y)) /
+                                10000) *
+                              item.quantity
+                            )
+                              .toFixed(2)
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                      }}
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="flex mt-8 gap-8 ml-4 pb-4">
-            <div>
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Sotuvchi</label
-              >
-              <select
-                v-model="seller"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              >
-                <option v-for="(item, id) in sellers" :key="id" :value="item">
-                  {{ item.name }} ({{ item.phone }})
-                </option>
-              </select>
-            </div>
-            <div>
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Mijoz</label
-              >
-              <select
-                v-model="client"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              >
-                <option v-for="(item, id) in clients" :key="id" :value="item">
-                  {{ item.name }} ({{ item.phone }})
-                </option>
-              </select>
-            </div>
-            <div>
-              <label
-                for="quantity"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                To'lov Usuli</label
-              >
-              <select
-                v-model="saledType"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              >
-                <option>Naxt</option>
-                <option>Qarz</option>
-                <option>Perechesleniya</option>
-                <option>Kartaga( terminal)</option>
-              </select>
-            </div>
-            <div>
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Umumiy summasi</label
-              >
-              <input
-                :value="formatNumberWithSpaces(total)"
-                type="text"
-                disabled
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div class="hidden-print">
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Tasdiqlaysizmi?</label
-              >
-              <button
-                @click="submitAll"
-                type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-2.5 me-2 mb-2 focus:outline-none"
-              >
-                Tasdiqlash
-              </button>
-            </div>
-          </div>
+                  </template>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300 hidden-print">
+                  <div>
+                    <Icon
+                      name="clarity:pencil-line"
+                      class="hover:text-black text-gray-400"
+                      size="1.5rem"
+                      @click="handleEditProductPrice(item)"
+                    />
+                    <Icon
+                      name="ant-design:delete-outlined"
+                      class="ml-2 hover:text-black text-gray-400"
+                      size="1.5rem"
+                      @click="handleDeleteProduct(item)"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div
-          v-if="isPopupOpen"
-          class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-        >
-          <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
-            <button
-              @click="() => (isPopupOpen = false)"
-              class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
+        <div class="flex mt-8 gap-8 ml-4 pb-4">
+          <div>
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
             >
-              <Icon name="material-symbols:close" width="25" height="25" />
+              Sotuvchi</label
+            >
+            <select
+              v-model="seller"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            >
+              <option v-for="(item, id) in sellers" :key="id" :value="item">
+                {{ item.name }} ({{ item.phone }})
+              </option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Mijoz</label
+            >
+            <select
+              v-model="client"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            >
+              <option v-for="(item, id) in clients" :key="id" :value="item">
+                {{ item.name }} ({{ item.phone }})
+              </option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              To'lov Usuli</label
+            >
+            <select
+              v-model="saledType"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            >
+              <option>Naxt</option>
+              <option>Qarz</option>
+              <option>Perechesleniya</option>
+              <option>Kartaga( terminal)</option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Umumiy summasi</label
+            >
+            <input
+              :value="formatNumberWithSpaces(total)"
+              type="text"
+              disabled
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div class="hidden-print">
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Tasdiqlaysizmi?</label
+            >
+            <button
+              @click="submitAll"
+              type="button"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-2.5 me-2 mb-2 focus:outline-none"
+            >
+              Tasdiqlash
             </button>
-
-            <div>
-              <form @submit="handleSubmit">
-                <div class="mb-4">
-                  <label
-                    for="name"
-                    class="block mb-2 text-sm font-medium text-gray-700"
-                    >1m uchun sotuv narxini kiriting
-                  </label>
-                  <input
-                    v-model="saledPrice"
-                    type="number"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <button
-                    type="submit"
-                    class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-                  >
-                    Tasdiqlash
-                  </button>
-                </div>
-              </form>
-            </div>
           </div>
         </div>
-      </NewLayout>
-    </template>
-    <template v-else>
+      </div>
+      <div
+        v-if="isPopupOpen"
+        class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
+      >
+        <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
+          <button
+            @click="() => (isPopupOpen = false)"
+            class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
+          >
+            <Icon name="material-symbols:close" width="25" height="25" />
+          </button>
+
+          <div>
+            <form @submit="handleSubmit">
+              <div class="mb-4">
+                <label
+                  for="name"
+                  class="block mb-2 text-sm font-medium text-gray-700"
+                  >1m uchun sotuv narxini kiriting
+                </label>
+                <input
+                  v-model="saledPrice"
+                  type="number"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                >
+                  Tasdiqlash
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else>
       <Loader />
-    </template>
+    </div>
   </div>
 </template>
 

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const { generateUsername } = require("unique-username-generator");
 const bcrypt = require('bcrypt');
-const { default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 const ExcelJS = require('exceljs');
 const moment = require('moment');
 const Users = require('../models/Users');
@@ -14,6 +15,7 @@ const Saleds = require('../models/Saleds');
 const Debts = require('../models/Debts');
 const Sellers = require('../models/Sellers');
 const { formatTime } = require('../functions/formatTime');
+const Alerts = require('../models/Alerts');
 require('dotenv').config();
 
 exports.index = async (req, res) => {
@@ -34,9 +36,10 @@ exports.check = async (req, res) => {
 };
 exports.register = async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 13);
+    const username = generateUsername(req.body.surname, 3, 15);
+    const hashedPassword = await bcrypt.hash("admin", 13);
     const newUser = new Users({
-      login: req.body.login,
+      login: username,
       password: hashedPassword,
       name: req.body.name,
       user_level: req.body.user_level,
@@ -44,6 +47,22 @@ exports.register = async (req, res) => {
     });
     await newUser.save();
     return res.status(201).json({ status: 'success', message: 'User registered successfully', data: newUser });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.loginPatch = async (req, res) => {
+  try {
+    const existingUser = await Users.findOne({ login: req.body.username });
+    if (existingUser) {
+      return res.status(400).json({ error: 'invalid' });
+    }
+    const hashedPassword = await bcrypt.hash(req.body.password, 13);
+    const user = await Users.findById(req.userId);
+    user.login = req.body.username;
+    user.password = hashedPassword;
+    await user.save();
+    return res.json({ status: "success" });
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -75,6 +94,41 @@ exports.login = async (req, res) => {
 exports.userGetInfo = async (req, res) => {
   try {
     const user = await Users.findById(req.userId);
+    return res.json({ user });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.usersGetAll = async (req, res) => {
+  try {
+    const users = await Users.find().sort({ _id: -1 });
+    return res.json(users);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.userDelete = async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await user.deleteOne();
+    return res.json({ message: 'User deleted' });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.userPatch = async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.name = req.body.name;
+    user.surname = req.body.surname;
+    user.user_level = req.body.user_level;
+    await user.save();
     return res.json({ user });
   } catch (error) {
     return res.status(500).json(error);
@@ -382,11 +436,90 @@ exports.harajatExcelByDate = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.harajatYearGet = async (req, res) => {
+  try {
+    const year = new Date().getFullYear();
+    const harajats = await Harajats.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+            $lte: new Date(`${year + 1}-01-01T00:00:00.000Z`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$amount' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalAmount: 1,
+        },
+      },
+    ]);
+
+    const totalAmount = harajats.length > 0 ? harajats[0].totalAmount : 0;
+
+    return res.json({ totalAmount });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.harajatYearGetGraph = async (req, res) => {
+  try {
+    const year = new Date().getFullYear();
+
+    const result = await Harajats.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+            $lte: new Date(`${year + 1}-01-01T00:00:00.000Z`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+            day: { $dayOfMonth: '$date' },
+          },
+          totalAmount: {
+            $sum: '$amount',
+          },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+    return res.json(result);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
 
 exports.skladGet = async (req, res) => {
   try {
-    const sklad = await Sklads.find();
+    const sklad = await Sklads.find({ active: true });
     return res.json(sklad);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.skladsGet = async (req, res) => {
+  try {
+    const sklads = await Sklads.find();
+    return res.json(sklads);
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -408,7 +541,8 @@ exports.skladDelete = async (req, res) => {
     if (!sklad) {
       return res.status(404).json({ message: 'Sklad not found' });
     }
-    await sklad.deleteOne();
+    sklad.active = false;
+    await sklad.save();
     return res.json({ message: 'Deleted successfully' });
   } catch (error) {
     return res.status(500).json(error);
@@ -668,7 +802,6 @@ exports.productPut = async (req, res) => {
     const filter = { ...productData };
     delete filter._id;
     delete filter.date;
-    delete filter.time;
     for (let i = 0; i < req.body.quantity; i += 1) {
       try {
         const pr = await Products.findOne(filter);
@@ -859,6 +992,34 @@ exports.productsPostSeller = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.getProductsWithDebtsPrice = async (req, res) => {
+  try {
+    const result = await Debts.aggregate([
+      {
+        $match: {
+          active: true,
+        }
+      },
+      {
+        $project: {
+          totalDebt: { $subtract: ['$allAmount', '$payedAmount'] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$totalDebt' },
+        },
+      },
+    ]);
+
+    const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
+    
+    return res.status(200).json({result: totalAmount});
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
 exports.skladExcelGet = async (req, res) => {
   try {
     const cellStyle = {
@@ -958,6 +1119,51 @@ exports.skladExcelGet = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.skladPriceGet = async (req, res) => {
+  try {
+    const result = await Products.aggregate([
+      {
+        $match: {
+          saled: false,
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalPrice: {
+            $sum: {
+              $cond: {
+                if: { $eq: ['$name', 'List'] },
+                then: {
+                  $multiply: [ '$price',
+                    {
+                      $divide: [
+                        { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                        10000,
+                      ],
+                    },
+                  ],
+                },
+                else: { 
+                  $multiply: [ '$price', '$uzunligi', ]},
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalAmount: '$totalPrice',
+        },
+      },
+    ]);
+    return res.json(result);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
 exports.clientsGet = async (req, res) => {
   try {
     const clients = await Clients.find();
@@ -1005,52 +1211,66 @@ exports.clientsPost = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+const sellProduct = async (product, clientID, saledType, sellerID) => {
+  const filter = { ...product };
+  delete filter._id;
+
+  for (let j = 0; j < product.quantity; j++) {
+    delete filter.quantity;
+    let date = new Date();
+    date = moment(date).format();
+    
+    await Products.findOneAndUpdate(
+      filter,
+      {
+        $set: {
+          saled: true,
+          saledPrice: product.saledPrice,
+          saledClient: new mongoose.Types.ObjectId(clientID),
+          saledType,
+          saledDate: date,
+          saledSeller: new mongoose.Types.ObjectId(sellerID),
+        },
+      }
+    );
+  }
+};
+
 exports.sellPost = async (req, res) => {
   try {
-    if (req.body.saledType !== 'Qarz') {
+    const { client, seller, products, saledType, total } = req.body;
+
+    for (const product of products) {
+      product.saled = false;
+      product.sklad = new mongoose.Types.ObjectId(product.sklad);
+      await sellProduct(product, client._id, saledType, seller._id);
+    }
+
+    if (saledType !== 'Qarz') {
       const newSaled = new Saleds({
-        clientId: new mongoose.Types.ObjectId(req.body.client._id),
-        sellerId: new mongoose.Types.ObjectId(req.body.seller._id),
-        products: req.body.products,
-        allAmount: req.body.total,
-        type: req.body.saledType,
+        clientId: new mongoose.Types.ObjectId(client._id),
+        sellerId: new mongoose.Types.ObjectId(seller._id),
+        products,
+        allAmount: total,
+        type: saledType,
       });
       await newSaled.save();
     } else {
       const newDebts = new Debts({
-        sellerId: new mongoose.Types.ObjectId(req.body.seller._id),
-        clientId: new mongoose.Types.ObjectId(req.body.client._id),
-        products: req.body.products,
-        allAmount: req.body.total,
+        sellerId: new mongoose.Types.ObjectId(seller._id),
+        clientId: new mongoose.Types.ObjectId(client._id),
+        products,
+        allAmount: total,
       });
       await newDebts.save();
     }
-    for (let i = 0; i < req.body.products.length; i += 1) {
-      const { quantity } = req.body.products[i];
-      req.body.products[i].quantity = 1;
-      req.body.products[i].saled = false;
-      req.body.products[i].sklad = new mongoose.Types.ObjectId(req.body.products[i].sklad);
-      const product = await Products.findOne(req.body.products[i]);
-      const productData = { ...product.toObject() };
-      const filter = { ...productData };
-      delete filter._id;
-      for (let j = 0; j < quantity; j += 1) {
-        let date = new Date();
-        date = moment(date).format();
-        const p = await Products.findOne(filter);
-        p.saled = true;
-        p.saledPrice = req.body.products[i].saledPrice;
-        p.saledClient = new mongoose.Types.ObjectId(req.body.client._id);
-        p.saledType = req.body.saledType;
-        p.saledDate = date;
-        await p.save();
-      }
-    }
+
     return res.json({ saved: true });
   } catch (error) {
     return res.status(500).json(error);
   }
 };
+
 exports.sellerGet = async (req, res) => {
   try {
     const sellers = await Sellers.find();
@@ -1098,6 +1318,129 @@ exports.sellerPost = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.getSellerResults = async (req, res) => {
+  try {
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 7);
+
+
+    const startDate = req.body.startDate ? new Date(req.body.startDate) : threeDaysAgo;
+    const endDate = req.body.endDate ? new Date(req.body.endDate) : new Date();
+
+    const result = await Products.aggregate([
+      {
+        $match: {
+          saledSeller: new mongoose.Types.ObjectId(req.params.id),
+          saled: true,
+          saledDate: {
+            $exists: true,
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$saledDate' },
+            month: { $month: '$saledDate' },
+            day: { $dayOfMonth: '$saledDate' },
+          },
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        {
+                          $divide: [
+                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                            10000,
+                          ],
+                        },
+                      ],
+                    },
+                    else: { 
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        '$uzunligi',
+                      ]},
+                  },
+                },
+                1
+              ],
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+
+    const result2 = await Products.aggregate([
+      {
+        $match: {
+          sellerId: new mongoose.Types.ObjectId(req.params.id),
+          date: {
+            $exists: true,
+            $type: 'date',
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+            day: { $dayOfMonth: '$date' },
+          },
+          totalAmount: {
+            $sum: {
+              $cond: {
+                if: { $eq: ['$name', 'List'] },
+                then: {
+                  $multiply: [ '$price',
+                    {
+                      $divide: [
+                        { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                        10000,
+                      ],
+                    },
+                  ],
+                },
+                else: { 
+                  $multiply: [ '$price', '$uzunligi', ]},
+              },
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+
+    return res.json({ sales: result, came: result2 });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
 exports.cutPost = async (req, res) => {
   try {
     const product = await Products.findOne(req.body.product);
@@ -1116,12 +1459,16 @@ exports.cutPost = async (req, res) => {
 };
 exports.getSellerProducts = async (req, res) => {
   try {
-    console.log(req.body);
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDay() - 31);
+
+    const startDate = req.body.startDate || threeDaysAgo;
+    const endDate = req.body.endDate || new Date();
     const products = await Saleds.find({
       sellerId: new mongoose.Types.ObjectId(req.params.id),
       date: {
-        $gte: req.body.startDate,
-        $lte: req.body.endDate,
+        $gte: startDate,
+        $lte: endDate,
       },
     })
       .sort({ date: -1 })
@@ -1129,11 +1476,13 @@ exports.getSellerProducts = async (req, res) => {
       .populate('sellerId')
       .limit(50);
 
-    const debtsQuery = {
+    const debts = await Debts.find({
       sellerId: req.params.id,
-    };
-
-    const debts = await Debts.find(debtsQuery)
+      date: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    })
       .sort({ _id: -1 })
       .populate('sellerId')
       .populate('clientId')
@@ -1144,3 +1493,155 @@ exports.getSellerProducts = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.noticesGet = async (req, res) => {
+  try {
+    const notices = await Alerts.find().populate('senderName').sort({ createdAt: -1 });
+    return res.json(notices);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.noticesPut = async (req, res) => {
+  try {
+    const newNotice = new Alerts({
+      senderName: new mongoose.Types.ObjectId(req.userId),
+      text: req.body.text,
+    });
+    await newNotice.save();
+    return res.status(200).json({ status: "success" });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.productsYearGet = async (req, res) => {
+  try {
+    const year = new Date().getFullYear();
+    const result = await Products.aggregate([
+      {
+        $match: {
+          saled: true,
+          saledDate: {
+            $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+            $lte: new Date(`${year + 1}-01-01T00:00:00.000Z`),
+          },
+        },
+      },
+      {
+        $project: {
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        {
+                          $cond: {
+                            if: { $ne: ['$uzunligi_x', 0] },
+                            then: {
+                              $divide: [
+                                { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                                10000,
+                              ],
+                            },
+                            else: 0,
+                          },
+                        },
+                      ],
+                    },
+                    else: {
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        '$uzunligi',
+                      ],
+                    },
+                  },
+                },
+                1,
+              ],
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$totalAmount' },
+        },
+      },
+    ]);
+
+    const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
+
+    return res.json({ totalAmount });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.productsYearGetGraph = async (req, res) => {
+  try {
+    const year = new Date().getFullYear();
+
+    const result = await Products.aggregate([
+      {
+        $match: {
+          saled: true,
+          saledDate: {
+            $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+            $lte: new Date(`${year + 1}-01-01T00:00:00.000Z`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$saledDate' },
+            month: { $month: '$saledDate' },
+            day: { $dayOfMonth: '$saledDate' },
+          },
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        {
+                          $divide: [
+                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                            10000,
+                          ],
+                        },
+                      ],
+                    },
+                    else: { 
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        '$uzunligi',
+                      ]},
+                  },
+                },
+                1
+              ],
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+    return res.json(result);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}

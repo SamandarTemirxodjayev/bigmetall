@@ -5,15 +5,15 @@
         class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
       >
         <div class="m-4 text-center">
-          <a
-            href="/login"
+          <NuxtLink
+            to="/login"
             class="text-2xl font-bold flex text-center items-center"
           >
             <div class="px-2 py-1 bg-[#196CF4] rounded-[8px] text-white">
               BIG
             </div>
             <div class="text-[#196CF4]">METALL</div>
-          </a>
+          </NuxtLink>
         </div>
         <div
           class="w-full bg-white rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 border-gray-700"
@@ -100,4 +100,7 @@ const handleSubmit = async (e) => {
     });
   }
 };
+definePageMeta({
+  layout: false,
+});
 </script>

@@ -8,8 +8,12 @@ router.get('/', userController.index);
 router.get('/token', userController.token);
 router.post('/register', userController.register);
 router.post('/login', userController.login);
+router.patch('/login', UserMiddleware, userController.loginPatch);
 router.get('/check', UserMiddleware, userController.check);
 router.get('/user', UserMiddleware, userController.userGetInfo);
+router.get('/users', UserMiddleware, userController.usersGetAll);
+router.delete('/user/:id', UserMiddleware, userController.userDelete);
+router.patch('/user/:id', UserMiddleware, userController.userPatch);
 
 router.put('/harajat', UserMiddleware, userController.harajatPut);
 router.get('/harajat', UserMiddleware, userController.harajatGet);
@@ -18,13 +22,17 @@ router.patch('/harajat/:id', UserMiddleware, userController.harajatPatch);
 router.post('/harajat/find', UserMiddleware, userController.harajatFinder);
 router.get('/harajat/excel', UserMiddleware, userController.harajatExcel);
 router.get('/harajat/excel-by-date', UserMiddleware, userController.harajatExcelByDate);
+router.get('/harajat/year', UserMiddleware, userController.harajatYearGet);
+router.get('/harajat/graph', UserMiddleware, userController.harajatYearGetGraph);
 
 router.get('/sklad', UserMiddleware, userController.skladGet);
+router.get('/sklads', UserMiddleware, userController.skladsGet);
 router.put('/sklad', UserMiddleware, userController.skladPut);
 router.delete('/sklad/:id', UserMiddleware, userController.skladDelete);
 router.patch('/sklad/:id', UserMiddleware, userController.skladPatch);
 router.post('/sklad/find', UserMiddleware, userController.skladFinder);
 router.get('/sklad/:id/excel', UserMiddleware, userController.skladExcelGet);
+router.get('/sklad/price', UserMiddleware, userController.skladPriceGet);
 
 router.get('/products/:id', UserMiddleware, userController.productsGet);
 router.patch('/products/:id', UserMiddleware, userController.productsPatch);
@@ -41,6 +49,7 @@ router.post('/products/debt/:id', UserMiddleware, userController.postProductsDeb
 router.put('/products/debt/:id', UserMiddleware, userController.putProductsDebt);
 router.get('/products/seller/:id', UserMiddleware, userController.productsGetSeller);
 router.post('/products/seller/:id', UserMiddleware, userController.productsPostSeller);
+router.get('/products/debts/price', UserMiddleware, userController.getProductsWithDebtsPrice);
 
 router.get('/clients', UserMiddleware, userController.clientsGet);
 router.get('/client/:id', UserMiddleware, userController.clientsGetById);
@@ -55,9 +64,16 @@ router.get('/seller/:id', UserMiddleware, userController.getSellerById);
 router.put('/sellers', UserMiddleware, userController.sellerPut);
 router.delete('/sellers/:id', UserMiddleware, userController.sellerDelete);
 router.post('/sellers/:id', UserMiddleware, userController.sellerPost);
+router.post('/seller/:id/results', UserMiddleware, userController.getSellerResults);
 
 router.post('/seller/:id/products', UserMiddleware, userController.getSellerProducts);
 
 router.post('/cut', UserMiddleware, userController.cutPost);
+
+router.get('/notices', UserMiddleware, userController.noticesGet);
+router.put('/notices', UserMiddleware, userController.noticesPut);
+
+router.get("/productsYear", UserMiddleware, userController.productsYearGet);
+router.get("/productsYear/graph", UserMiddleware, userController.productsYearGetGraph);
 
 module.exports = router;

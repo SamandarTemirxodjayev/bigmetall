@@ -24,7 +24,7 @@ $host.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response.status === 401) {
+    if (error && error.response && error.response.status && error.response.status === 401) {
       window.location.href = "/logout";
       return; 
     }

@@ -49,6 +49,10 @@ const productSchema = new mongoose.Schema({
   saledPrice: {
     type: Number,
   },
+  saledSeller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'seller',
+  },
   saledClient: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'client',

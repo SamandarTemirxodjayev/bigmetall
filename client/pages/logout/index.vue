@@ -9,4 +9,7 @@ onMounted(async () => {
   localStorage.clear();
   window.location.href = "/login";
 });
+definePageMeta({
+  layout: false,
+});
 </script>

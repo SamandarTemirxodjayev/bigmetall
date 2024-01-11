@@ -1,7 +1,7 @@
 <template>
   <div>
     <aside
-      class="bg-white fixed left-0 w-24 top-16 h-full transition-transform -translate-x-full sm:translate-x-0 border-r border-gray-300 shadow-inner"
+      class="bg-white fixed left-0 w-24 top-16 h-full transition-transform -translate-x-full sm:translate-x-0 border-r border-gray-300 shadow-inner z-10"
     >
       <ul class="mt-4">
         <li>
@@ -47,12 +47,33 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="#">
+          <NuxtLink to="/1/hisobot">
             <div>
               <Icon name="fluent-emoji-high-contrast:bar-chart" size="28px" />
             </div>
             <div>Hisobotlar</div>
           </NuxtLink>
+        </li>
+        <li>
+          <div>
+            <div>
+              <Icon name="material-symbols:app-badging-outline" size="28px" />
+            </div>
+            <div>Qo'shimcha</div>
+            <div
+              class="text-left submenu hidden absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
+            >
+              <div class="hover:text-[#34a3f1] px-3">
+                <NuxtLink to="/1/addAlert">Xabar Yuborish</NuxtLink>
+              </div>
+              <div class="hover:text-[#34a3f1] px-3">
+                <NuxtLink to="/1/changePassword">Parolni O'zgartish</NuxtLink>
+              </div>
+              <div class="hover:text-[#34a3f1] px-3">
+                <NuxtLink to="/1/users">Foydalanuvchilar</NuxtLink>
+              </div>
+            </div>
+          </div>
         </li>
       </ul>
     </aside>
@@ -76,5 +97,11 @@ ul li {
 ul li:hover {
   opacity: 1;
   color: #34a3f1;
+}
+ul li:hover .submenu {
+  display: block;
+}
+.submenu {
+  display: none;
 }
 </style>
