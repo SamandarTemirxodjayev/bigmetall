@@ -45,7 +45,6 @@ mongoose.connect(process.env.MONGODB_URI)
     const PORT = process.env.PORT || 3002;
     app.listen(PORT, () => {
       console.log(`Server is running on ${process.env.PROTOCOL}://${process.env.SERVER_IP}:${PORT}`);
-      require('./cron.js');
     });
   })
   .catch((error) => {

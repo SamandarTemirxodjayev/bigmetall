@@ -5,7 +5,7 @@
         <span class="text-2xl font-semibold">Chiqim</span>
       </div>
       <div
-        class="mt-8 text-[13px] bg-white border borer-gray-50 shadow-2xl p-4 print-table"
+        class="mt-8 text-[13px] bg-white border borer-gray-50 shadow-2xl p-4"
       >
         <div class="border border-gray-50">
           <table class="w-full">
@@ -305,6 +305,249 @@
           </div>
         </div>
       </div>
+      <div class="print-wrapper h-full max-w-[25.9%]">
+        <div class="print-content ps-12 mt-20">
+          <div
+            class="print-text w-full text-xl font-bold justify-between flex items-center mb-4"
+          >
+            <img src="/logo.png" alt="" class="print-text" width="150" />
+            <div class="print-text">
+              <div class="print-text">{{ phones.one }}</div>
+              <div class="print-text">{{ phones.two }}</div>
+            </div>
+          </div>
+          <div
+            class="print-text w-full text-[13px] font-bold justify-center flex items-center"
+          >
+            "GOLDEN METALL RUSTAM" MChJ
+          </div>
+          <div
+            class="print-text w-full text-[13px] font-bold justify-center flex items-center"
+          >
+            Toshkent Tumani,Xasanboy Daxasi,Dom 571
+          </div>
+          <br />
+          <div class="print-text text-[13px]">
+            <div class="flex justify-between print-text">
+              <div class="print-text">Savdo Sanasi:</div>
+              <div class="print-text" style="white-space: nowrap">
+                {{ formatTime(new Date()) }}
+              </div>
+            </div>
+          </div>
+          <div class="print-text font-bold">
+            --------------------------------------
+          </div>
+          <div
+            class="print-text text-[13px]"
+            v-for="item in products"
+            :key="item._id"
+          >
+            <div class="flex justify-between print-text">
+              <div class="print-text">Mahsulot Nomi:</div>
+              <div class="print-text">{{ item.name }}</div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">O'lchamlari:</div>
+              <div class="print-text">{{ item.olchamlari }}</div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">Kategoriyasi:</div>
+              <div class="print-text">{{ item.category }}</div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">Qalinligi:</div>
+              <div class="print-text">
+                <div class="print-text">
+                  <div v-if="item.qalinligi_ortasi" class="print-text">
+                    <div class="print-text" style="white-space: nowrap">
+                      O'rta: {{ item.qalinligi_ortasi }}mm
+                    </div>
+                    <div class="print-text" style="white-space: nowrap">
+                      Chet: {{ item.qalinligi }}mm
+                    </div>
+                  </div>
+                  <div class="print-text" style="white-space: nowrap" v-else>
+                    {{ item.qalinligi }}mm
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">Holati:</div>
+              <div class="print-text">{{ item.holati }}</div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">Uzunligi:</div>
+              <div class="print-text">
+                <template
+                  v-if="
+                    item.name == 'Palasa' ||
+                    item.name == 'Kvadrat prut' ||
+                    item.name == 'Kvadrad profil'
+                  "
+                >
+                  <div class="text-print">
+                    <div class="print-text" style="white-space: nowrap">
+                      Uzunligi: {{ item.uzunligi }}m
+                    </div>
+                    <div class="print-text" style="white-space: nowrap">
+                      Bo'yi: {{ item.uzunligi_x }}m
+                    </div>
+                    <div class="print-text" style="white-space: nowrap">
+                      Eni: {{ item.uzunligi_y }}m
+                    </div>
+                  </div>
+                </template>
+                <template v-else-if="item.uzunligi">
+                  <div class="print-text" style="white-space: nowrap">
+                    {{ item.uzunligi }}m
+                  </div>
+                </template>
+                <template v-else>
+                  <div>
+                    <div class="print-text" style="white-space: nowrap">
+                      Bo'yi: {{ item.uzunligi_x }}sm
+                    </div>
+                    <div class="print-text" style="white-space: nowrap">
+                      Eni: {{ item.uzunligi_y }}sm
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">Soni:</div>
+              <div class="print-text">{{ item.quantity }}</div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">Umumiy Uzunligi:</div>
+              <div class="print-text">
+                <template v-if="item.uzunligi">
+                  <div class="print-text">
+                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="print-text">
+                    {{
+                      (item.uzunligi_y * item.uzunligi_x * item.quantity) /
+                      10000
+                    }}
+                    m<sup>2</sup>
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">1 m Uchun Sotuv Narxi:</div>
+              <div class="print-text" style="white-space: nowrap">
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                }}
+              </div>
+            </div>
+            <div class="flex justify-between print-text">
+              <div class="print-text">Umumiy Narxi:</div>
+              <div class="print-text" style="white-space: nowrap">
+                <template v-if="item.uzunligi">
+                  <div class="print-text">
+                    {{
+                      item.saledPrice == null
+                        ? "Narx belgilanmagan"
+                        : `${(item.saledPrice * item.uzunligi * item.quantity)
+                            .toFixed(2)
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                    }}
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="print-text">
+                    {{
+                      item.saledPrice == null
+                        ? "Narx belgilanmagan"
+                        : `${(
+                            ((item.saledPrice *
+                              (item.uzunligi_x * item.uzunligi_y)) /
+                              10000) *
+                            item.quantity
+                          )
+                            .toFixed(2)
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                    }}
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div class="print-text text-lg">
+              <div class="print-text font-bold">
+                ----------------------------------
+              </div>
+            </div>
+          </div>
+          <div class="print-text text-[13px]">
+            <div class="flex justify-between print-text whitespace-nowrap">
+              <div class="print-text">Hammasi:</div>
+              <div class="print-text">
+                {{ formatNumberWithSpaces(total) }} so'm
+              </div>
+            </div>
+            <div class="flex justify-between print-text whitespace-nowrap">
+              <div class="print-text">Sotuvchi:</div>
+              <div class="print-text">
+                {{ seller.name }}
+              </div>
+            </div>
+            <div class="flex justify-between print-text whitespace-nowrap">
+              <div class="print-text">Mijoz:</div>
+              <div class="print-text">
+                {{ client.name }}
+              </div>
+            </div>
+            <div class="flex justify-between print-text whitespace-nowrap">
+              <div class="print-text">To'lov Usuli:</div>
+              <div class="print-text">
+                {{ saledType }}
+              </div>
+            </div>
+          </div>
+          <div class="print-text text-lg">
+            <div class="print-text font-bold">
+              ----------------------------------
+            </div>
+          </div>
+          <div
+            class="w-full print-text whitespace-nowrap font-bold text-[15.5px]"
+          >
+            <div class="print-text">
+              BigMetall.uz - Xaridingiz Uchun Rahmat!!!
+            </div>
+          </div>
+          <div class="print-text text-lg">
+            <div class="print-text font-bold">
+              ----------------------------------
+            </div>
+          </div>
+          <div
+            class="print-text w-full text-[13px] font-bold justify-center flex items-center"
+          >
+            <img
+              src="/qr.png"
+              alt=""
+              width="300"
+              height="300"
+              class="print-text"
+            />
+          </div>
+        </div>
+      </div>
     </div>
     <div v-else>
       <Loader />
@@ -330,6 +573,7 @@ let isPopupOpen = ref(false);
 let productOne = ref([]);
 let quantityProduct = ref();
 let saledPrice = ref();
+let phones = ref({});
 onMounted(async () => {
   try {
     const res = await $host.get("/user");
@@ -341,6 +585,8 @@ onMounted(async () => {
     const sellerRes = await $host.get("/sellers");
     sellers = sellerRes.data.sort((a, b) => a.name.localeCompare(b.name));
     products = counterStore.get();
+    const PhonesRes = await $host.get("/phone");
+    phones.value = PhonesRes.data;
   } catch (error) {
     console.log(error);
   }
@@ -473,17 +719,28 @@ const formatNumberWithSpaces = (number) => {
   return number;
 };
 </script>
-<style scoped>
+<style>
 @media print {
-  .hidden-print {
-    visibility: hidden;
+  body,
+  html {
+    position: relative;
   }
-  .print-table {
-    font-size: 12px;
-    visibility: visible;
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-wrapper {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
+  }
+
+  .print-content {
     width: 100%;
   }
 }

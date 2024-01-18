@@ -17,6 +17,7 @@ const Sellers = require('../models/Sellers');
 const { formatTime } = require('../functions/formatTime');
 const Alerts = require('../models/Alerts');
 require('dotenv').config();
+const fs = require('fs');
 
 exports.index = async (req, res) => {
   res.json({ message: 'Welcome to the API!' });
@@ -786,12 +787,13 @@ exports.productsGetSaled = async (req, res) => {
 };
 exports.getProductId = async (req, res) => {
   try {
-    const product = await Products.findOne(req.body);
+    const product = await Products.findOne({ ...req.body, saled: false });
     return res.json(product);
   } catch (error) {
     return res.status(500).json(error);
   }
 };
+
 exports.productPut = async (req, res) => {
   try {
     const product = await Products.findOne(req.body.product);
@@ -1158,7 +1160,9 @@ exports.skladPriceGet = async (req, res) => {
         },
       },
     ]);
-    return res.json(result);
+    const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
+
+    return res.json({ result: totalAmount });
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -1386,6 +1390,64 @@ exports.getSellerResults = async (req, res) => {
       },
     ]);
 
+    const result3 = await Products.aggregate([
+      {
+        $match: {
+          saledSeller: new mongoose.Types.ObjectId(req.params.id),
+          saled: true,
+          saledDate: {
+            $exists: true,
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$saledDate' },
+            month: { $month: '$saledDate' },
+            day: { $dayOfMonth: '$saledDate' },
+          },
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        '$price',
+                        {
+                          $divide: [
+                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                            10000,
+                          ],
+                        },
+                      ],
+                    },
+                    else: { 
+                      $multiply: [
+                        '$price',
+                        '$uzunligi',
+                      ]},
+                  },
+                },
+              ],
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+
     const result2 = await Products.aggregate([
       {
         $match: {
@@ -1436,7 +1498,7 @@ exports.getSellerResults = async (req, res) => {
       },
     ]);
 
-    return res.json({ sales: result, came: result2 });
+    return res.json({ sales: result, came: result2, sof: result3 });
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -1445,11 +1507,11 @@ exports.cutPost = async (req, res) => {
   try {
     const product = await Products.findOne(req.body.product);
     product.cut = true;
-    product.uzunligi = req.body.cut;
+    product.uzunligi = parseFloat(req.body.cut);
     await product.save();
     const newProduct = new Products(req.body.product);
     newProduct.cut = true;
-    newProduct.uzunligi = (newProduct.uzunligi - req.body.cut).toFixed(2);
+    newProduct.uzunligi = (parseFloat(newProduct.uzunligi) - parseFloat(req.body.cut)).toFixed(2);
     newProduct.quantity = 1;
     await newProduct.save();
     return res.json({ cutted: true });
@@ -1641,6 +1703,277 @@ exports.productsYearGetGraph = async (req, res) => {
       },
     ]);
     return res.json(result);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.hisobotGet = async (req, res) => {
+  try {
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 7);
+
+
+    const startDate = req.body.startDate ? new Date(req.body.startDate) : threeDaysAgo;
+    const endDate = req.body.endDate ? new Date(req.body.endDate) : new Date();
+    const harajat = await Harajats.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+            day: { $dayOfMonth: '$date' },
+          },
+          totalAmount: {
+            $sum: '$amount',
+          },
+          totalRecords: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+
+    const foyda = await Products.aggregate([
+      {
+        $match: {
+          saled: true,
+          saledDate: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$saledDate' },
+            month: { $month: '$saledDate' },
+            day: { $dayOfMonth: '$saledDate' },
+          },
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        {
+                          $divide: [
+                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                            10000,
+                          ],
+                        },
+                      ],
+                    },
+                    else: { 
+                      $multiply: [
+                        { $subtract: ['$saledPrice', '$price'] },
+                        '$uzunligi',
+                      ]},
+                  },
+                },
+                1
+              ],
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+    const savdoTushumi = await Products.aggregate([
+      {
+        $match: {
+          saled: true,
+          saledDate: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$saledDate' },
+            month: { $month: '$saledDate' },
+            day: { $dayOfMonth: '$saledDate' },
+          },
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        '$saledPrice',
+                        {
+                          $divide: [
+                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                            10000,
+                          ],
+                        },
+                      ],
+                    },
+                    else: { 
+                      $multiply: [
+                        '$saledPrice',
+                        '$uzunligi',
+                      ]},
+                  },
+                },
+              ],
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+    const kirimTushumi = await Products.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+            day: { $dayOfMonth: '$date' },
+          },
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        '$price',
+                        {
+                          $divide: [
+                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                            10000,
+                          ],
+                        },
+                      ],
+                    },
+                    else: { 
+                      $multiply: [
+                        '$price',
+                        '$uzunligi',
+                      ]},
+                  },
+                },
+              ],
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+
+    const netProfitMap = new Map();
+
+    foyda.forEach((entry) => {
+      const { year, month, day } = entry._id;
+      const dateKey = `${year}-${month}-${day}`;
+
+      const entryNetProfit = (netProfitMap.get(dateKey) || 0) + entry.totalAmount;
+      netProfitMap.set(dateKey, entryNetProfit);
+    });
+    
+
+    harajat.forEach((entry) => {
+      const { year, month, day } = entry._id;
+      const dateKey = `${year}-${month}-${day}`;
+
+      const entryNetProfit = (netProfitMap.get(dateKey) || 0) - entry.totalAmount;
+      netProfitMap.set(dateKey, entryNetProfit);
+    });
+
+    const sofFoyda = Array.from(netProfitMap, ([date, netProfit]) => ({
+      _id: {
+        day: new Date(date).getDate(),
+        month: new Date(date).getMonth() + 1,
+        year: new Date(date).getFullYear(),
+      },
+      totalAmount: netProfit,
+    }));
+    sofFoyda.sort((a, b) => {
+      const dateA = a._id.year * 10000 + a._id.month * 100 + a._id.day;
+      const dateB = b._id.year * 10000 + b._id.month * 100 + b._id.day;
+    
+      return dateA - dateB;
+    });
+    
+    return res.json({ harajat, foyda, savdoTushumi, sofFoyda, kirimTushumi });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+const readJsonFile = () => {
+  try {
+    const data = fs.readFileSync("./db/phone.json", "utf8");
+    return JSON.parse(data);
+  } catch (err) {
+    console.error("Error reading JSON file:", err);
+    return {};
+  }
+};
+exports.phoneGet = async (req, res) => {
+  try {
+    const data = readJsonFile();
+    console.log(data);
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.phonePost = async (req, res) => {
+  try {
+    const data = req.body;
+    fs.writeFileSync("./db/phone.json", JSON.stringify(data));
+    return res.json({...data, status: "success"});
   } catch (error) {
     return res.status(500).json(error);
   }

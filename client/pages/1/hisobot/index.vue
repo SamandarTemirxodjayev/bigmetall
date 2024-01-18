@@ -1,93 +1,148 @@
 <template>
-  <div v-if="!loading">
+  <div v-if="!loading" class="">
     <div>
-      <span class="text-2xl font-semibold">Bosh Sahifa</span>
+      <span class="text-2xl font-semibold">Hisobot</span>
     </div>
-    <div class="mt-4">
-      <div class="flex justify-between">
-        <div class="flex-1 m-4 p-2 shadow-xl border border-gray-300">
-          <div class="flex justify-between mx-3 items-center my-2">
-            <div class="font-semibold">Sana:</div>
-            <div>
-              <VueDatePicker
-                class="border border-gray-500 rounded-[5px] mx-auto max-w-[80%]"
-                v-model="date"
-                :enable-time-picker="false"
-                disabled
-              />
-            </div>
-          </div>
-          <div class="flex justify-between mx-3 mt-8 items-center text-center">
-            <div class="font-semibold">Foyda:</div>
-            <div class="text-[#196CF4] text-xl font-bold">
-              {{ numberFormat(foyda.toFixed()) }} so'm
-            </div>
-          </div>
-        </div>
-        <div class="flex-1 m-4 p-2 shadow-xl border border-gray-300">
-          <div class="flex justify-between mx-3 items-center my-2">
-            <div class="font-semibold">Sana:</div>
-            <div>
-              <VueDatePicker
-                class="border border-gray-500 rounded-[5px] mx-auto max-w-[80%]"
-                v-model="date"
-                :enable-time-picker="false"
-                disabled
-              />
-            </div>
-          </div>
-          <div class="flex justify-between mx-3 mt-8 items-center text-center">
-            <div class="font-semibold">Harajatlar:</div>
-            <div class="text-[red] text-xl font-bold">
-              {{ numberFormat(xarajats) }} so'm
-            </div>
-          </div>
-        </div>
-        <div class="flex-1 m-4 p-2 shadow-xl border border-gray-300">
-          <div class="flex justify-between mx-3 items-center my-2">
-            <div class="font-semibold">Sana:</div>
-            <div>
-              <VueDatePicker
-                class="border border-gray-500 rounded-[5px] mx-auto max-w-[80%]"
-                v-model="date"
-                :enable-time-picker="false"
-                disabled
-              />
-            </div>
-          </div>
-          <div class="flex justify-between mx-3 mt-8 items-center text-center">
-            <div class="font-semibold">Qarzdorliklar:</div>
-            <div class="text-[red] text-xl font-bold">
-              {{ numberFormat(debts.toFixed()) }} so'm
-            </div>
-          </div>
-        </div>
-        <div class="flex-1 m-4 p-2 shadow-xl border border-gray-300">
-          <div class="flex justify-between mx-3 items-center my-2">
-            <div class="font-semibold">Sana:</div>
-            <div>
-              <VueDatePicker
-                class="border border-gray-500 rounded-[5px] mx-auto max-w-[80%]"
-                v-model="date"
-                :enable-time-picker="false"
-                disabled
-              />
-            </div>
-          </div>
-          <div class="flex justify-between mx-3 mt-8 items-center text-center">
-            <div class="font-semibold">Omborxona:</div>
-            <div class="text-[blue] text-xl font-bold">
-              {{ numberFormat(ombors.toFixed()) }} so'm
-            </div>
+    <div class="shadow-2xl border border-gray-300 items-center">
+      <div class="flex p-4 justify-between">
+        <div class="flex items-center">
+          <div class="items-center pt-0.5 w-full">
+            <VueDatePicker
+              class="border border-gray-500 rounded-[5px] min-w-[350px] -z-0"
+              v-model="date"
+              range
+              :max-date="new Date()"
+              time-picker-inline
+            />
           </div>
         </div>
       </div>
+    </div>
+    <div class="mt-8">
+      <div class="flex gap-[1%] font-[500]">
+        <div
+          @click="clickOne"
+          class="w-[15%] bg-white border-t border-x border-gray-50 p-4 cursor-pointer rounded-t-xl"
+        >
+          <div
+            class="flex gap-[5%]"
+            :class="[
+              button == 1 ? `text-blue-500 ` : 'grayscale text-[#ABB1BD]',
+            ]"
+          >
+            <img src="/icons/kirim.svg" alt="" />
+            <div>Kirim Tushumi</div>
+          </div>
+        </div>
+        <div
+          @click="clickTwo"
+          class="w-[15%] bg-white border-t border-x border-gray-50 p-4 rounded-t-xl cursor-pointer"
+        >
+          <div
+            class="flex gap-[5%]"
+            :class="[
+              button == 2 ? `text-blue-500 ` : 'grayscale text-[#ABB1BD]',
+            ]"
+          >
+            <img src="/icons/savdo.svg" alt="" class="" />
+            <div>Savdo Tushumi</div>
+          </div>
+        </div>
+        <div
+          @click="clickThree"
+          class="w-[15%] bg-white border border-x border-gray-50 p-4 rounded-t-xl cursor-pointer"
+        >
+          <div
+            class="flex gap-[5%]"
+            :class="[
+              button == 3 ? `text-blue-500 ` : 'grayscale text-[#ABB1BD]',
+            ]"
+          >
+            <img src="/icons/harajat.svg" alt="" />
+            <div>Operatsion Harajat</div>
+          </div>
+        </div>
+        <div
+          @click="clickFour"
+          class="w-[15%] bg-white border border-x border-gray-50 p-4 rounded-t-xl cursor-pointer"
+        >
+          <div
+            class="flex gap-[5%]"
+            :class="[
+              button == 4 ? `text-blue-500 ` : 'grayscale text-[#ABB1BD]',
+            ]"
+          >
+            <img src="/icons/savdofoyda.svg" alt="" />
+            <div>Savdo Foydasi</div>
+          </div>
+        </div>
+        <div
+          @click="clickFive"
+          class="w-[15%] bg-white border border-x border-gray-50 p-4 rounded-t-xl cursor-pointer"
+        >
+          <div
+            class="flex gap-[5%]"
+            :class="[
+              button == 5 ? `text-blue-500 ` : 'grayscale text-[#ABB1BD]',
+            ]"
+          >
+            <img src="/icons/soffoyda.svg" alt="" />
+            <div>Sof Foyda</div>
+          </div>
+        </div>
+      </div>
+      <div
+        :class="[
+          isActive
+            ? `transition duration-[500] ease-in w-[15%] bg-white p-4 ${classObject}`
+            : '',
+        ]"
+      ></div>
+      <div
+        class="w-full bg-white border border-gray-50 p-4 flex justify-around"
+      >
+        <div
+          class="w-[40%] h-[300px] max-h-[300px] overflow-y-auto scrollbar pe-4"
+        >
+          <div
+            class="grid grid-cols-2 bg-[#F3F4F6] rounded-md p-2 my-2"
+            v-for="item in fetchItems"
+            :key="item._id"
+          >
+            <div>
+              {{ padWithZero(item._id.day) }}.{{
+                padWithZero(item._id.month)
+              }}.{{ padWithZero(item._id.year) }}
+            </div>
+            <div class="place-self-end">
+              {{ numberFormat(item.totalAmount.toFixed(2)) }} so'm
+            </div>
+          </div>
+        </div>
+        <div class="w-[40%] bg-[#F3F4F6] rounded-xl">
+          <div class="p-4 font-[500] text-[24px] text-[#437DEB]">Umumiy:</div>
+          <div
+            class="-m-16 flex items-center justify-center text-[#437DEB] text-[42px] font-[500] h-full"
+          >
+            {{ numberFormat(fetchSummary) }} so'm
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
+      <Line id="my-chart-id" :data="data5" class="max-w-[100%] max-h-[477px]" />
     </div>
     <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
       <Line id="my-chart-id" :data="data" class="max-w-[100%] max-h-[477px]" />
     </div>
     <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
       <Line id="my-chart-id" :data="data2" class="max-w-[100%] max-h-[477px]" />
+    </div>
+    <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
+      <Line id="my-chart-id" :data="data3" class="max-w-[100%] max-h-[477px]" />
+    </div>
+    <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
+      <Line id="my-chart-id" :data="data4" class="max-w-[100%] max-h-[477px]" />
     </div>
   </div>
   <div v-else>
@@ -121,15 +176,63 @@ ChartJS.register(
 );
 
 let loading = ref(true);
-let calculator = ref(false);
-let isFullScreen = ref(false);
-let date = ref(new Date());
-let xarajats = ref(null);
-let ombors = ref(null);
-let debts = ref(null);
-let foyda = ref(null);
-let data = ref([]);
-let data2 = ref([]);
+let date = ref([]);
+let savdoTushumi = ref([]);
+let savdoTushumiSummary = ref(0);
+let harajat = ref([]);
+let harajatSummary = ref(0);
+let foyda = ref([]);
+let foydaSummary = ref(0);
+let sofFoyda = ref([]);
+let sofFoydaSummary = ref(0);
+let kirimTushumi = ref([]);
+let kirimTushumiSummary = ref(0);
+let data = ref(null);
+let data2 = ref(null);
+let data3 = ref(null);
+let data4 = ref(null);
+let data5 = ref(null);
+let isActive = ref(true);
+let classObject = ref("");
+let button = ref(1);
+let fetchSummary = ref(0);
+let fetchItems = ref([]);
+
+const clickOne = () => {
+  isActive.value = true;
+  button.value = 1;
+  classObject.value = "translate-x-0";
+  fetchItems.value = kirimTushumi.value;
+  fetchSummary.value = kirimTushumiSummary.value;
+};
+const clickTwo = () => {
+  isActive.value = true;
+  button.value = 2;
+  classObject.value = "translate-x-[106.5%]";
+  fetchItems.value = savdoTushumi.value;
+  fetchSummary.value = savdoTushumiSummary.value;
+};
+const clickThree = () => {
+  isActive.value = true;
+  button.value = 3;
+  classObject.value = "translate-x-[213.5%]";
+  fetchItems.value = harajat.value;
+  fetchSummary.value = harajatSummary.value;
+};
+const clickFour = () => {
+  isActive.value = true;
+  button.value = 4;
+  classObject.value = "translate-x-[320%]";
+  fetchItems.value = foyda.value;
+  fetchSummary.value = foydaSummary.value;
+};
+const clickFive = () => {
+  isActive.value = true;
+  button.value = 5;
+  classObject.value = "translate-x-[427%]";
+  fetchItems.value = sofFoyda.value;
+  fetchSummary.value = sofFoydaSummary.value;
+};
 
 onMounted(async () => {
   try {
@@ -137,37 +240,19 @@ onMounted(async () => {
     if (res.data.user.user_level != 1) {
       window.location.href = "/";
     }
-    const resHarajats = await $host.get("/harajat/year");
-    xarajats.value = resHarajats.data.totalAmount;
-    const resOmbor = await $host.get("/sklad/price");
-    ombors.value = resOmbor.data[0].totalAmount;
-    const resDebts = await $host.get("/products/debts/price");
-    debts.value = resDebts.data.result;
-    const resFoyda = await $host.get("/productsYear");
-    foyda.value = resFoyda.data.totalAmount;
-    const resFoydaGraph = await $host.get("/productsYear/graph");
-    data.value = {
-      labels: resFoydaGraph.data.map(
-        (item) =>
-          `${padWithZero(item._id.day)}.${padWithZero(
-            item._id.month
-          )}.${padWithZero(item._id.year)}`
-      ),
-      datasets: [
-        {
-          label: "Foyda",
-          data: resFoydaGraph.data.map((item) => item.totalAmount),
-          fill: false,
-          borderColor: "rgba(16, 185, 129, 1)",
-          pointStyle: "star",
-          pointBorderWidth: 5,
-          tension: 0.1,
-        },
-      ],
-    };
-    const resHarajatsGraph = await $host.get("/harajat/graph");
+    const endDate = new Date();
+    const startDate = new Date(new Date().setDate(endDate.getDate() - 7));
+    date.value = [startDate, endDate];
+    const resHisobot = await $host.post("/hisobot", {
+      startDate,
+      endDate,
+    });
+    harajat.value = resHisobot.data.harajat;
+    for (const key in harajat.value) {
+      harajatSummary.value += harajat.value[key].totalAmount;
+    }
     data2.value = {
-      labels: resHarajatsGraph.data.map(
+      labels: harajat.value.map(
         (item) =>
           `${padWithZero(item._id.day)}.${padWithZero(
             item._id.month
@@ -175,37 +260,253 @@ onMounted(async () => {
       ),
       datasets: [
         {
-          label: "Harajat",
-          data: resHarajatsGraph.data.map((item) => item.totalAmount),
+          label: "Operatsion Harajat",
+          data: harajat.value.map((item) => item.totalAmount),
           fill: false,
-          borderColor: "red",
+          borderColor: "#FA9804",
           pointStyle: "star",
           pointBorderWidth: 5,
           tension: 0.1,
         },
       ],
     };
+    foyda.value = resHisobot.data.foyda;
+    for (const key in foyda.value) {
+      foydaSummary.value += foyda.value[key].totalAmount;
+    }
+    data3.value = {
+      labels: foyda.value.map(
+        (item) =>
+          `${padWithZero(item._id.day)}.${padWithZero(
+            item._id.month
+          )}.${padWithZero(item._id.year)}`
+      ),
+      datasets: [
+        {
+          label: "Savdo Operatsiyalaridan Qolgan Foyda",
+          data: foyda.value.map((item) => item.totalAmount),
+          fill: false,
+          borderColor: "#FA9804",
+          pointStyle: "star",
+          pointBorderWidth: 5,
+          tension: 0.1,
+        },
+      ],
+    };
+    savdoTushumi.value = resHisobot.data.savdoTushumi;
+    for (const key in savdoTushumi.value) {
+      savdoTushumiSummary.value += savdoTushumi.value[key].totalAmount;
+    }
+    data.value = {
+      labels: savdoTushumi.value.map(
+        (item) =>
+          `${padWithZero(item._id.day)}.${padWithZero(
+            item._id.month
+          )}.${padWithZero(item._id.year)}`
+      ),
+      datasets: [
+        {
+          label: "Savdo Tushumi",
+          data: savdoTushumi.value.map((item) => item.totalAmount),
+          fill: false,
+          borderColor: "#DC2F02",
+          pointStyle: "star",
+          pointBorderWidth: 5,
+          tension: 0.1,
+        },
+      ],
+    };
+    sofFoyda.value = resHisobot.data.sofFoyda;
+    for (const key in sofFoyda.value) {
+      sofFoydaSummary.value += sofFoyda.value[key].totalAmount;
+    }
+    data4.value = {
+      labels: sofFoyda.value.map(
+        (item) =>
+          `${padWithZero(item._id.day)}.${padWithZero(
+            item._id.month
+          )}.${padWithZero(item._id.year)}`
+      ),
+      datasets: [
+        {
+          label: "Sof Foyda",
+          data: sofFoyda.value.map((item) => item.totalAmount),
+          fill: false,
+          borderColor: "#40DE50",
+          pointStyle: "star",
+          pointBorderWidth: 5,
+          tension: 0.1,
+        },
+      ],
+    };
+    kirimTushumi.value = resHisobot.data.kirimTushumi;
+    for (const key in kirimTushumi.value) {
+      kirimTushumiSummary.value += kirimTushumi.value[key].totalAmount;
+    }
+    data5.value = {
+      labels: kirimTushumi.value.map(
+        (item) =>
+          `${padWithZero(item._id.day)}.${padWithZero(
+            item._id.month
+          )}.${padWithZero(item._id.year)}`
+      ),
+      datasets: [
+        {
+          label: "Kirim Tushumi",
+          data: kirimTushumi.value.map((item) => item.totalAmount),
+          fill: false,
+          borderColor: "#40DE50",
+          pointStyle: "star",
+          pointBorderWidth: 5,
+          tension: 0.1,
+        },
+      ],
+    };
+    fetchItems.value = kirimTushumi.value;
+    fetchSummary.value = kirimTushumiSummary.value;
   } catch (error) {
     console.log(error);
   }
   loading.value = false;
 });
+watch(date, async () => {
+  loading.value = true;
+  const startDate = date.value && date.value[0] ? date.value[0] : null;
+  const endDate = date.value && date.value[1] ? date.value[1] : null;
+  const resHisobot = await $host.post("/hisobot", {
+    startDate,
+    endDate,
+  });
+  harajat.value = resHisobot.data.harajat;
+  harajatSummary.value = 0;
+  for (const key in harajat.value) {
+    harajatSummary.value += harajat.value[key].totalAmount;
+  }
+  data2.value = {
+    labels: harajat.value.map(
+      (item) =>
+        `${padWithZero(item._id.day)}.${padWithZero(
+          item._id.month
+        )}.${padWithZero(item._id.year)}`
+    ),
+    datasets: [
+      {
+        label: "Operatsion Harajat",
+        data: harajat.value.map((item) => item.totalAmount),
+        fill: false,
+        borderColor: "#FA9804",
+        pointStyle: "star",
+        pointBorderWidth: 5,
+        tension: 0.1,
+      },
+    ],
+  };
+  foyda.value = resHisobot.data.foyda;
+  foydaSummary.value = 0;
+  for (const key in foyda.value) {
+    foydaSummary.value += foyda.value[key].totalAmount;
+  }
+  data3.value = {
+    labels: foyda.value.map(
+      (item) =>
+        `${padWithZero(item._id.day)}.${padWithZero(
+          item._id.month
+        )}.${padWithZero(item._id.year)}`
+    ),
+    datasets: [
+      {
+        label: "Savdo Operatsiyalaridan Qolgan Foyda",
+        data: foyda.value.map((item) => item.totalAmount),
+        fill: false,
+        borderColor: "#FA9804",
+        pointStyle: "star",
+        pointBorderWidth: 5,
+        tension: 0.1,
+      },
+    ],
+  };
+  savdoTushumi.value = resHisobot.data.savdoTushumi;
+  savdoTushumiSummary.value = 0;
+  for (const key in savdoTushumi.value) {
+    savdoTushumiSummary.value += savdoTushumi.value[key].totalAmount;
+  }
+  data.value = {
+    labels: savdoTushumi.value.map(
+      (item) =>
+        `${padWithZero(item._id.day)}.${padWithZero(
+          item._id.month
+        )}.${padWithZero(item._id.year)}`
+    ),
+    datasets: [
+      {
+        label: "Savdo Tushumi",
+        data: savdoTushumi.value.map((item) => item.totalAmount),
+        fill: false,
+        borderColor: "#DC2F02",
+        pointStyle: "star",
+        pointBorderWidth: 5,
+        tension: 0.1,
+      },
+    ],
+  };
+  sofFoyda.value = resHisobot.data.sofFoyda;
+  sofFoydaSummary.value = 0;
+  for (const key in sofFoyda.value) {
+    sofFoydaSummary.value += sofFoyda.value[key].totalAmount;
+  }
+  data4.value = {
+    labels: sofFoyda.value.map(
+      (item) =>
+        `${padWithZero(item._id.day)}.${padWithZero(
+          item._id.month
+        )}.${padWithZero(item._id.year)}`
+    ),
+    datasets: [
+      {
+        label: "Sof Foyda",
+        data: sofFoyda.value.map((item) => item.totalAmount),
+        fill: false,
+        borderColor: "#40DE50",
+        pointStyle: "star",
+        pointBorderWidth: 5,
+        tension: 0.1,
+      },
+    ],
+  };
+  kirimTushumi.value = resHisobot.data.kirimTushumi;
+  kirimTushumiSummary.value = 0;
+  for (const key in kirimTushumi.value) {
+    kirimTushumiSummary.value += kirimTushumi.value[key].totalAmount;
+  }
+  data5.value = {
+    labels: kirimTushumi.value.map(
+      (item) =>
+        `${padWithZero(item._id.day)}.${padWithZero(
+          item._id.month
+        )}.${padWithZero(item._id.year)}`
+    ),
+    datasets: [
+      {
+        label: "Kirim Tushumi",
+        data: kirimTushumi.value.map((item) => item.totalAmount),
+        fill: false,
+        borderColor: "#40DE50",
+        pointStyle: "star",
+        pointBorderWidth: 5,
+        tension: 0.1,
+      },
+    ],
+  };
+  clickOne();
+  loading.value = false;
+});
+const showBottomElement = ref(false);
+const moveElementToBottom = () => {
+  showBottomElement.value = true;
+};
 </script>
 <style scoped>
-.square {
-  width: 230px;
-  height: 180px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
-}
-.square2 {
-  width: 280px;
-  height: 180px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
+.svg {
+  filter: grayscale(100%);
 }
 </style>

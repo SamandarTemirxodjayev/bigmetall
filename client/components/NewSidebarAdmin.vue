@@ -72,6 +72,9 @@
               <div class="hover:text-[#34a3f1] px-3">
                 <NuxtLink to="/1/users">Foydalanuvchilar</NuxtLink>
               </div>
+              <div class="hover:text-[#34a3f1] px-3">
+                <NuxtLink to="/1/phone">Telefon Raqam</NuxtLink>
+              </div>
             </div>
           </div>
         </li>

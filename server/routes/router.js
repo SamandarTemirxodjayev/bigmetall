@@ -1,6 +1,7 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const UserMiddleware = require('../middleware/userMiddleware');
+const CheckMiddleware = require('../middleware/checkMiddleware');
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.patch('/login', UserMiddleware, userController.loginPatch);
 router.get('/check', UserMiddleware, userController.check);
-router.get('/user', UserMiddleware, userController.userGetInfo);
+router.get('/user', CheckMiddleware, userController.userGetInfo);
 router.get('/users', UserMiddleware, userController.usersGetAll);
 router.delete('/user/:id', UserMiddleware, userController.userDelete);
 router.patch('/user/:id', UserMiddleware, userController.userPatch);
@@ -75,5 +76,10 @@ router.put('/notices', UserMiddleware, userController.noticesPut);
 
 router.get("/productsYear", UserMiddleware, userController.productsYearGet);
 router.get("/productsYear/graph", UserMiddleware, userController.productsYearGetGraph);
+
+router.post("/hisobot", UserMiddleware, userController.hisobotGet);
+
+router.get("/phone", UserMiddleware, userController.phoneGet);
+router.post("/phone", UserMiddleware, userController.phonePost);
 
 module.exports = router;

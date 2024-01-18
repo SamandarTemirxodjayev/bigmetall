@@ -19,9 +19,9 @@
       </div>
     </div>
     <div class="mt-8">
-      <div class="flex justify-between gap-[10%]">
+      <div class="flex justify-between gap-[1%]">
         <div
-          class="w-[50%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl"
+          class="w-[33%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl"
         >
           <div class="flex gap-2 mb-5">
             <img src="/icons/line.svg" alt="" />
@@ -45,11 +45,37 @@
           </div>
         </div>
         <div
-          class="w-[50%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl"
+          class="w-[33%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl"
+        >
+          <div class="flex gap-2 mb-5">
+            <img src="/icons/foyda.svg" alt="" />
+            <h1 class="font-[500] text-[20px] leading-7">Savdo Tushumi</h1>
+          </div>
+          <div class="max-h-[200px] overflow-y-auto scrollbar pe-4">
+            <div
+              class="grid grid-cols-2 bg-[#F3F4F6] rounded-md p-2 my-2"
+              v-for="item in sof"
+              :key="item._id"
+            >
+              <div>
+                {{ padWithZero(item._id.day) }}.{{
+                  padWithZero(item._id.month)
+                }}.{{ padWithZero(item._id.year) }}
+              </div>
+              <div class="place-self-end">
+                {{ numberFormat(item.totalAmount.toFixed(2)) }} so'm
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="w-[33%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl"
         >
           <div class="flex gap-2 mb-5">
             <img src="/icons/profit.svg" alt="" />
-            <h1 class="font-[500] text-[20px] leading-7">Foyda</h1>
+            <h1 class="font-[500] text-[18px] leading-7">
+              Savdo Operatsiyalaridan Qolgan Foyda
+            </h1>
           </div>
           <div class="max-h-[200px] overflow-y-auto scrollbar pe-4">
             <div
@@ -70,9 +96,9 @@
         </div>
       </div>
 
-      <div class="flex justify-between gap-[10%] mt-5">
+      <div class="flex justify-between gap-[1%] mt-5">
         <div
-          class="w-[50%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl text-[#196DF4] font-[500] text-xl"
+          class="w-[33%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl text-[#196DF4] font-[500] text-xl"
         >
           <div class="grid grid-cols-2 p-2 my-2">
             <div>Umumiy:</div>
@@ -82,7 +108,17 @@
           </div>
         </div>
         <div
-          class="w-[50%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl text-[#40DE50] font-[500] text-xl"
+          class="w-[33%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl text-[#FA9804] font-[500] text-xl"
+        >
+          <div class="grid grid-cols-2 p-2 my-2">
+            <div>Umumiy:</div>
+            <div class="place-self-end">
+              {{ numberFormat(sofSummary.toFixed(2)) }} so'm
+            </div>
+          </div>
+        </div>
+        <div
+          class="w-[33%] bg-white border border-gray-50 p-4 shadow-2xl rounded-xl text-[#40DE50] font-[500] text-xl"
         >
           <div class="grid grid-cols-2 p-2 my-2">
             <div>Umumiy:</div>
@@ -98,6 +134,9 @@
     </div>
     <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
       <Line id="my-chart-id" :data="data2" class="max-w-[100%] max-h-[477px]" />
+    </div>
+    <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
+      <Line id="my-chart-id" :data="data3" class="max-w-[100%] max-h-[477px]" />
     </div>
   </div>
   <div v-else>
@@ -135,10 +174,13 @@ let seller = ref(null);
 let saleds = ref();
 let date = ref([]);
 let came = ref(null);
+let sof = ref(null);
 let foydaSummary = ref(0);
 let cameSummary = ref(0);
+let sofSummary = ref(0);
 let data = ref(null);
 let data2 = ref(null);
+let data3 = ref(null);
 
 const route = useRoute();
 
@@ -159,6 +201,10 @@ onMounted(async () => {
   came.value = datas.data.came;
   for (const key in came.value) {
     cameSummary.value += came.value[key].totalAmount;
+  }
+  sof.value = datas.data.sof;
+  for (const key in sof.value) {
+    sofSummary.value += sof.value[key].totalAmount;
   }
   data.value = {
     labels: came.value.map(
@@ -192,6 +238,25 @@ onMounted(async () => {
         data: came.value.map((item) => item.totalAmount),
         fill: false,
         borderColor: "rgba(239, 68, 68, 1)",
+        pointStyle: "star",
+        pointBorderWidth: 5,
+        tension: 0.1,
+      },
+    ],
+  };
+  data3.value = {
+    labels: sof.value.map(
+      (item) =>
+        `${padWithZero(item._id.day)}.${padWithZero(
+          item._id.month
+        )}.${padWithZero(item._id.year)}`
+    ),
+    datasets: [
+      {
+        label: "Savdo Tushumi",
+        data: sof.value.map((item) => item.totalAmount),
+        fill: false,
+        borderColor: "#DC2F02",
         pointStyle: "star",
         pointBorderWidth: 5,
         tension: 0.1,
@@ -245,10 +310,29 @@ watch(date, async () => {
       ),
       datasets: [
         {
-          label: "Foyda",
+          label: "Savdo Operatsiyalaridan Qolgan Foyda",
           data: saleds.value.map((item) => item.totalAmount),
           fill: false,
           borderColor: "#40DE50",
+          pointStyle: "star",
+          pointBorderWidth: 5,
+          tension: 0.1,
+        },
+      ],
+    };
+    data3.value = {
+      labels: sof.value.map(
+        (item) =>
+          `${padWithZero(item._id.day)}.${padWithZero(
+            item._id.month
+          )}.${padWithZero(item._id.year)}`
+      ),
+      datasets: [
+        {
+          label: "Savdo Tushumi",
+          data: sof.value.map((item) => item.totalAmount),
+          fill: false,
+          borderColor: "#DC2F02",
           pointStyle: "star",
           pointBorderWidth: 5,
           tension: 0.1,

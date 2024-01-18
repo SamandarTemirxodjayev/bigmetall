@@ -9,3 +9,12 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+@media print {
+  * {
+    margin: 0;
+    padding: 0;
+  }
+}
+</style>
