@@ -5,36 +5,20 @@
     </div>
     <div class="shadow items-center bg-white shadow-xl rounded-md">
       <div class="flex p-4 justify-between">
-        <form @submit="handleSearchSubmit">
-          <div class="flex">
-            <div
-              class="flex items-center border border-gray-500 rounded-lg px-2 mr-3"
-            >
-              <input
-                type="text"
-                class="text-gray-900 text-sm block w-full p-2.5 outline-none"
-                placeholder="Qidiruv"
-                v-model="search"
-              />
-              <div class="text-gray-500">
-                <Icon name="iconamoon:search-thin" size="1.5rem" />
-              </div>
-            </div>
-            <button
-              type="submit"
-              class="bg-blue-500 text-white font-semibold rounded-xl px-3 mx-2"
-            >
-              Qidirish
-            </button>
-          </div>
-        </form>
-        <div>
-          <button
-            @click="() => (isPopupOpen = true)"
-            class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
+        <div class="flex">
+          <div
+            class="flex items-center border border-gray-500 rounded-lg px-2 mr-3"
           >
-            Ombor Qo'shish
-          </button>
+            <input
+              type="text"
+              class="text-gray-900 text-sm block w-full p-2.5 outline-none"
+              placeholder="Qidiruv"
+              v-model="search"
+            />
+            <div class="text-gray-500">
+              <Icon name="iconamoon:search-thin" size="1.5rem" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -64,17 +48,12 @@
               <div class="print-text">{{ i + 1 }}</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <NuxtLink :to="`/1/sklad/${item._id}`">
-                <div class="print-text">
-                  {{ item.name }} ({{
-                    numberFormat(item.totalAmount.toFixed(2))
-                  }}
-                  so'm)
-                </div>
+              <NuxtLink :to="`/2/sklad/${item._id}`">
+                <div class="print-text">{{ item.name }}</div>
               </NuxtLink>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <NuxtLink :to="`/1/sklad/${item._id}`">
+              <NuxtLink :to="`/2/sklad/${item._id}`">
                 <div class="print-text">
                   {{ formatTime(item.date) }}
                 </div>
@@ -204,11 +183,11 @@ let name = ref("");
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
+    const res = await $host2.get("/user");
+    if (res.data.user.user_level != 2) {
       window.location.href = "/";
     }
-    const resSklad = await $host.patch("/sklad");
+    const resSklad = await $host2.get("/sklad");
     sklads.value = resSklad.data;
   } catch (error) {
     console.log(error);
@@ -223,7 +202,7 @@ const handleEditOmborv = (id, name) => {
 const handleAddOmbor = async () => {
   loading.value = true;
   try {
-    await $host.put("/sklad", {
+    await $host2.put("/sklad", {
       name: name.value,
     });
     await Swal.fire("Ombor", "Muvaffiqatli yaratildi", "success");
@@ -242,7 +221,7 @@ const handleDeleteOmbor = async (_id) => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       loading.value = true;
-      await $host.delete(`/sklad/${_id}`).then(async () => {
+      await $host2.delete(`/sklad/${_id}`).then(async () => {
         await Swal.fire("O'chirildi", "", "success");
         window.location.reload();
       });
@@ -253,7 +232,7 @@ const handleEditOmbor = async (e) => {
   e.preventDefault();
   loading.value = true;
   try {
-    await $host.patch(`/sklad/${editId.value}`, {
+    await $host2.patch(`/sklad/${editId.value}`, {
       name: editName.value,
     });
     await Swal.fire("Ombor", "Muvaffiqatli o'zgartirildi", "success");
@@ -267,6 +246,9 @@ let filteredSklads = computed(() => {
   return sklads.value.filter((sklad) =>
     sklad.name.toLowerCase().includes(search.value.toLowerCase())
   );
+});
+definePageMeta({
+  layout: "user2",
 });
 </script>
 <style scoped>

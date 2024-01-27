@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+  },
   name: {
     type: String,
   },
@@ -74,6 +78,10 @@ const productSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
+  },
+  isDebt: {
+    type: Boolean,
+    default: false,
   },
 });
 

@@ -7,6 +7,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 const router = require('./routes/router');
+const user2Router = require('./routes/user2.router');
 
 const app = express();
 
@@ -19,6 +20,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api', router);
+app.use('/api/user2', user2Router);
 
 const logFolder = path.join(__dirname, 'log');
 const logFileName = () => {
@@ -27,7 +29,7 @@ const logFileName = () => {
   return path.join(logFolder, `${formattedDate}.mongodb.log`);
 };
 fs.mkdirSync(logFolder, { recursive: true });
-const logStream = fs.createWriteStream(logFileName(), { flags: 'a' });
+let logStream = fs.createWriteStream(logFileName(), { flags: 'a' });
 mongoose.set('debug', (collectionName, method, query, doc) => {
   const logMessage = `[${new Date().toISOString()}] ${collectionName}.${method} ${JSON.stringify(query)} ${JSON.stringify(doc)}\n`;
 

@@ -28,6 +28,15 @@
               time-picker-inline
             />
           </div>
+          <select
+            v-model="skladSearch"
+            class="ml-2 text-blue-500 border border-2 border-blue-500 bg-white py-2 px-3 rounded-xl font-semibold"
+          >
+            <option value="">Hammasi</option>
+            <option v-for="item in sklads" :key="item._id" :value="item._id">
+              {{ item.name }}
+            </option>
+          </select>
           <button
             @click="handleSearch"
             class="bg-blue-500 text-white font-semibold rounded-xl px-3 mx-2"
@@ -80,6 +89,7 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Summasi
             </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Ombor</th>
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qo'shilgan Vaqti
             </th>
@@ -101,6 +111,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.amount.toLocaleString("en-US").replace(/,/g, " ") }}so'm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{ item.sklad.name }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
@@ -165,14 +180,28 @@
               >
                 Harajat Summasi</label
               >
-              <input
+              <VueNumber
                 v-model="amount"
-                min="0"
-                required
-                step="0.01"
-                type="number"
+                v-bind="number"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
+            </div>
+            <div class="w-full col-span-2 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Ombor</label
+              >
+              <select
+                v-model="sklad"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              >
+                <option
+                  v-for="item in sklads"
+                  :key="item._id"
+                  :value="item._id"
+                >
+                  {{ item.name }}
+                </option>
+              </select>
             </div>
             <div>
               <button
@@ -252,6 +281,7 @@ import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { component as VueNumber } from "@coders-tm/vue-number-format";
 
 let isPopupOpen = ref(false);
 let isPopupEditOpen = ref(false);
@@ -265,6 +295,17 @@ let editName = ref("");
 let editAmount = ref("");
 let harajatId = ref("");
 let count = ref(0);
+let sklads = ref([]);
+let sklad = ref(null);
+let skladSearch = ref("");
+let number = ref({
+  decimal: ".",
+  separator: " ",
+  suffix: " so'm",
+  precision: 2,
+  masked: false,
+  min: 0,
+});
 onMounted(async () => {
   try {
     count.value = localStorage.getItem("count") || 100;
@@ -274,6 +315,9 @@ onMounted(async () => {
     }
     const harajatRes = await $host.get("/harajat?limit=" + count.value);
     harajats.value = harajatRes.data;
+
+    const skladsRes = await $host.get("/sklad");
+    sklads.value = skladsRes.data;
   } catch (error) {
     console.log(error);
   }
@@ -296,6 +340,7 @@ const handleSubmit = async (e) => {
     const data = {
       name: name.value,
       amount: amount.value,
+      sklad: sklad.value,
     };
     await $host.put("/harajat", data);
     await Swal.fire("Saqlandi", "Muvaffiqatli saqlandi", "success");
@@ -309,6 +354,7 @@ const handleSearch = async (e) => {
   try {
     const searchParams = {
       search: search.value,
+      sklad: skladSearch.value,
     };
     if (date.value && date.value[0]) {
       searchParams.startDate = date.value[0];
@@ -401,6 +447,7 @@ const handleExcelDownloadByDate = async () => {
       params: {
         startDate: date.value && date.value[0] ? date.value[0] : null,
         endDate: date.value && date.value[1] ? date.value[1] : null,
+        sklad: skladSearch.value,
       },
     });
     const url = window.URL.createObjectURL(new Blob([res.data]));

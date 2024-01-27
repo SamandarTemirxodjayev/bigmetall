@@ -140,6 +140,8 @@ exports.harajatPut = async (req, res) => {
     const harajat = new Harajats({
       name: req.body.name,
       amount: req.body.amount,
+      userId: req.userId,
+      sklad: req.body.sklad,
     });
     await harajat.save();
     return res.json({ harajat });
@@ -149,7 +151,7 @@ exports.harajatPut = async (req, res) => {
 };
 exports.harajatGet = async (req, res) => {
   try {
-    const harajat = await Harajats.find().sort({ _id: -1 }).limit(req.query.limit);
+    const harajat = await Harajats.find().sort({ _id: -1 }).limit(req.query.limit).populate('sklad');
     return res.json(harajat);
   } catch (error) {
     return res.status(500).json(error);
@@ -210,27 +212,33 @@ exports.harajatPatch = async (req, res) => {
 exports.harajatFinder = async (req, res) => {
   try {
     const regexPattern = new RegExp(req.body.search, 'i');
-
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDay() - 31);
-
     const startDate = req.body.startDate || threeDaysAgo;
     const endDate = req.body.endDate || new Date();
-
-    const results = await Harajats.find({
+    
+    const filter = {
       name: regexPattern,
       date: {
         $gte: startDate, $lte: endDate,
       },
-    })
+    };
+
+    if (req.body.sklad) {
+      filter.sklad = req.body.sklad;
+    }
+
+    const results = await Harajats.find(filter)
       .sort({ _id: -1 })
-      .limit(req.query.limit);
+      .limit(req.query.limit)
+      .populate('sklad');
 
     return res.json(results);
   } catch (err) {
     return res.status(500).json({ error: 'An error occurred while searching for Harajat.' });
   }
 };
+
 exports.harajatExcel = async (req, res) => {
   try {
     const currentYear = new Date().getFullYear();
@@ -246,130 +254,138 @@ exports.harajatExcel = async (req, res) => {
       },
     };
     const workbook = new ExcelJS.Workbook();
-    let worksheet = workbook.addWorksheet(`Yillik ${new Date().getFullYear()}`);
-    const startOfYear = new Date(`${currentYear}-01-01T00:00:00.000Z`);
-    const endOfYear = new Date(`${currentYear}-12-31T23:59:59.999Z`);
-
-    let harajats = await Harajats.find({
-      date: {
-        $gte: startOfYear,
-        $lte: endOfYear,
-      },
+    let sklads = await Sklads.find({
+      active: true,
     });
 
-    worksheet.getCell(1, 1).value = 'ID';
-    worksheet.getCell(1, 2).value = 'Harajat Nomi';
-    worksheet.getCell(1, 3).value = 'Summasi';
-    worksheet.getCell(1, 4).value = 'Sanasi va Vaqti';
-    let totalAmount = 0;
-    harajats.forEach((item, index) => {
-      worksheet.getCell(index + 2, 1).value = index + 1;
-      worksheet.getCell(index + 2, 2).value = item.name || '';
-      worksheet.getCell(index + 2, 3).value = `${item.amount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
-      worksheet.getCell(index + 2, 4).value = formatTime(item.date);
-      totalAmount += item.amount;
-    });
-    worksheet.getCell(harajats.length + 2, 2).value = 'Umumiy Harajat Summasi';
-    worksheet.getCell(harajats.length + 2, 3).value = `${totalAmount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
-    worksheet.eachRow((row) => {
-      row.eachCell((cell) => {
-        cell.style = cellStyle;
+    await Promise.all(sklads.map(async (sklad) => {
+      let worksheet = workbook.addWorksheet(`${sklad.name}`);
+      const startOfYear = new Date(`${currentYear}-01-01T00:00:00.000Z`);
+      const endOfYear = new Date(`${currentYear}-12-31T23:59:59.999Z`);
+      let harajats = await Harajats.find({
+        date: {
+          $gte: startOfYear,
+          $lte: endOfYear,
+        },
+        sklad: sklad._id,
+      }).populate('sklad');
+      worksheet.getCell(1, 13).value = 'ID';
+      worksheet.getCell(1, 14).value = 'Harajat Nomi';
+      worksheet.getCell(1, 15).value = 'Summasi';
+      worksheet.getCell(1, 16).value = 'Ombor';
+      worksheet.getCell(1, 17).value = 'Sanasi va Vaqti';
+      let totalAmount = 0;
+      harajats.forEach((item, index) => {
+        worksheet.getCell(index + 2, 13).value = index + 1;
+        worksheet.getCell(index + 2, 14).value = item.name || '';
+        worksheet.getCell(index + 2, 15).value = `${item.amount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
+        worksheet.getCell(index + 2, 16).value = item.sklad.name;
+        worksheet.getCell(index + 2, 17).value = formatTime(item.date);
+        totalAmount += item.amount;
       });
-    });
-    worksheet.columns.forEach((column) => {
-      let maxLength = 0;
-      column.eachCell({ includeEmpty: true }, (cell) => {
-        const columnLength = cell.value ? cell.value.toString().length : 10;
-        if (columnLength > maxLength) {
-          maxLength = columnLength + 3;
-        }
+      worksheet.getCell(harajats.length + 2, 14).value = 'Umumiy Harajat Summasi';
+      worksheet.getCell(harajats.length + 2, 15).value = `${totalAmount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
+      worksheet.eachRow((row) => {
+        row.eachCell((cell) => {
+          cell.style = cellStyle;
+        });
       });
-      column.width = maxLength < 10 ? 10 : maxLength;
-    });
-
-    worksheet = workbook.addWorksheet(`Oylik ${currentMonth.toString().padStart(2, '0')}`);
-    harajats = await Harajats.find({
-      date: {
-        $gte: new Date(`${currentYear}-${currentMonth.toString().padStart(2, '0')}-01T00:00:00.000Z`),
-        $lte: new Date(`${currentYear}-${currentMonth.toString().padStart(2, '0')}-${new Date(currentYear, currentMonth, 0).getDate()}T23:59:59.999Z`),
-      },
-    });
-    worksheet.getCell(1, 1).value = 'ID';
-    worksheet.getCell(1, 2).value = 'Harajat Nomi';
-    worksheet.getCell(1, 3).value = 'Summasi';
-    worksheet.getCell(1, 4).value = 'Sanasi va Vaqti';
-    totalAmount = 0;
-    harajats.forEach((item, index) => {
-      worksheet.getCell(index + 2, 1).value = index + 1;
-      worksheet.getCell(index + 2, 2).value = item.name || '';
-      worksheet.getCell(index + 2, 3).value = `${item.amount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
-      worksheet.getCell(index + 2, 4).value = formatTime(item.date);
-      totalAmount += item.amount;
-    });
-    worksheet.getCell(harajats.length + 2, 2).value = 'Umumiy Harajat Summasi';
-    worksheet.getCell(harajats.length + 2, 3).value = `${totalAmount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
-    worksheet.eachRow((row) => {
-      row.eachCell((cell) => {
-        cell.style = cellStyle;
+      worksheet.columns.forEach((column) => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value ? cell.value.toString().length : 10;
+          if (columnLength > maxLength) {
+            maxLength = columnLength + 3;
+          }
+        });
+        column.width = maxLength < 10 ? 10 : maxLength;
       });
-    });
-    worksheet.columns.forEach((column) => {
-      let maxLength = 0;
-      column.eachCell({ includeEmpty: true }, (cell) => {
-        const columnLength = cell.value ? cell.value.toString().length : 10;
-        if (columnLength > maxLength) {
-          maxLength = columnLength + 3;
-        }
+
+      harajats = await Harajats.find({
+        date: {
+          $gte: new Date(`${currentYear}-${currentMonth.toString().padStart(2, '0')}-01T00:00:00.000Z`),
+          $lte: new Date(`${currentYear}-${currentMonth.toString().padStart(2, '0')}-${new Date(currentYear, currentMonth, 0).getDate()}T23:59:59.999Z`),
+        },
+        sklad: sklad._id,
+      }).populate('sklad');
+      worksheet.getCell(1, 7).value = 'ID';
+      worksheet.getCell(1, 8).value = 'Harajat Nomi';
+      worksheet.getCell(1, 9).value = 'Summasi';
+      worksheet.getCell(1, 10).value = 'Ombor';
+      worksheet.getCell(1, 11).value = 'Sanasi va Vaqti';
+      totalAmount = 0;
+      harajats.forEach((item, index) => {
+        worksheet.getCell(index + 2, 7).value = index + 1;
+        worksheet.getCell(index + 2, 8).value = item.name || '';
+        worksheet.getCell(index + 2, 9).value = `${item.amount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
+        worksheet.getCell(index + 2, 10).value = item.sklad.name;
+        worksheet.getCell(index + 2, 11).value = formatTime(item.date);
+        totalAmount += item.amount;
       });
-      column.width = maxLength < 10 ? 10 : maxLength;
-    });
-
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const startDateFormatted = `${sevenDaysAgo.getDate()}.${(sevenDaysAgo.getMonth() + 1).toString().padStart(2, '0')}.${sevenDaysAgo.getFullYear()}`;
-    const endDateFormatted = `${new Date().getDate()}.${(new Date().getMonth() + 1).toString().padStart(2, '0')}.${new Date().getFullYear()}`;
-
-    worksheet = workbook.addWorksheet(`Haftalik ${startDateFormatted} - ${endDateFormatted}`);
-    harajats = await Harajats.find({
-      date: {
-        $gte: sevenDaysAgo,
-        $lte: new Date(),
-      },
-    });
-    worksheet.getCell(1, 1).value = 'ID';
-    worksheet.getCell(1, 2).value = 'Harajat Nomi';
-    worksheet.getCell(1, 3).value = 'Summasi';
-    worksheet.getCell(1, 4).value = 'Sanasi va Vaqti';
-
-    totalAmount = 0;
-    harajats.forEach((item, index) => {
-      worksheet.getCell(index + 2, 1).value = index + 1;
-      worksheet.getCell(index + 2, 2).value = item.name || '';
-      worksheet.getCell(index + 2, 3).value = `${item.amount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
-      worksheet.getCell(index + 2, 4).value = formatTime(item.date);
-
-      totalAmount += item.amount;
-    });
-    worksheet.getCell(harajats.length + 2, 2).value = 'Umumiy Harajat Summasi';
-    worksheet.getCell(harajats.length + 2, 3).value = `${totalAmount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
-    worksheet.eachRow((row) => {
-      row.eachCell((cell) => {
-        cell.style = cellStyle;
+      worksheet.getCell(harajats.length + 2, 8).value = 'Umumiy Harajat Summasi';
+      worksheet.getCell(harajats.length + 2, 9).value = `${totalAmount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
+      worksheet.eachRow((row) => {
+        row.eachCell((cell) => {
+          cell.style = cellStyle;
+        });
       });
-    });
-    worksheet.columns.forEach((column) => {
-      let maxLength = 0;
-      column.eachCell({ includeEmpty: true }, (cell) => {
-        const columnLength = cell.value ? cell.value.toString().length : 10;
-        if (columnLength > maxLength) {
-          maxLength = columnLength + 3;
-        }
+      worksheet.columns.forEach((column) => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value ? cell.value.toString().length : 10;
+          if (columnLength > maxLength) {
+            maxLength = columnLength + 3;
+          }
+        });
+        column.width = maxLength < 10 ? 10 : maxLength;
       });
-      column.width = maxLength < 10 ? 10 : maxLength;
-    });
 
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      harajats = await Harajats.find({
+        date: {
+          $gte: sevenDaysAgo,
+          $lte: new Date(),
+        },
+        sklad: sklad._id,
+      }).populate('sklad');
+      worksheet.getCell(1, 1).value = 'ID';
+      worksheet.getCell(1, 2).value = 'Harajat Nomi';
+      worksheet.getCell(1, 3).value = 'Summasi';
+      worksheet.getCell(1, 4).value = 'Ombor';
+      worksheet.getCell(1, 5).value = 'Sanasi va Vaqti';
+
+      totalAmount = 0;
+      harajats.forEach((item, index) => {
+        worksheet.getCell(index + 2, 1).value = index + 1;
+        worksheet.getCell(index + 2, 2).value = item.name || '';
+        worksheet.getCell(index + 2, 3).value = `${item.amount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
+        worksheet.getCell(index + 2, 4).value = item.sklad.name;
+        worksheet.getCell(index + 2, 5).value = formatTime(item.date);
+
+        totalAmount += item.amount;
+      });
+      worksheet.getCell(harajats.length + 2, 2).value = 'Umumiy Harajat Summasi';
+      worksheet.getCell(harajats.length + 2, 3).value = `${totalAmount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
+      worksheet.eachRow((row) => {
+        row.eachCell((cell) => {
+          cell.style = cellStyle;
+        });
+      });
+      worksheet.columns.forEach((column) => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value ? cell.value.toString().length : 10;
+          if (columnLength > maxLength) {
+            maxLength = columnLength + 3;
+          }
+        });
+        column.width = maxLength < 10 ? 10 : maxLength;
+      });
+    }));
     await workbook.xlsx.writeFile('./docs/SKLAD.xlsx');
+
     return res.download('./docs/SKLAD.xlsx');
   } catch (error) {
     return res.status(500).json(error);
@@ -394,23 +410,31 @@ exports.harajatExcelByDate = async (req, res) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(`${startDateFormatted} - ${endDateFormatted}`);
 
-    const harajats = await Harajats.find({
+    let query = {
       date: {
         $gte: startOfYear,
         $lte: endOfYear,
-      },
-    });
+      }
+    };
+    
+    if (req.query.sklad) {
+      query.sklad = req.query.sklad;
+    }
+    
+    const harajats = await Harajats.find(query).populate('sklad');
 
     worksheet.getCell(1, 1).value = 'ID';
     worksheet.getCell(1, 2).value = 'Harajat Nomi';
     worksheet.getCell(1, 3).value = 'Summasi';
-    worksheet.getCell(1, 4).value = 'Sanasi va Vaqti';
+    worksheet.getCell(1, 4).value = 'Ombor';
+    worksheet.getCell(1, 5).value = 'Sanasi va Vaqti';
     let totalAmount = 0;
     harajats.forEach((item, index) => {
       worksheet.getCell(index + 2, 1).value = index + 1;
       worksheet.getCell(index + 2, 2).value = item.name || '';
       worksheet.getCell(index + 2, 3).value = `${item.amount.toLocaleString('en-US').replace(/,/g, ' ')} so'm`;
-      worksheet.getCell(index + 2, 4).value = formatTime(item.date);
+      worksheet.getCell(index + 2, 4).value = item.sklad.name;
+      worksheet.getCell(index + 2, 5).value = formatTime(item.date);
       totalAmount += item.amount;
     });
     worksheet.getCell(harajats.length + 2, 2).value = 'Umumiy Harajat Summasi';
@@ -517,6 +541,81 @@ exports.skladGet = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.skladPatchPrice = async (req, res) => {
+  try {
+    const sklads = await Sklads.find({
+      active: true,
+    }).lean();
+
+    await Promise.all(sklads.map( async (sklad) => {
+      const result = await Products.aggregate([
+        {
+          $match: {
+            saled: false,
+            sklad: sklad._id,
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalPrice: {
+              $sum: {
+                $cond: {
+                  if: { $eq: ['$name', 'List'] },
+                  then: {
+                    $multiply: [ '$price',
+                      {
+                        $divide: [
+                          { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                          10000,
+                        ],
+                      },
+                    ],
+                  },
+                  else: { 
+                    $multiply: [ '$price', '$uzunligi', ]},
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            totalAmount: '$totalPrice',
+          },
+        },
+      ]);
+      const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
+      sklad.totalAmount = totalAmount;
+    }));
+    console.log(sklads);
+    return res.json(sklads);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.skladProductsPost = async (req, res) => {
+  try {
+    const products = await Products.find({
+      name: req.body.name,
+      category: req.body.category,
+      qalinligi: req.body.qalinligi,
+      qalinligi_ortasi: req.body.qalinligi_ortasi,
+      holati: req.body.holati,
+      sklad: req.body.sklad,
+      saled: false,
+    }).sort({
+      category: 1,
+      qalinligi: 1,
+      qalinligi_ortasi: 1,
+      quantity: 1,
+    });
+    return res.json(products);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
 exports.skladsGet = async (req, res) => {
   try {
     const sklads = await Sklads.find();
@@ -588,16 +687,13 @@ exports.productsGet = async (req, res) => {
             qalinligi_ortasi: '$qalinligi_ortasi',
             category: '$category',
             holati: '$holati',
-            uzunligi: '$uzunligi',
-            uzunligi_x: '$uzunligi_x',
             olchamlari: '$olchamlari',
-            uzunligi_y: '$uzunligi_y',
             sklad: '$sklad',
-            price: '$price',
-            saledPrice: '$saledPrice',
-            cut: '$cut',
           },
           totalQuantity: { $sum: '$quantity' },
+          totalUzunligi: { $sum: '$uzunligi' },
+          minUzunligi: { $min: '$uzunligi' },
+          maxUzunligi: { $max: '$uzunligi' },
         },
       },
       {
@@ -616,9 +712,20 @@ exports.productsGet = async (req, res) => {
           olchamlari: '$_id.olchamlari',
           saledPrice: '$_id.saledPrice',
           quantity: '$totalQuantity',
+          totalUzunligi: '$totalUzunligi',
+          minUzunligi: '$minUzunligi',
+          maxUzunligi: '$maxUzunligi',
           cut: '$_id.cut',
         },
       },
+      {
+        $sort: {
+          category: 1,
+          qalinligi: 1,
+          qalinligi_ortasi: 1,
+          quantity: 1,
+        }
+      }
     ]);
 
     return res.json(aggregatedProducts);
@@ -692,6 +799,7 @@ exports.productsPut = async (req, res) => {
     for (let i = 0; i < req.body.quantity; i += 1) {
       try {
         const newProduct = new Products({
+          userId: req.userId,
           name: req.body.name,
           sellerId: req.body.sellerId,
           qalinligi: req.body.qalinligi,
@@ -706,6 +814,7 @@ exports.productsPut = async (req, res) => {
           sklad: req.body.sklad,
           price: req.body.price,
           saledPrice: req.body.saledPrice,
+          isDebt: req.body.isDebt,
         });
         newProduct.save();
       } catch (error) {
@@ -1277,7 +1386,7 @@ exports.sellPost = async (req, res) => {
 
 exports.sellerGet = async (req, res) => {
   try {
-    const sellers = await Sellers.find();
+    const sellers = await Sellers.find({ active: true });
     return res.json(sellers);
   } catch (error) {
     return res.status(500).json(error);
@@ -1305,7 +1414,9 @@ exports.sellerPut = async (req, res) => {
 };
 exports.sellerDelete = async (req, res) => {
   try {
-    await Sellers.findByIdAndDelete(req.params.id);
+    const seller = await Sellers.findById(req.params.id);
+    seller.active = false;
+    await seller.save();
     return res.json({ message: 'Seller deleted' });
   } catch (error) {
     return res.status(500).json(error);

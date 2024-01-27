@@ -66,9 +66,7 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Umumiy Uzunligi
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
-              1 m Uchun Narx
-            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300"></th>
           </tr>
         </thead>
         <tbody v-for="item in products" :key="item._id">
@@ -106,21 +104,24 @@
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.uzunligi }}m</div>
+              <div class="print-text">
+                {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+              </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+              <div class="print-text">{{ item.totalUzunligi }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.saledPrice == null
-                    ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
-                }}
+                <button
+                  @click="openModal(item)"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+                >
+                  Batafsil
+                </button>
               </div>
             </td>
           </tr>
@@ -208,7 +209,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -297,7 +298,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -372,20 +373,22 @@
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.uzunligi }}m</div>
+              <div class="print-text">
+                {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+              </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.uzunligi * item.quantity }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -482,7 +485,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -570,7 +573,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -666,7 +669,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -761,7 +764,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -856,7 +859,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -945,7 +948,7 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
@@ -1034,13 +1037,146 @@
                 {{
                   item.saledPrice == null
                     ? "Narx belgilanmagan"
-                    : `${item.saledPrice.toFixed(2)} so'm`
+                    : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                 }}
               </div>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+    <div
+      v-if="isOpenModal"
+      class="fixed w-full h-full bg-white top-0 left-0 z-[9999] overflow-y-auto pr-[7%] p-[4%]"
+    >
+      <div
+        class="fixed top-5 right-10 cursor-pointer"
+        @click="() => (isOpenModal = false)"
+      >
+        <Icon name="material-symbols:close" size="1.5rem" />
+      </div>
+      <div class="text-2xl font-bold">Batafsil</div>
+      <div class="border border-gray-50">
+        <table class="w-full text-[13px]">
+          <thead>
+            <tr>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Mahsulot Nomi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                O'lchamlari
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Kategoriyasi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Qalinligi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Holati
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Uzunligi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Umumiy Uzunligi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                1 m Uchun Sotuv Narxi
+              </th>
+            </tr>
+          </thead>
+          <tbody v-for="item in fetchedProducts" :key="item._id">
+            <tr class="hover:bg-gray-200 cursor-pointer w-full">
+              <td class="px-5 py-3 border-b border-gray-300">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>{{ item.olchamlari }}</div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>
+                  {{ item.category }}
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>
+                  <div v-if="item.qalinligi_ortasi">
+                    O'rta: {{ item.qalinligi_ortasi }}mm<br />
+                    Chet: {{ item.qalinligi }}mm
+                  </div>
+                  <div v-else>{{ item.qalinligi }}mm</div>
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>
+                  {{ item.holati }}
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <template
+                  v-if="
+                    item.name == 'Palasa' ||
+                    item.name == 'Kvadrat prut' ||
+                    item.name == 'Kvadrad profil'
+                  "
+                >
+                  <div>
+                    Uzunligi: {{ item.uzunligi }}m <br />
+                    Bo'yi: {{ item.uzunligi_x }}sm <br />
+                    Eni: {{ item.uzunligi_y }}sm
+                  </div>
+                </template>
+                <template v-else-if="item.uzunligi">
+                  <div>{{ item.uzunligi }}m</div>
+                </template>
+                <template v-else>
+                  <div>
+                    Bo'yi: {{ item.uzunligi_x }}sm <br />
+                    Eni: {{ item.uzunligi_y }}sm
+                  </div>
+                </template>
+              </td>
+
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>{{ item.quantity }}ta</div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <template v-if="item.uzunligi">
+                  <div>{{ (item.uzunligi * item.quantity).toFixed() }}m</div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{
+                      (item.uzunligi_y * item.uzunligi_x * item.quantity) /
+                      10000
+                    }}
+                    m<sup>2</sup>
+                  </div>
+                </template>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>
+                  {{
+                    item.saledPrice == null
+                      ? "Narx belgilanmagan"
+                      : `${item.saledPrice
+                          .toFixed(2)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                  }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
   <div v-else>
@@ -1055,7 +1191,9 @@ import "sweetalert2/dist/sweetalert2.min.css";
 const route = useRoute();
 
 let loading = ref(true);
+let isOpenModal = ref(false);
 let products = ref([]);
+let fetchedProducts = ref([]);
 let search = ref("Hammasi");
 let name = ref("");
 let MahsulotName = ref([
@@ -1114,6 +1252,25 @@ const handleClickDownloadExcel = async () => {
     console.log(error);
   }
   loading.value = false;
+};
+const openModal = async (item) => {
+  loading.value = true;
+  try {
+    const res = await $host.post("/sklad/products", {
+      name: item.name,
+      olchamlari: item.olchamlari,
+      category: item.category,
+      qalinligi: item.qalinligi,
+      qalinligi_ortasi: item.qalinligi_ortasi,
+      holati: item.holati,
+      sklad: item.sklad,
+    });
+    fetchedProducts.value = res.data;
+  } catch (error) {
+    console.log(error);
+  }
+  loading.value = false;
+  isOpenModal.value = true;
 };
 </script>
 <style scoped>

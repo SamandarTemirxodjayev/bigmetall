@@ -7,6 +7,14 @@ const harajatSchema = new mongoose.Schema({
   amount: {
     type: Number,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+  },
+  sklad: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'sklad',
+  },
   date: {
     type: Date,
     default: Date.now,

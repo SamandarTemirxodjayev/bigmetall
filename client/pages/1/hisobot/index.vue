@@ -124,7 +124,7 @@
           <div
             class="-m-16 flex items-center justify-center text-[#437DEB] text-[42px] font-[500] h-full"
           >
-            {{ numberFormat(fetchSummary) }} so'm
+            {{ numberFormat(fetchSummary.toFixed(2)) }} so'm
           </div>
         </div>
       </div>

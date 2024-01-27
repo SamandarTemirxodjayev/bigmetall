@@ -27,6 +27,8 @@ router.get('/harajat/year', UserMiddleware, userController.harajatYearGet);
 router.get('/harajat/graph', UserMiddleware, userController.harajatYearGetGraph);
 
 router.get('/sklad', UserMiddleware, userController.skladGet);
+router.post('/sklad/products', UserMiddleware, userController.skladProductsPost);
+router.patch('/sklad', UserMiddleware, userController.skladPatchPrice);
 router.get('/sklads', UserMiddleware, userController.skladsGet);
 router.put('/sklad', UserMiddleware, userController.skladPut);
 router.delete('/sklad/:id', UserMiddleware, userController.skladDelete);
@@ -71,7 +73,7 @@ router.post('/seller/:id/products', UserMiddleware, userController.getSellerProd
 
 router.post('/cut', UserMiddleware, userController.cutPost);
 
-router.get('/notices', UserMiddleware, userController.noticesGet);
+router.get('/notices', userController.noticesGet);
 router.put('/notices', UserMiddleware, userController.noticesPut);
 
 router.get("/productsYear", UserMiddleware, userController.productsYearGet);

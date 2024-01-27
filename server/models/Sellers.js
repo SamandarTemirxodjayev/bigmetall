@@ -7,6 +7,10 @@ const sellersSchema = new mongoose.Schema({
   phone: {
     type: String,
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
   date: {
     type: Date,
     default: Date.now,
