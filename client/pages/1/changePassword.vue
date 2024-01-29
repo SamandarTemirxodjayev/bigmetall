@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading">
     <div class="mb-2">
-      <span class="text-2xl font-semibold">Parolni O'zgartirish </span>
+      <span class="text-2xl font-semibold">Parolni O'zgartirish</span>
     </div>
     <div
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl min-h-[70vh]"
@@ -12,28 +12,28 @@
             <label class="block mb-2 text-sm font-medium text-gray-900"
               >Yangi Login</label
             >
-            <input
-              type="text"
+            <UInput
               v-model="username"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              color="white"
+              variant="outline"
+              size="lg"
+              required
             />
           </div>
           <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900"
               >Yangi Parol</label
             >
-            <input
-              type="text"
+            <UInput
               v-model="password"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              color="white"
+              variant="outline"
+              size="lg"
+              required
+              type="password"
             />
           </div>
-          <button
-            type="submit"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-          >
-            Tasdiqlash
-          </button>
+          <UButton type="submit" block class="px-4 py-2"> Tasdiqlash </UButton>
         </form>
       </div>
     </div>

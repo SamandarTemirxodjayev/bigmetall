@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -12,9 +11,7 @@ const user2Router = require('./routes/user2.router');
 const app = express();
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  optionsSuccessStatus: 200,
+  origin: '*',
 };
 
 app.use(cors(corsOptions));

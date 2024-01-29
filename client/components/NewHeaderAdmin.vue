@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white w-full fixed z-[1000] top-0 h-16 border-b border-gray-300 shadow-lg flex justify-between items-center pl-5"
+    class="bg-white w-full fixed z-[5] top-0 h-16 border-b border-gray-300 shadow-lg flex justify-between items-center pl-5"
   >
     <div
       class="cursor-pointer text-gray-500 font-semibold flex items-center hover:text-[#34a3f1]"

@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@coders-tm/vue-number-format": "^3.34.1",
+    "@nuxt/ui": "^2.12.3",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
     "@vuepic/vue-datepicker": "^7.4.0",

@@ -192,17 +192,9 @@ exports.harajatPatch = async (req, res) => {
     if (!harajat) {
       return res.status(404).json({ message: 'Harajat not found' });
     }
-    const history = new HarajatHistoryEdited({
-      user: req.userId,
-      editedFrom: {
-        name: harajat.name,
-        amount: harajat.amount,
-      },
-      editedID: req.params.id,
-    });
-    await history.save();
     harajat.name = req.body.name;
     harajat.amount = req.body.amount;
+    harajat.sklad = new mongoose.Types.ObjectId(req.body.sklad);
     await harajat.save();
     return res.json({ harajat });
   } catch (error) {
@@ -589,7 +581,6 @@ exports.skladPatchPrice = async (req, res) => {
       const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
       sklad.totalAmount = totalAmount;
     }));
-    console.log(sklads);
     return res.json(sklads);
   } catch (error) {
     return res.status(500).json(error);
@@ -597,20 +588,86 @@ exports.skladPatchPrice = async (req, res) => {
 };
 exports.skladProductsPost = async (req, res) => {
   try {
-    const products = await Products.find({
-      name: req.body.name,
-      category: req.body.category,
-      qalinligi: req.body.qalinligi,
-      qalinligi_ortasi: req.body.qalinligi_ortasi,
-      holati: req.body.holati,
-      sklad: req.body.sklad,
-      saled: false,
-    }).sort({
-      category: 1,
-      qalinligi: 1,
-      qalinligi_ortasi: 1,
-      quantity: 1,
-    });
+    const products = await Products.aggregate([
+      {
+        $match: { 
+          name: req.body.name,
+          category: req.body.category,
+          qalinligi: req.body.qalinligi,
+          qalinligi_ortasi: req.body.qalinligi_ortasi,
+          holati: req.body.holati,
+          sklad: new mongoose.Types.ObjectId(req.body.sklad),
+          saled: false,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            name: '$name',
+            qalinligi: '$qalinligi',
+            qalinligi_ortasi: '$qalinligi_ortasi',
+            category: '$category',
+            holati: '$holati',
+            olchamlari: '$olchamlari',
+            sklad: '$sklad',
+            uzunligi: '$uzunligi',
+            uzunligi_x: '$uzunligi_x',
+            uzunligi_y: '$uzunligi_y',
+            price: '$price',
+            saledPrice: '$saledPrice',
+            cut: '$cut',
+          },
+          totalQuantity: { $sum: '$quantity' },
+          totalUzunligi: { 
+            $sum: {
+              $cond: {
+                if: { $eq: ['$name', 'List'] },
+                then: {
+                  $multiply: [ 1,
+                    {
+                      $divide: [
+                        { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                        10000,
+                      ],
+                    },
+                  ],
+                },
+                else: { 
+                  $multiply: [ 1, '$uzunligi', ]},
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id.name',
+          qalinligi: '$_id.qalinligi',
+          qalinligi_ortasi: '$_id.qalinligi_ortasi',
+          category: '$_id.category',
+          holati: '$_id.holati',
+          uzunligi: '$_id.uzunligi',
+          uzunligi_x: '$_id.uzunligi_x',
+          uzunligi_y: '$_id.uzunligi_y',
+          sklad: '$_id.sklad',
+          price: '$_id.price',
+          olchamlari: '$_id.olchamlari',
+          saledPrice: '$_id.saledPrice',
+          quantity: '$totalQuantity',
+          totalUzunligi: '$totalUzunligi',
+          cut: '$_id.cut',
+        },
+      },
+      {
+        $sort: {
+          category: 1,
+          qalinligi: 1,
+          qalinligi_ortasi: 1,
+          uzunligi: -1,
+        }
+      }
+    ]);
     return res.json(products);
   } catch (error) {
     return res.status(500).json(error);
@@ -691,7 +748,25 @@ exports.productsGet = async (req, res) => {
             sklad: '$sklad',
           },
           totalQuantity: { $sum: '$quantity' },
-          totalUzunligi: { $sum: '$uzunligi' },
+          totalUzunligi: { 
+            $sum: {
+              $cond: {
+                if: { $eq: ['$name', 'List'] },
+                then: {
+                  $multiply: [ 1,
+                    {
+                      $divide: [
+                        { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                        10000,
+                      ],
+                    },
+                  ],
+                },
+                else: { 
+                  $multiply: [ 1, '$uzunligi', ]},
+              },
+            },
+          },
           minUzunligi: { $min: '$uzunligi' },
           maxUzunligi: { $max: '$uzunligi' },
         },
@@ -1128,6 +1203,103 @@ exports.getProductsWithDebtsPrice = async (req, res) => {
     
     return res.status(200).json({result: totalAmount});
   } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.productsFinder = async (req, res) => {
+  try {
+    const category = new RegExp(req.body.category, 'i');
+    const olchamlari = new RegExp(req.body.olchamlari, 'i');
+    const query = {
+      name: req.body.name,
+      saled: false,
+      category,
+      olchamlari,
+    }
+    if(req.body.qalinligi){
+      query.qalinligi = parseFloat(req.body.qalinligi);
+    }
+    if(req.body.qalinligi_ortasi){
+      query.qalinligi_ortasi = parseFloat(req.body.qalinligi_ortasi);
+    }
+    if(req.body.holati){
+      query.holati = req.body.holati;
+    }
+    const result = await Products.aggregate([
+      {
+        $match: query,
+      },
+      {
+        $group: {
+          _id: {
+            name: '$name',
+            qalinligi: '$qalinligi',
+            qalinligi_ortasi: '$qalinligi_ortasi',
+            category: '$category',
+            holati: '$holati',
+            olchamlari: '$olchamlari',
+            sklad: '$sklad',
+          },
+          totalQuantity: { $sum: '$quantity' },
+          totalUzunligi: {
+            $sum: {
+              $cond: {
+                if: { $eq: ['$name', 'List'] },
+                then: {
+                  $multiply: [
+                    1,
+                    {
+                      $divide: [
+                        { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                        10000,
+                      ],
+                    },
+                  ],
+                },
+                else: {
+                  $multiply: [1, '$uzunligi'],
+                },
+              },
+            },
+          },
+          minUzunligi: { $min: '$uzunligi' },
+          maxUzunligi: { $max: '$uzunligi' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id.name',
+          qalinligi: '$_id.qalinligi',
+          qalinligi_ortasi: '$_id.qalinligi_ortasi',
+          category: '$_id.category',
+          holati: '$_id.holati',
+          sklad: '$_id.sklad',
+          olchamlari: '$_id.olchamlari',
+          saledPrice: '$_id.saledPrice',
+          quantity: '$totalQuantity',
+          totalUzunligi: '$totalUzunligi',
+          minUzunligi: '$minUzunligi',
+          maxUzunligi: '$maxUzunligi',
+        },
+      },
+      {
+        $sort: {
+          category: 1,
+          qalinligi: 1,
+          qalinligi_ortasi: 1,
+          quantity: 1,
+        },
+      },
+    ]);
+
+    await Products.populate(result, {
+      path: 'sklad',
+    });
+    
+    return res.status(200).json(result);
+  } catch (error) {
+    console.log(error);
     return res.status(500).json(error);
   }
 };
@@ -2074,7 +2246,6 @@ const readJsonFile = () => {
 exports.phoneGet = async (req, res) => {
   try {
     const data = readJsonFile();
-    console.log(data);
     return res.json(data);
   } catch (error) {
     return res.status(500).json(error);

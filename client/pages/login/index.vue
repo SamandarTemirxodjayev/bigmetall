@@ -1,6 +1,11 @@
 <template>
   <div v-if="!loading">
-    <section class="bg-gray-50">
+    <section
+      :class="{
+        'bg-gray-50': !$colorMode.dark,
+        'dark:bg-gray-800': $colorMode.dark,
+      }"
+    >
       <div
         class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
       >

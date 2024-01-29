@@ -5,11 +5,11 @@
         >Mijoz - {{ client.name }} - Qarz</span
       >
     </div>
-    <div class="shadow items-center bg-white shadow-xl rounded-md">
+    <div class="items-center bg-white shadow-xl rounded-md">
       <div class="flex p-4 justify-between">
         <div class="flex">
           <div
-            class="px-5 flex items-center border border-gray-500 rounded-lg px-2 mr-3"
+            class="flex items-center border border-gray-500 rounded-lg px-2 mr-3"
           >
             <select
               class="text-gray-900 text-sm block w-full p-2.5 outline-none"

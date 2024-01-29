@@ -1,10 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
-    '@nuxtjs/tailwindcss',
-    'nuxt-icon',
+    '@nuxt/ui',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt'
+    '@pinia-plugin-persistedstate/nuxt',
   ],
+  colorMode: {
+    preference: 'light'
+  },
+  ui: {
+    safelistColors: ['blue']
+  },
   devtools: { enabled: false },
 })

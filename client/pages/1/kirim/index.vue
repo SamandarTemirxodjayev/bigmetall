@@ -4,252 +4,265 @@
       <span class="text-2xl font-semibold">Kirim</span>
     </div>
     <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
-      <div class="grid grid-cols-2 gap-[5%]">
-        <div
-          class="w-[100%] grid grid-cols-4 gap-x-[7%] grid-span-2 grid-rows-5"
-        >
-          <div class="w-full col-span-2 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Temir Mahsulot Turi</label
-            >
-            <div class="select-wrapper">
-              <select
-                v-model="mahsulotTuri"
-                @change="handleChangeMahsulotTuri"
-                class="pr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+      <form @submit="handleSubmit">
+        <div class="grid grid-cols-2 gap-[5%]">
+          <div
+            class="w-[100%] grid grid-cols-4 gap-x-[7%] grid-span-2 grid-rows-5"
+          >
+            <div class="w-full col-span-2 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Temir Mahsulot Turi</label
               >
-                <option
-                  v-for="(item, id) in MahsulotName"
-                  :key="id"
-                  :value="item"
+              <div>
+                <USelect
+                  v-model="mahsulotTuri"
+                  class="w-full"
+                  size="xl"
+                  :options="
+                    MahsulotName.map((item) => ({
+                      name: item,
+                    }))
+                  "
+                  option-attribute="name"
+                  value-attribute="name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="w-full col-span-2 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Sotuvchi</label
+              >
+              <USelect
+                v-model="seller"
+                class="w-full"
+                size="xl"
+                :options="
+                  sellers.map((seller) => ({
+                    name: `${seller.name}(${seller.phone})`,
+                    id: seller._id,
+                  }))
+                "
+                option-attribute="name"
+                value-attribute="id"
+                required
+              />
+            </div>
+
+            <div class="col-span-4 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >O'lchamlari</label
+              >
+              <UInput v-model="olchamlari" size="lg" required />
+            </div>
+
+            <div class="col-span-4 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Kategoriyasi</label
+              >
+              <UInput v-model="category" size="lg" required />
+            </div>
+
+            <div
+              class="w-full col-span-2 mb-4"
+              v-if="mahsulotTuri == 'Dvuxtavr'"
+            >
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Qalinligi o'rtasi(mm)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                v-model="qalinligiOrtasi"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+
+            <div
+              class="w-full col-span-2 mb-4"
+              v-if="mahsulotTuri == 'Dvuxtavr'"
+            >
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Qalinligi chetlari(mm)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                v-model="qalinligi"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+
+            <div
+              class="w-full col-span-4 mb-4"
+              v-if="mahsulotTuri != 'Dvuxtavr'"
+            >
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Qalinligi(mm)</label
+              >
+              <input
+                type="number"
+                required
+                step="0.01"
+                v-model="qalinligi"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+            <div class="w-full col-span-4 mb-4">
+              <label class="block mb-2 text-sm font-medium text-gray-900"
+                >Tan Narxi(1m uchun)</label
+              >
+              <VueNumber
+                v-model="tanNarxi"
+                v-bind="number"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <div
+            class="w-[100%] grid grid-cols-4 gap-x-[7%] grid-span-2 grid-rows-5"
+          >
+            <div class="w-full col-span-2 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Holati</label
+              >
+              <USelect
+                v-model="holati"
+                size="lg"
+                :options="['Yangi', 'Eski', 'B/U']"
+                required
+              />
+            </div>
+
+            <div class="w-full col-span-2 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Ombor</label
+              >
+              <USelect
+                v-model="ombor"
+                size="lg"
+                :options="
+                  ombors.map((item) => ({
+                    name: item.name,
+                    id: item._id,
+                  }))
+                "
+                option-attribute="name"
+                value-attribute="id"
+                required
+              >
+              </USelect>
+            </div>
+
+            <div
+              class="w-full col-span-2 mb-4"
+              v-if="
+                mahsulotTuri == 'List' ||
+                mahsulotTuri == 'Kvadrad profil' ||
+                mahsulotTuri == 'Kvadrat prut' ||
+                mahsulotTuri == 'Palasa'
+              "
+            >
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Uzunligi Bo'yi(sm)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                v-model="uzunligi_x"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+            <div
+              class="w-full col-span-2 mb-4"
+              v-if="
+                mahsulotTuri == 'List' ||
+                mahsulotTuri == 'Kvadrad profil' ||
+                mahsulotTuri == 'Kvadrat prut' ||
+                mahsulotTuri == 'Palasa'
+              "
+            >
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Uzunligi Eni(sm)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                v-model="uzunligi_y"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+
+            <div class="w-full col-span-4 mb-4" v-if="mahsulotTuri != 'List'">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Uzunligi(m)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                v-model="uzunligi"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+
+            <div class="w-full col-span-4 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Soni</label
+              >
+              <input
+                type="number"
+                step="1"
+                min="0"
+                v-model="quantity"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+
+            <div class="w-full col-span-4 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Sotuv Narxi(1m uchun)</label
+              >
+              <VueNumber
+                v-model="sotuvNarxi"
+                v-bind="number"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div class="w-full col-span-2 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >To'lov Turi</label
+              >
+              <div class="select-wrapper">
+                <select
+                  required
+                  v-model="isDebt"
+                  class="pr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
-                  {{ item }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="w-full col-span-2 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Sotuvchi</label
-            >
-            <select
-              v-model="seller"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option v-for="(item, id) in sellers" :key="id" :value="item._id">
-                {{ item.name }}({{ item.phone }})
-              </option>
-            </select>
-          </div>
-
-          <div class="col-span-4 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >O'lchamlari</label
-            >
-            <input
-              type="text"
-              v-model="olchamlari"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="col-span-4 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Kategoriyasi</label
-            >
-            <input
-              type="text"
-              v-model="category"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="w-full col-span-2 mb-4" v-if="mahsulotTuri == 'Dvuxtavr'">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Qalinligi o'rtasi(mm)</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              v-model="qalinligiOrtasi"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="w-full col-span-2 mb-4" v-if="mahsulotTuri == 'Dvuxtavr'">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Qalinligi chetlari(mm)</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              v-model="qalinligi"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="w-full col-span-4 mb-4" v-if="mahsulotTuri != 'Dvuxtavr'">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Qalinligi(mm)</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              v-model="qalinligi"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-          <div class="w-full col-span-4 mb-4">
-            <label class="mb-[6px] block mb-2 text-sm font-medium text-gray-900"
-              >Tan Narxi(1m uchun)</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              v-model="tanNarxi"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-        </div>
-
-        <div
-          class="w-[100%] grid grid-cols-4 gap-x-[7%] grid-span-2 grid-rows-5"
-        >
-          <div class="w-full col-span-2 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Holati</label
-            >
-            <select
-              v-model="holati"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option key="Yangi">Yangi</option>
-              <option key="Eski">Eski</option>
-              <option key="B/U">B/U</option>
-            </select>
-          </div>
-
-          <div class="w-full col-span-2 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Ombor</label
-            >
-            <select
-              v-model="ombor"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option v-for="item in ombors" :key="item._id" :value="item._id">
-                {{ item.name }}
-              </option>
-            </select>
-          </div>
-
-          <div
-            class="w-full col-span-2 mb-4"
-            v-if="
-              mahsulotTuri == 'List' ||
-              mahsulotTuri == 'Kvadrad profil' ||
-              mahsulotTuri == 'Kvadrat prut' ||
-              mahsulotTuri == 'Palasa'
-            "
-          >
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Uzunligi Bo'yi(sm)</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              v-model="uzunligi_x"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-          <div
-            class="w-full col-span-2 mb-4"
-            v-if="
-              mahsulotTuri == 'List' ||
-              mahsulotTuri == 'Kvadrad profil' ||
-              mahsulotTuri == 'Kvadrat prut' ||
-              mahsulotTuri == 'Palasa'
-            "
-          >
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Uzunligi Eni(sm)</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              v-model="uzunligi_y"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="w-full col-span-4 mb-4" v-if="mahsulotTuri != 'List'">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Uzunligi(m)</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              v-model="uzunligi"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="w-full col-span-4 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Soni</label
-            >
-            <input
-              type="number"
-              step="1"
-              min="0"
-              v-model="quantity"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="w-full col-span-4 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >Sotuv Narxi(1m uchun)</label
-            >
-            <input
-              v-model="sotuvNarxi"
-              type="number"
-              step="0.01"
-              min="0"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          <div class="w-full col-span-2 mb-4">
-            <label class="mb-[6px] block text-sm font-medium text-gray-900"
-              >To'lov Turi</label
-            >
-            <div class="select-wrapper">
-              <select
-                v-model="isDebt"
-                class="pr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              >
-                <option :value="false">Naqt</option>
-                <option :value="true">Qarz</option>
-              </select>
+                  <option :value="false">Naqt</option>
+                  <option :value="true">Qarz</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="text-right">
-        <button
-          @click="handleSubmit"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-        >
-          Tasdiqlash
-        </button>
-      </div>
+        <div class="text-right">
+          <UButton type="submit" size="lg"> Tasdiqlash </UButton>
+        </div>
+      </form>
     </div>
   </div>
   <div v-else>
@@ -260,6 +273,7 @@
 <script setup>
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import { component as VueNumber } from "@coders-tm/vue-number-format";
 
 let loading = ref(true);
 let mahsulotTuri = ref("Dvuxtavr");
@@ -296,6 +310,14 @@ let MahsulotName = ref([
 let sellers = ref([]);
 let seller = ref("");
 let isDebt = ref(false);
+let number = ref({
+  decimal: ".",
+  separator: " ",
+  suffix: " so'm",
+  precision: 2,
+  masked: false,
+  min: 0,
+});
 
 onMounted(async () => {
   try {
@@ -349,7 +371,7 @@ const handleSubmit = async (e) => {
       icon: "success",
       title: "Mahsulot qo'shildi",
       showConfirmButton: false,
-      timer: 1500,
+      timer: 1000,
     });
     loading.value = false;
   } catch (error) {
@@ -363,5 +385,3 @@ const HandleChangeSotuvNarxi = (e) => {
   sotuvNarxi.value = parseInt(e.target.value.replace(",", ""));
 };
 </script>
-<style scoped>
-</style>

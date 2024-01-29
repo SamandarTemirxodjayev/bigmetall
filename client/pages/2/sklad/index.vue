@@ -3,7 +3,7 @@
     <div class="mb-2">
       <span class="text-2xl font-semibold">Omborlar ro‘yxati</span>
     </div>
-    <div class="shadow items-center bg-white shadow-xl rounded-md">
+    <div class="items-center bg-white shadow-xl rounded-md">
       <div class="flex p-4 justify-between">
         <div class="flex">
           <div

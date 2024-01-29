@@ -3,38 +3,22 @@
     <div class="mb-2">
       <span class="text-2xl font-semibold">Omborlar ro‘yxati</span>
     </div>
-    <div class="shadow items-center bg-white shadow-xl rounded-md">
+    <div class="items-center bg-white shadow-xl rounded-md">
       <div class="flex p-4 justify-between">
-        <form @submit="handleSearchSubmit">
-          <div class="flex">
-            <div
-              class="flex items-center border border-gray-500 rounded-lg px-2 mr-3"
-            >
-              <input
-                type="text"
-                class="text-gray-900 text-sm block w-full p-2.5 outline-none"
-                placeholder="Qidiruv"
-                v-model="search"
-              />
-              <div class="text-gray-500">
-                <Icon name="iconamoon:search-thin" size="1.5rem" />
-              </div>
-            </div>
-            <button
-              type="submit"
-              class="bg-blue-500 text-white font-semibold rounded-xl px-3 mx-2"
-            >
-              Qidirish
-            </button>
-          </div>
-        </form>
+        <div class="flex">
+          <UInput
+            icon="i-heroicons-magnifying-glass-20-solid"
+            size="xl"
+            color="gray"
+            :trailing="false"
+            placeholder="Qidirish..."
+            v-model="search"
+          />
+        </div>
         <div>
-          <button
-            @click="() => (isPopupOpen = true)"
-            class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
-          >
+          <UButton @click="() => (isPopupOpen = true)" size="xl">
             Ombor Qo'shish
-          </button>
+          </UButton>
         </div>
       </div>
     </div>
@@ -102,17 +86,30 @@
         </tbody>
       </table>
     </div>
-    <div
-      v-if="isPopupOpen"
-      class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-    >
-      <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
-        <button
-          @click="() => (isPopupOpen = false)"
-          class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
-        >
-          <Icon name="material-symbols:close" width="25" height="25" />
-        </button>
+
+    <UModal v-model="isPopupOpen" prevent-close>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Ombor Qo'shish
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isPopupOpen = false"
+            />
+          </div>
+        </template>
 
         <div>
           <form @submit="handleAddOmbor">
@@ -123,66 +120,71 @@
               >
                 Ombor Nomi</label
               >
-              <input
+              <UInput
                 v-model="name"
-                type="text"
+                color="white"
+                variant="outline"
+                size="lg"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <button
-                type="submit"
-                class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-              >
+              <UButton type="submit" block class="px-4 py-2">
                 Tasdiqlash
-              </button>
+              </UButton>
             </div>
           </form>
         </div>
-      </div>
-    </div>
-    <div
-      v-if="isPopupOpenEdit"
-      class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-    >
-      <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
-        <button
-          @click="() => (isPopupOpenEdit = false)"
-          class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
-        >
-          <Icon name="material-symbols:close" width="25" height="25" />
-        </button>
+      </UCard>
+    </UModal>
+
+    <UModal v-model="isPopupOpenEdit" prevent-close>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Ombor Qo'shish
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isPopupOpenEdit = false"
+            />
+          </div>
+        </template>
 
         <div>
           <form @submit="handleEditOmbor">
             <div class="mb-4">
-              <label
-                for="editName"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
+              <label class="block mb-2 text-sm font-medium text-gray-700">
                 Ombor Nomi</label
               >
-              <input
+              <UInput
                 v-model="editName"
-                type="text"
+                color="white"
+                variant="outline"
+                size="lg"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                autofocus
               />
             </div>
             <div>
-              <button
-                type="submit"
-                class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-              >
+              <UButton type="submit" block class="px-4 py-2">
                 Tasdiqlash
-              </button>
+              </UButton>
             </div>
           </form>
         </div>
-      </div>
-    </div>
+      </UCard>
+    </UModal>
   </div>
   <div v-else>
     <Loader />
@@ -267,6 +269,24 @@ let filteredSklads = computed(() => {
   return sklads.value.filter((sklad) =>
     sklad.name.toLowerCase().includes(search.value.toLowerCase())
   );
+});
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isPopupOpen],
+    handler: () => {
+      isPopupOpen.value = false;
+    },
+  },
+});
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isPopupOpenEdit],
+    handler: () => {
+      isPopupOpenEdit.value = false;
+    },
+  },
 });
 </script>
 <style scoped>

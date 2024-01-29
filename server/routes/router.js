@@ -41,6 +41,7 @@ router.get('/products/:id', UserMiddleware, userController.productsGet);
 router.patch('/products/:id', UserMiddleware, userController.productsPatch);
 router.get('/products', UserMiddleware, userController.productsGetAll);
 router.put('/products', UserMiddleware, userController.productsPut);
+router.post('/products/find', UserMiddleware, userController.productsFinder);
 router.post('/products/:id', UserMiddleware, userController.productsGetClients);
 router.post('/products/client/:id', UserMiddleware, userController.productsGetClientsByDate);
 router.get('/products/saled', UserMiddleware, userController.productsGetSaled);
@@ -53,6 +54,7 @@ router.put('/products/debt/:id', UserMiddleware, userController.putProductsDebt)
 router.get('/products/seller/:id', UserMiddleware, userController.productsGetSeller);
 router.post('/products/seller/:id', UserMiddleware, userController.productsPostSeller);
 router.get('/products/debts/price', UserMiddleware, userController.getProductsWithDebtsPrice);
+
 
 router.get('/clients', UserMiddleware, userController.clientsGet);
 router.get('/client/:id', UserMiddleware, userController.clientsGetById);

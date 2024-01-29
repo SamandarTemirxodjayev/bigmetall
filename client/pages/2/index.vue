@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="body">
+  <div v-if="!loading" class="body dark:bg-gray-800 bg-gray-50">
     <NewHeaderAdmin2 />
     <div class="pt-[5%] sm:pt-0" />
     <div
@@ -8,7 +8,7 @@
       <div v-for="item in sklads" :key="item._id" class="my-[2%]">
         <NuxtLink :to="`/2/sklad/${item._id}`">
           <div
-            class="lg:w-[396px] w-[100%] grid grid-cols-3 gap-4 bg-white rounded-[24px] border border-gray-50 shadow-xl p-4"
+            class="lg:w-[396px] w-[100%] grid grid-cols-3 gap-4 bg-white dark:bg-gray-500 rounded-[24px] border border-gray-50 shadow-xl p-4"
           >
             <div class="col-span-1">
               <div
