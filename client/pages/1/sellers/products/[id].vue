@@ -177,7 +177,7 @@ onMounted(async () => {
     console.log(error);
   }
 });
-watch(date, async () => {
+watchEffect(async () => {
   loading.value = true;
   try {
     const res = await $host.post(`/seller/${route.params.id}/products`, {

@@ -12,11 +12,6 @@
     </div>
     <div class="text-3xl font-bold text-[#34a3f1] uppercase">Big metall</div>
     <div class="flex flex-row">
-      <div class="pr-5 cursor-pointer">
-        <NuxtLink to="/">
-          <Icon name="logos:telegram" size="1.5rem" />
-        </NuxtLink>
-      </div>
       <div class="pr-5 cursor-pointer text-gray-700">
         <NuxtLink @click="printContent">
           <Icon name="mingcute:print-line" size="1.5rem" />
@@ -36,7 +31,7 @@
           />
         </div>
         <div
-          class="hidden group-hover:block absolute bg-white w-[200px] right-10 px-3 py-1 border border-gray-300 rounded-md shadow-xl"
+          class="hidden group-hover:block absolute bg-white w-[200px] right-3 px-3 py-1 border border-gray-300 rounded-md shadow-xl"
         >
           <div v-if="notices.length == 0">
             <span class="text-xs">Hozircha Xabarlar Mavjud Emas</span>
@@ -56,16 +51,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <div
-        class="cursor-pointer text-gray-500 hover:text-black pr-5"
-        @click="handleCalculator"
-      >
-        <Icon name="mdi:calculator" size="1.5rem" />
-      </div>
-      <div v-if="calculator" class="fixed right-[3%] top-16 bg-white z-10">
-        <Calculator />
       </div>
     </div>
   </div>

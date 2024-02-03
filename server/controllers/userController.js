@@ -863,6 +863,19 @@ exports.productsGetAll = async (req, res) => {
           cut: '$_id.cut',
         },
       },
+      {
+        $sort: {
+          name: 1,
+          category: 1,
+          qalinligi: 1,
+          qalinligi_ortasi: 1,
+          quantity: 1,
+          uzunligi: 1,
+          uzunligi_x: 1,
+          uzunligi_y: 1,
+          saledPrice: 1,
+        }
+      }
     ]);
     return res.json(products);
   } catch (error) {
@@ -1998,14 +2011,21 @@ exports.hisobotGet = async (req, res) => {
 
     const startDate = req.body.startDate ? new Date(req.body.startDate) : threeDaysAgo;
     const endDate = req.body.endDate ? new Date(req.body.endDate) : new Date();
+
+    console.log(req.body)
+
+    let query = {
+      date: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    };
+    if(req.body.sklad != 'Hammasi'){
+      query.sklad = new mongoose.Types.ObjectId(req.body.sklad);
+    }
     const harajat = await Harajats.aggregate([
       {
-        $match: {
-          date: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        },
+        $match: query,
       },
       {
         $group: {
@@ -2029,15 +2049,63 @@ exports.hisobotGet = async (req, res) => {
       },
     ]);
 
+    
+    
+    const kirimTushumi = await Products.aggregate([
+      {
+        $match: query
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+            day: { $dayOfMonth: '$date' },
+          },
+          totalAmount: {
+            $sum: {
+              $multiply: [
+                {
+                  $cond: {
+                    if: { $eq: ['$name', 'List'] },
+                    then: {
+                      $multiply: [
+                        '$price',
+                        {
+                          $divide: [
+                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                            10000,
+                          ],
+                        },
+                      ],
+                    },
+                    else: { 
+                      $multiply: [
+                        '$price',
+                        '$uzunligi',
+                      ]},
+                  },
+                },
+              ],
+            },
+          },
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1,
+          '_id.day': 1,
+        },
+      },
+    ]);
+
+    query.saled = true;
+
     const foyda = await Products.aggregate([
       {
-        $match: {
-          saled: true,
-          saledDate: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        },
+        $match: query
       },
       {
         $group: {
@@ -2085,15 +2153,10 @@ exports.hisobotGet = async (req, res) => {
         },
       },
     ]);
+
     const savdoTushumi = await Products.aggregate([
       {
-        $match: {
-          saled: true,
-          saledDate: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        },
+        $match: query
       },
       {
         $group: {
@@ -2122,60 +2185,6 @@ exports.hisobotGet = async (req, res) => {
                     else: { 
                       $multiply: [
                         '$saledPrice',
-                        '$uzunligi',
-                      ]},
-                  },
-                },
-              ],
-            },
-          },
-          totalProducts: { $sum: 1 },
-        },
-      },
-      {
-        $sort: {
-          '_id.year': 1,
-          '_id.month': 1,
-          '_id.day': 1,
-        },
-      },
-    ]);
-    const kirimTushumi = await Products.aggregate([
-      {
-        $match: {
-          date: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: '$date' },
-            month: { $month: '$date' },
-            day: { $dayOfMonth: '$date' },
-          },
-          totalAmount: {
-            $sum: {
-              $multiply: [
-                {
-                  $cond: {
-                    if: { $eq: ['$name', 'List'] },
-                    then: {
-                      $multiply: [
-                        '$price',
-                        {
-                          $divide: [
-                            { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
-                            10000,
-                          ],
-                        },
-                      ],
-                    },
-                    else: { 
-                      $multiply: [
-                        '$price',
                         '$uzunligi',
                       ]},
                   },

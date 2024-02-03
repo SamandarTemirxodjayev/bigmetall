@@ -11,23 +11,23 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@nuxtjs/tailwindcss": "^6.9.4",
-    "nuxt": "^3.8.2",
-    "nuxt-icon": "^0.6.1",
-    "vue": "^3.3.7",
+    "@nuxtjs/tailwindcss": "^6.11.2",
+    "nuxt": "^3.10.0",
+    "nuxt-icon": "^0.6.8",
+    "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
     "@coders-tm/vue-number-format": "^3.34.1",
-    "@nuxt/ui": "^2.12.3",
+    "@nuxt/ui": "^2.13.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
-    "@vuepic/vue-datepicker": "^7.4.0",
-    "autonumeric": "^4.10.0",
-    "axios": "^1.6.0",
-    "chart.js": "^4.4.0",
+    "@vuepic/vue-datepicker": "^7.4.1",
+    "autonumeric": "^4.10.4",
+    "axios": "^1.6.7",
+    "chart.js": "^4.4.1",
     "pinia": "^2.1.7",
-    "sweetalert2": "^11.9.0",
-    "vue-chartjs": "^5.2.0"
+    "sweetalert2": "^11.10.4",
+    "vue-chartjs": "^5.3.0"
   }
 }

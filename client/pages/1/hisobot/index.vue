@@ -5,8 +5,8 @@
     </div>
     <div class="shadow-2xl border border-gray-300 items-center">
       <div class="flex p-4 justify-between">
-        <div class="flex items-center">
-          <div class="items-center pt-0.5 w-full">
+        <div class="flex items-center gap-x-[2%]">
+          <div class="items-center w-full">
             <VueDatePicker
               class="border border-gray-500 rounded-[5px] min-w-[350px] -z-0"
               v-model="date"
@@ -15,6 +15,23 @@
               time-picker-inline
             />
           </div>
+          <USelect
+            v-model="ombor"
+            size="lg"
+            class="min-w-[350px]"
+            :options="
+              [{ name: 'Hammasi', id: null }].concat(
+                ombors.map((item) => ({
+                  name: item.name,
+                  id: item._id,
+                }))
+              )
+            "
+            value-attribute="id"
+            option-attribute="name"
+            required
+          />
+          <UButton size="lg" @click="handleSearch"> Qidirish </UButton>
         </div>
       </div>
     </div>
@@ -197,6 +214,8 @@ let classObject = ref("");
 let button = ref(1);
 let fetchSummary = ref(0);
 let fetchItems = ref([]);
+let ombor = ref("Hammasi");
+let ombors = ref([]);
 
 const clickOne = () => {
   isActive.value = true;
@@ -240,12 +259,15 @@ onMounted(async () => {
     if (res.data.user.user_level != 1) {
       window.location.href = "/";
     }
+    const resOmbor = await $host.get("/sklad");
+    ombors.value = resOmbor.data;
     const endDate = new Date();
     const startDate = new Date(new Date().setDate(endDate.getDate() - 7));
     date.value = [startDate, endDate];
     const resHisobot = await $host.post("/hisobot", {
       startDate,
       endDate,
+      sklad: ombor.value,
     });
     harajat.value = resHisobot.data.harajat;
     for (const key in harajat.value) {
@@ -369,13 +391,14 @@ onMounted(async () => {
   }
   loading.value = false;
 });
-watch(date, async () => {
+const handleSearch = async () => {
   loading.value = true;
   const startDate = date.value && date.value[0] ? date.value[0] : null;
   const endDate = date.value && date.value[1] ? date.value[1] : null;
   const resHisobot = await $host.post("/hisobot", {
     startDate,
     endDate,
+    sklad: ombor.value,
   });
   harajat.value = resHisobot.data.harajat;
   harajatSummary.value = 0;
@@ -499,7 +522,8 @@ watch(date, async () => {
   };
   clickOne();
   loading.value = false;
-});
+};
+
 const showBottomElement = ref(false);
 const moveElementToBottom = () => {
   showBottomElement.value = true;

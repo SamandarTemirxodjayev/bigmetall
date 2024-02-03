@@ -6,6 +6,7 @@ export const useCounterStore = defineStore("store", {
   }),
   actions: {
     add(product) {
+      console.log(product.sklad)
       const existingProduct = this.count.find(p => 
         p.name == product.name && 
         p.qalinligi == product.qalinligi &&
@@ -16,7 +17,7 @@ export const useCounterStore = defineStore("store", {
         p.uzunligi == product.uzunligi &&
         p.uzunligi_y == product.uzunligi_y && 
         p.uzunligi_x == product.uzunligi_x &&
-        p.sklad[0].name == p.sklad[0].name &&
+        p.sklad == product.sklad &&
         p.price == product.price && 
         p.saledPrice == product.saledPrice &&
         p.cut == product.cut

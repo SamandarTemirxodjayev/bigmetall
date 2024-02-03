@@ -265,7 +265,7 @@ onMounted(async () => {
   };
   loading.value = false;
 });
-watch(date, async () => {
+watchEffect(async () => {
   loading.value = true;
   try {
     const datas = await $host.post("/seller/" + route.params.id + "/results", {

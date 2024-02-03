@@ -306,7 +306,7 @@ const handleAboutClick = async (item) => {
 const handleChangeDate = () => {
   console.log(date.value);
 };
-watch(date, async () => {
+watchEffect(async () => {
   loading.value = true;
   try {
     const res = await $host.post("/products/seller/" + route.params.id, {

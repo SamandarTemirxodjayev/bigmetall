@@ -1,49 +1,45 @@
 <template>
   <div v-if="!loading">
-    <NewHeaderAdmin2 />
-    <div class="mb-2 mt-[20%] sm:mt-[5%] mx-[5%] sm:mx-[1%]">
-      <span class="text-xl font-semibold">Ombordagi Mahsulotlar Ro'yxati</span>
+    <div class="mb-2">
+      <span class="text-2xl font-semibold">Ombordagi Mahsulotlar Ro'yxati</span>
     </div>
-    <div class="shadow items-center bg-white shadow-xl rounded-md">
-      <div class="flex p-4 justify-between">
+    <div class="items-center bg-white shadow-xl rounded-md">
+      <div class="flex p-4 justify-between items-center">
         <form @submit="handleSearchSubmit">
           <div class="flex">
-            <div
-              class="px-5 flex items-center border border-gray-500 rounded-lg px-2 mr-3"
-            >
-              <select
-                class="text-gray-900 text-sm block w-full p-2.5 outline-none"
-                placeholder="Qidiruv"
+            <div class="px-2 mr-3">
+              <USelect
                 v-model="search"
-              >
-                <option value="Hammasi">Hammasi</option>
-                <option
-                  v-for="(item, id) in MahsulotName"
-                  :key="id"
-                  :value="item"
-                >
-                  {{ item }}
-                </option>
-              </select>
+                :options="
+                  [{ name: 'Hammasi' }].concat(
+                    MahsulotName.map((item) => ({
+                      name: item,
+                    }))
+                  )
+                "
+                option-attribute="name"
+                size="lg"
+              />
             </div>
           </div>
         </form>
         <div>
-          <button
+          <UButton
             @click="handleClickDownloadExcel"
-            class="text-[12px] mx-2 text-white bg-blue-500 hover:bg-blue-600 py-[8%] px-3 rounded-xl font-semibold"
+            :ui="{ rounded: 'rounded-xl' }"
+            class="px-3 py-2 mx-2"
           >
             Excelda Yuklab Olish
-          </button>
+          </UButton>
         </div>
       </div>
     </div>
     <!-- DVUXTAVR -->
     <div
-      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl text-sm"
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Dvuxtavr'"
     >
-      <div class="font-bold mb-2">Dvuxtavr</div>
+      <div class="text-lg font-bold mb-2">Dvuxtavr</div>
       <div class="overflow-x-auto hide-scrollbar">
         <table class="w-full text-sm">
           <thead>
@@ -70,9 +66,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -80,7 +74,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Dvuxtavr'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -110,23 +104,25 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div class="print-text">
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
-                <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
-                </div>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="print-text">{{ item.totalUzunligi }}m</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -137,12 +133,12 @@
 
     <!-- SHVELLIR -->
     <div
-      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl text-sm"
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Shvellir'"
     >
-      <div class="font-bold mb-2">Shvellir</div>
+      <div class="text-xl font-bold mb-2">Shvellir</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -167,9 +163,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -177,7 +171,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Shvellir'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -204,24 +198,28 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div class="print-text">
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+                </div>
               </td>
 
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -232,12 +230,12 @@
 
     <!-- UGALOK -->
     <div
-      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl text-sm"
+      class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Ugalok'"
     >
-      <div class="font-bold mb-2">Ugalok</div>
+      <div class="text-xl font-bold mb-2">Ugalok</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -262,9 +260,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -272,7 +268,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Ugalok'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -299,24 +295,28 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div class="print-text">
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+                </div>
               </td>
 
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -330,9 +330,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Truba'"
     >
-      <div class="text-sm font-bold mb-2">Truba</div>
+      <div class="text-xl font-bold mb-2">Truba</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -357,9 +357,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -367,7 +365,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Truba'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -394,23 +392,27 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div class="print-text">
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -424,9 +426,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'List'"
     >
-      <div class="text-sm font-bold mb-2">List</div>
+      <div class="text-xl font-bold mb-2">List</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -444,16 +446,11 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Holati
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Maydoni
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m<sup>2</sup> Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -461,7 +458,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'List'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -487,31 +484,25 @@
                   {{ item.holati }}
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
-                </div>
-              </td>
 
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    (item.uzunligi_y * item.uzunligi_x * item.quantity) / 10000
-                  }}
+                  {{ item.totalUzunligi.toFixed(2) }}
                   m<sup>2</sup>
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -525,9 +516,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Armatura'"
     >
-      <div class="text-sm font-bold mb-2">Armatura</div>
+      <div class="text-xl font-bold mb-2">Armatura</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -552,9 +543,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -562,7 +551,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Armatura'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -589,23 +578,27 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div class="print-text">
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+                </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -619,9 +612,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Kvadrat prut'"
     >
-      <div class="text-sm font-bold mb-2">Kvadrat prut</div>
+      <div class="text-xl font-bold mb-2">Kvadrat prut</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -639,9 +632,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Holati
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
+
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Uzunligi
               </th>
@@ -649,9 +640,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -659,7 +648,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Kvadrat prut'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -685,29 +674,27 @@
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
                 </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
               </td>
 
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -721,9 +708,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Kvadrad profil'"
     >
-      <div class="text-sm font-bold mb-2">Kvadrat profil</div>
+      <div class="text-xl font-bold mb-2">Kvadrat profil</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -742,18 +729,13 @@
                 Holati
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
                 Uzunligi
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -761,7 +743,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Kvadrad profil'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -785,30 +767,29 @@
                   {{ item.holati }}
                 </div>
               </td>
+
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
                 </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -822,9 +803,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Palasa'"
     >
-      <div class="text-sm font-bold mb-2">Palasa</div>
+      <div class="text-xl font-bold mb-2">Palasa</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -843,18 +824,13 @@
                 Holati
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
-                O'lchamlari
-              </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
                 Uzunligi
               </th>
               <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -862,7 +838,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Palasa'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -888,28 +864,26 @@
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  Bo'yi: {{ item.uzunligi_x }}sm <br />
-                  Eni: {{ item.uzunligi_y }}sm
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
                 </div>
-              </td>
-              <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -923,9 +897,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Prut'"
     >
-      <div class="text-sm font-bold mb-2">Prut</div>
+      <div class="text-xl font-bold mb-2">Prut</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -950,9 +924,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -960,7 +932,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Prut'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -987,24 +959,28 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div class="print-text">
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+                </div>
               </td>
 
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -1018,9 +994,9 @@
       class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl"
       v-if="search == 'Hammasi' || search == 'Planka'"
     >
-      <div class="text-sm font-bold mb-2">Planka</div>
+      <div class="text-xl font-bold mb-2">Planka</div>
       <div class="overflow-x-auto hide-scrollbar">
-        <table class="w-full text-sm">
+        <table class="w-full">
           <thead>
             <tr>
               <th class="px-5 py-3 text-left border-y border-gray-300">
@@ -1045,9 +1021,7 @@
               <th class="px-5 py-3 text-left border-y border-gray-300">
                 Umumiy Uzunligi
               </th>
-              <th class="px-5 py-3 text-left border-y border-gray-300">
-                1 m Uchun Narx
-              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
             </tr>
           </thead>
           <tbody v-for="item in products" :key="item._id">
@@ -1055,7 +1029,7 @@
               class="hover:bg-gray-200 cursor-pointer w-full"
               v-if="item.name == 'Planka'"
             >
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[170px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
                   <template v-if="item.cut">
                     {{ item.name }} (kesilgan)
@@ -1082,24 +1056,28 @@
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div class="print-text">
+                  {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+                </div>
               </td>
 
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">{{ item.quantity }}ta</div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[180px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{ item.uzunligi * item.quantity }}m
+                  {{ item.totalUzunligi.toFixed(2) }}m
                 </div>
               </td>
-              <td class="px-5 py-3 border-b border-gray-300 min-w-[250px]">
+              <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.saledPrice == null
-                      ? "Narx belgilanmagan"
-                      : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                  }}
+                  <UButton
+                    @click="openModal(item)"
+                    :ui="{ rounded: 'rounded-xl' }"
+                    class="px-3 py-2 mx-2"
+                  >
+                    Batafsil
+                  </UButton>
                 </div>
               </td>
             </tr>
@@ -1107,6 +1085,159 @@
         </table>
       </div>
     </div>
+    <UModal v-model="isOpenModal" fullscreen>
+      <UCard
+        :ui="{
+          base: 'h-full flex flex-col',
+          rounded: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+          body: {
+            base: 'grow overflow-auto',
+          },
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              <div class="text-2xl font-bold">Batafsil</div>
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isOpenModal = false"
+            />
+          </div>
+        </template>
+
+        <div class="border border-gray-50">
+          <table class="w-full text-[13px]">
+            <thead>
+              <tr>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Mahsulot Nomi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  O'lchamlari
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Kategoriyasi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Qalinligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Holati
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Uzunligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Soni
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Umumiy Uzunligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  1 m Uchun Sotuv Narxi
+                </th>
+              </tr>
+            </thead>
+            <tbody v-for="item in fetchedProducts" :key="item._id">
+              <tr class="hover:bg-gray-200 cursor-pointer w-full">
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>{{ item.olchamlari }}</div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{ item.category }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    <div v-if="item.qalinligi_ortasi">
+                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
+                      Chet: {{ item.qalinligi }}mm
+                    </div>
+                    <div v-else>{{ item.qalinligi }}mm</div>
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{ item.holati }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template
+                    v-if="
+                      item.name == 'Palasa' ||
+                      item.name == 'Kvadrat prut' ||
+                      item.name == 'Kvadrad profil'
+                    "
+                  >
+                    <div>
+                      Uzunligi: {{ item.uzunligi }}m <br />
+                      Bo'yi: {{ item.uzunligi_x }}sm <br />
+                      Eni: {{ item.uzunligi_y }}sm
+                    </div>
+                  </template>
+                  <template v-else-if="item.uzunligi">
+                    <div>{{ item.uzunligi }}m</div>
+                  </template>
+                  <template v-else>
+                    <div>
+                      Bo'yi: {{ item.uzunligi_x }}sm <br />
+                      Eni: {{ item.uzunligi_y }}sm
+                    </div>
+                  </template>
+                </td>
+
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>{{ item.quantity }}ta</div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template v-if="item.uzunligi">
+                    <div>{{ (item.uzunligi * item.quantity).toFixed(2) }}m</div>
+                  </template>
+                  <template v-else>
+                    <div>
+                      {{
+                        (item.uzunligi_y * item.uzunligi_x * item.quantity) /
+                        10000
+                      }}
+                      m<sup>2</sup>
+                    </div>
+                  </template>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{
+                      item.saledPrice == null
+                        ? "Narx belgilanmagan"
+                        : `${item.saledPrice
+                            .toFixed(2)
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                    }}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </UCard>
+    </UModal>
   </div>
   <div v-else>
     <Loader />
@@ -1120,9 +1251,11 @@ import "sweetalert2/dist/sweetalert2.min.css";
 const route = useRoute();
 
 let loading = ref(true);
+let isOpenModal = ref(false);
 let products = ref([]);
 let search = ref("Hammasi");
 let name = ref("");
+let fetchedProducts = ref([]);
 let MahsulotName = ref([
   "Dvuxtavr",
   "Shvellir",
@@ -1183,6 +1316,25 @@ const handleClickDownloadExcel = async () => {
 definePageMeta({
   layout: false,
 });
+const openModal = async (item) => {
+  loading.value = true;
+  try {
+    const res = await $host2.post("/sklad/products", {
+      name: item.name,
+      olchamlari: item.olchamlari,
+      category: item.category,
+      qalinligi: item.qalinligi,
+      qalinligi_ortasi: item.qalinligi_ortasi,
+      holati: item.holati,
+      sklad: item.sklad,
+    });
+    fetchedProducts.value = res.data;
+  } catch (error) {
+    console.log(error);
+  }
+  loading.value = false;
+  isOpenModal.value = true;
+};
 </script>
 <style scoped>
 @media print {

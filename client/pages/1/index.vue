@@ -90,6 +90,7 @@
       <div class="flex justify-around gap-[1%]">
         <USelect
           v-model="mahsulotTuri"
+          @change="mahsulotTuriChange"
           class="w-full"
           size="xl"
           :options="
@@ -562,6 +563,13 @@ const openModal = async (item) => {
   loading.value = false;
   isOpenModal.value = true;
 };
+const mahsulotTuriChange = () => {
+  category.value = "";
+  olchamlari.value = "";
+  qalinligi.value = "";
+  qalinligi_ortasi.value = "";
+  holati.value = null;
+}
 </script>
 <style scoped>
 .square {
