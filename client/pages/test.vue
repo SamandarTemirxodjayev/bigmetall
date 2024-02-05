@@ -1,3 +1,3 @@
 <template>
-  <div>Test is work</div>
+  <div>Test is work for test</div>
 </template>
