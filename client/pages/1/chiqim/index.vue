@@ -232,7 +232,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -456,7 +456,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -680,7 +680,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -904,7 +904,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1128,7 +1128,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1555,7 +1555,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1772,7 +1772,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1989,7 +1989,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -2207,7 +2207,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -2428,7 +2428,7 @@
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">
                   <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed() }}m
+                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
                   </div>
                 </td>
                 <td class="px-5 py-3 border-b border-gray-300">

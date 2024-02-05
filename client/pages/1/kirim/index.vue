@@ -247,15 +247,30 @@
                 >To'lov Turi</label
               >
               <div class="select-wrapper">
-                <select
+                <USelect
                   required
                   v-model="isDebt"
-                  class="pr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                >
-                  <option :value="false">Naqt</option>
-                  <option :value="true">Qarz</option>
-                </select>
+                  size="xl"
+                  :options="[
+                    {
+                      name: 'Naqt',
+                      id: false,
+                    },
+                    {
+                      name: 'Qarz',
+                      id: true,
+                    },
+                  ]"
+                  option-attribute="name"
+                  value-attribute="id"
+                />
               </div>
+            </div>
+            <div v-if="isDebt" class="w-full col-span-2 mb-4">
+              <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                >Qarzga Beruvchi</label
+              >
+              <UInput v-model="debtSeller" size="xl" required />
             </div>
           </div>
         </div>
@@ -310,6 +325,7 @@ let MahsulotName = ref([
 let sellers = ref([]);
 let seller = ref("");
 let isDebt = ref(false);
+let debtSeller = ref("");
 let number = ref({
   decimal: ".",
   separator: " ",
@@ -334,6 +350,17 @@ onMounted(async () => {
     console.log(error);
   }
 });
+function formatDate(date) {
+  let day = date.getDate();
+  let month = date.getMonth() + 1; // Months are zero-based
+  let year = date.getFullYear();
+
+  // Pad the day and month with leading zeros if necessary
+  day = day < 10 ? "0" + day : day;
+  month = month < 10 ? "0" + month : month;
+
+  return day + "." + month + "." + year;
+}
 const handleSubmit = async (e) => {
   e.preventDefault();
   if (
@@ -366,6 +393,8 @@ const handleSubmit = async (e) => {
       price: tanNarxi.value,
       saledPrice: sotuvNarxi.value,
       isDebt: isDebt.value,
+      seller: debtSeller.value,
+      date: formatDate(new Date()),
     });
     Swal.fire({
       icon: "success",
@@ -378,6 +407,16 @@ const handleSubmit = async (e) => {
     console.log(error);
   }
 };
+watchEffect(() => {
+  if (mahsulotTuri.value) {
+    qalinligi.value = "";
+    uzunligi.value = "";
+    quantity.value = "";
+    qalinligiOrtasi.value = "";
+    uzunligi_x.value = "";
+    uzunligi_y.value = "";
+  }
+});
 const HandleChangeTanNarxi = (e) => {
   tanNarxi.value = parseInt(e.target.value.replace(",", ""));
 };

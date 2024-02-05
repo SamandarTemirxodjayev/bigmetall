@@ -35,10 +35,22 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/1/clients">
-            <div><Icon name="mdi:partnership-outline" size="28px" /></div>
-            <div>Mijozlar</div>
-          </NuxtLink>
+          <div>
+            <div>
+              <Icon name="mdi:partnership-outline" size="28px" />
+            </div>
+            <div>Qarzdorliklar</div>
+            <div
+              class="text-left submenu absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
+            >
+              <div class="hover:text-[#34a3f1] px-3">
+                <NuxtLink to="/1/clients">Mijozlar</NuxtLink>
+              </div>
+              <div class="hover:text-[#34a3f1] px-3">
+                <NuxtLink to="/1/business">Kompaniya</NuxtLink>
+              </div>
+            </div>
+          </div>
         </li>
         <li>
           <NuxtLink to="/1/harajat">
@@ -61,7 +73,7 @@
             </div>
             <div>Qo'shimcha</div>
             <div
-              class="text-left submenu hidden absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
+              class="text-left submenu absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
             >
               <div class="hover:text-[#34a3f1] px-3">
                 <NuxtLink to="/1/addAlert">Xabar Yuborish</NuxtLink>

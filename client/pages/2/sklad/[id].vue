@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div v-if="!loading" class="m-[1%]">
     <div class="mb-2">
       <span class="text-2xl font-semibold">Ombordagi Mahsulotlar Ro'yxati</span>
     </div>

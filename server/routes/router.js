@@ -83,6 +83,11 @@ router.get("/productsYear/graph", UserMiddleware, userController.productsYearGet
 
 router.post("/hisobot", UserMiddleware, userController.hisobotGet);
 
+router.get('/businessdebt', UserMiddleware, userController.businessdebtGet);
+router.get('/businessdebt/total', UserMiddleware, userController.businessdebtTotalGet);
+router.get('/businessdebt/:id', UserMiddleware, userController.businessdebtByIdGet);
+router.post('/businessdebt/:id', UserMiddleware, userController.businessdebtByIdPost);
+
 router.get("/phone", UserMiddleware, userController.phoneGet);
 router.post("/phone", UserMiddleware, userController.phonePost);
 

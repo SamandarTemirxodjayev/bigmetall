@@ -81,6 +81,25 @@
             </div>
           </div>
         </div>
+        <div class="flex-1 my-4 p-2 shadow-xl border border-gray-300">
+          <div class="flex justify-between mx-3 items-center my-2">
+            <div class="font-semibold">Sana:</div>
+            <div>
+              <VueDatePicker
+                class="border border-gray-500 rounded-[5px] mx-auto max-w-[80%]"
+                v-model="date"
+                :enable-time-picker="false"
+                disabled
+              />
+            </div>
+          </div>
+          <div class="flex justify-between mx-3 mt-8 items-center text-center">
+            <div class="font-semibold">Qarzdorliklarimiz:</div>
+            <div class="text-[red] text-xl font-bold">
+              {{ numberFormat(companyDebt.toFixed()) }} so'm
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div>
@@ -464,6 +483,7 @@ let MahsulotName = ref([
   "Palasa",
   "Planka",
 ]);
+let companyDebt = ref(null);
 let items = ref([]);
 onMounted(async () => {
   try {
@@ -479,6 +499,8 @@ onMounted(async () => {
     debts.value = resDebts.data.result;
     const resFoyda = await $host.get("/productsYear");
     foyda.value = resFoyda.data.totalAmount;
+    const companyDebtRes = await $host.get("/businessdebt/total");
+    companyDebt.value = companyDebtRes.data.result;
     const resFoydaGraph = await $host.get("/productsYear/graph");
     data.value = {
       labels: resFoydaGraph.data.map(
@@ -569,7 +591,7 @@ const mahsulotTuriChange = () => {
   qalinligi.value = "";
   qalinligi_ortasi.value = "";
   holati.value = null;
-}
+};
 </script>
 <style scoped>
 .square {

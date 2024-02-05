@@ -18,6 +18,7 @@ const { formatTime } = require('../functions/formatTime');
 const Alerts = require('../models/Alerts');
 require('dotenv').config();
 const fs = require('fs');
+const CompanyDebt = require('../models/CompanyDebts');
 
 exports.index = async (req, res) => {
   res.json({ message: 'Welcome to the API!' });
@@ -905,6 +906,30 @@ exports.productsPut = async (req, res) => {
           isDebt: req.body.isDebt,
         });
         newProduct.save();
+        if(req.body.isDebt){
+          const debt = await CompanyDebt.findOne({
+            date: req.body.date,
+            seller: req.body.seller,
+            active: true,
+          });
+          if(debt){
+            debt.products.push(newProduct);
+            if (req.body.name === 'List') {
+              debt.allAmount += (req.body.uzunligi_x * req.body.uzunligi_y)/10000 * req.body.price;
+            } else {
+              debt.allAmount += req.body.price * req.body.uzunligi;
+            }
+            await debt.save();
+          }else{
+            let newDebt = new CompanyDebt({
+              date: req.body.date,
+              seller: req.body.seller,
+              products: [newProduct],
+              allAmount: newProduct.price * req.body.quantity,
+            });
+            await newDebt.save();
+          }
+        }
       } catch (error) {
         return res.status(500).json(error);
       }
@@ -2252,6 +2277,75 @@ const readJsonFile = () => {
     return {};
   }
 };
+exports.businessdebtGet = async (req, res) => {
+  try {
+    const result = await CompanyDebt.find({ active: true });
+    return res.json(result);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.businessdebtByIdGet = async (req, res) => {
+  try {
+    const result = await CompanyDebt.findById(req.params.id);
+    return res.json(result);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.businessdebtByIdPost = async (req, res) => {
+  try {
+    const debt = await CompanyDebt.findById(req.params.id);
+    if(!debt){
+      return res.status(404).json({ message: "Company debt not found" });
+    }
+    let date = new Date();
+    date = moment(date).format();
+    debt.historyAmount.push({
+      payedType: req.body.payedType,
+      amount: req.body.amount,
+      date,
+    });
+    debt.payedAmount += req.body.amount;
+    if (debt.payedAmount === debt.allAmount) {
+      debt.active = false;
+      await debt.save();
+    }
+    await debt.save();
+    return res.json(debt);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
+exports.businessdebtTotalGet = async (req, res) => {
+  try {
+    const result = await CompanyDebt.aggregate([
+      {
+        $match: {
+          active: true,
+        }
+      },
+      {
+        $project: {
+          totalDebt: { $subtract: ['$allAmount', '$payedAmount'] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$totalDebt' },
+        },
+      },
+    ]);
+
+    const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
+
+    return res.json({ result: totalAmount });
+
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
 exports.phoneGet = async (req, res) => {
   try {
     const data = readJsonFile();

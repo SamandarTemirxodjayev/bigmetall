@@ -24,14 +24,6 @@
             </select>
           </div>
         </div>
-        <div>
-          <button
-            @click="handleClickDownloadExcel"
-            class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
-          >
-            Excelda Yuklab Olish
-          </button>
-        </div>
       </div>
     </div>
     <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
