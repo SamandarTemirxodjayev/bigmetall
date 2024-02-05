@@ -593,6 +593,7 @@ exports.skladProductsPost = async (req, res) => {
       {
         $match: { 
           name: req.body.name,
+          olchamlari: req.body.olchamlari,
           category: req.body.category,
           qalinligi: req.body.qalinligi,
           qalinligi_ortasi: req.body.qalinligi_ortasi,
