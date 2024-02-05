@@ -5,7 +5,7 @@
         >Sotuvchi - {{ seller.name }} - Kirim Qilingan Mahsulotlar</span
       >
     </div>
-    <div class="shadow items-center bg-white shadow-xl rounded-md">
+    <div class="items-center bg-white shadow-xl rounded-md">
       <div class="flex w-[30%] p-4 justify-between">
         <VueDatePicker
           v-model="date"
@@ -81,89 +81,91 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text" @click="handleAboutClick(item)">
-                <button
-                  type="button"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                  Batafsil
-                </button>
+                <UButton size="lg"> Batafsil </UButton>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div
-      v-if="isPopupOpen"
-      class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-    >
-      <div
-        class="bg-white p-10 rounded-md shadow-lg w-[400px] overflow-y-auto max-h-[500px]"
+    <UModal v-model="isPopupOpen" prevent-close>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
       >
-        <button
-          @click="() => (isPopupOpen = false)"
-          class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
-        >
-          <Icon name="material-symbols:close" width="25" height="25" />
-        </button>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Batafsil
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isPopupOpen = false"
+            />
+          </div>
+        </template>
 
         <div>
-          <div class="mb-4">
-            <label
-              for="name"
-              class="block mb-2 text-sm font-medium text-gray-700"
-            >
-              Mahsulot Nomi</label
-            >
-            <input
-              disabled
-              :value="product.name"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-4">
-            <label
-              for="name"
-              class="block mb-2 text-sm font-medium text-gray-700"
-            >
-              O'lchamlari</label
-            >
-            <input
-              disabled
-              :value="product.olchamlari"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-4">
-            <label
-              for="name"
-              class="block mb-2 text-sm font-medium text-gray-700"
-            >
-              Kategoriyasi</label
-            >
-            <input
-              disabled
-              :value="product.category"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-4">
-            <label
-              for="name"
-              class="block mb-2 text-sm font-medium text-gray-700"
-            >
-              Qalinligi</label
-            >
-            <div
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <div v-if="product.qalinligi_ortasi">
-                O'rta: {{ product.qalinligi_ortasi }}mm<br />
-                Chet: {{ product.qalinligi }}mm
-              </div>
-              <div v-else>{{ product.qalinligi }}mm</div>
+          <div class="flex justify-between gap-[1%] mb-4">
+            <div>
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Mahsulot Nomi</label
+              >
+              <UInput disabled :value="product.name" size="xl" />
+            </div>
+            <div>
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-700"
+              >
+                O'lchamlari</label
+              >
+              <UInput disabled :value="product.olchamlari" size="xl" />
             </div>
           </div>
+          <div class="flex justify-between gap-[1%] mb-4">
+            <div>
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Kategoriyasi</label
+              >
+              <UInput disabled :value="product.category" size="xl" />
+            </div>
+            <div>
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Qalinligi</label
+              >
+              <UInput
+                disabled
+                size="xl"
+                v-if="product.qalinligi_ortasi"
+                :value="`Orta: ${product.qalinligi_ortasi}mm, Chet: ${product.qalinligi}mm`"
+              />
+
+              <UInput
+                size="xl"
+                disabled
+                v-else
+                :value="`${product.qalinligi}mm`"
+              />
+            </div>
+          </div>
+
           <div class="mb-4">
             <label
               for="name"
@@ -171,21 +173,25 @@
             >
               Holati</label
             >
-            <input
-              disabled
-              :value="product.holati"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
+            <UInput disabled :value="product.holati" size="xl" />
           </div>
           <div class="mb-4">
             <label
               for="name"
               class="block mb-2 text-sm font-medium text-gray-700"
             >
-              Uzunligi</label
+              Soni</label
             >
+            <UInput disabled :value="product.quantity" size="xl" />
+          </div>
+          <div class="mb-4">
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Uzunligi
+            </label>
             <div
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 cursor-not-allowed"
             >
               <template
                 v-if="
@@ -211,58 +217,47 @@
               </template>
             </div>
           </div>
-          <div class="mb-4">
-            <label
-              for="name"
-              class="block mb-2 text-sm font-medium text-gray-700"
-            >
-              Soni</label
-            >
-            <input
-              disabled
-              :value="product.quantity"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-4">
-            <label
-              for="name"
-              class="block mb-2 text-sm font-medium text-gray-700"
-            >
-              Kirim Narxi 1m uchun</label
-            >
-            <input
-              disabled
-              :value="
-                product.price
-                  .toFixed(2)
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-              "
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-4">
-            <label
-              for="name"
-              class="block mb-2 text-sm font-medium text-gray-700"
-            >
-              Sotuv Narxi 1m uchun</label
-            >
-            <input
-              disabled
-              :value="
-                product.saledPrice
-                  .toFixed(2)
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-              "
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
+          <div class="flex justify-between gap-[1%] mb-4">
+            <div>
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Kirim Narxi 1m uchun</label
+              >
+              <UInput
+                disabled
+                :value="
+                  product.price
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+                "
+                size="xl"
+              />
+            </div>
+            <div>
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Sotuv Narxi 1m uchun</label
+              >
+              <UInput
+                disabled
+                :value="
+                  product.saledPrice
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+                "
+                size="xl"
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </UCard>
+    </UModal>
   </div>
   <div v-else>
     <Loader />
@@ -351,5 +346,14 @@ watchEffect(async () => {
     return console.log(error);
   }
   loading.value = false;
+});
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isPopupOpen],
+    handler: () => {
+      isPopupOpen.value = false;
+    },
+  },
 });
 </script>

@@ -85,6 +85,7 @@ router.post("/hisobot", UserMiddleware, userController.hisobotGet);
 
 router.get('/businessdebt', UserMiddleware, userController.businessdebtGet);
 router.get('/businessdebt/total', UserMiddleware, userController.businessdebtTotalGet);
+router.get('/businessdebt/payed', UserMiddleware, userController.businessdebtPayedGet);
 router.get('/businessdebt/:id', UserMiddleware, userController.businessdebtByIdGet);
 router.post('/businessdebt/:id', UserMiddleware, userController.businessdebtByIdPost);
 

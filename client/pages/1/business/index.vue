@@ -87,7 +87,99 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 <NuxtLink :to="`/1/business/${item._id}`">
-                  <UButton size="xl">Batafsil</UButton>
+                  <UButton size="lg">Batafsil</UButton>
+                </NuxtLink>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
+      <table class="w-full text-[14px]">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qarz Oluvchi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qarz Beruvchi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Soni
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Summasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              To'langan Summasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qolgan Summasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qabul Qilingan Sanasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              To'lov Turi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Ma'lumotlar
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in productsPayed" :key="item._id">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td class="px-5 py-3 border-b border-gray-300">BIG METALL</td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              {{ item.seller }}
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.products.length }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.allAmount
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}
+                so'm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.payedAmount
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}
+                so'm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  (item.allAmount - item.payedAmount)
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}
+                so'm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">{{ item.date }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">Qarz(To'langan)</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                <NuxtLink :to="`/1/business/${item._id}`">
+                  <UButton size="lg">Batafsil</UButton>
                 </NuxtLink>
               </div>
             </td>
@@ -104,6 +196,7 @@
 <script setup>
 let loading = ref(true);
 let products = ref([]);
+let productsPayed = ref([]);
 onMounted(async () => {
   try {
     const res = await $host.get("/user");
@@ -112,6 +205,8 @@ onMounted(async () => {
     }
     const productsRes = await $host.get("/businessdebt");
     products.value = productsRes.data;
+    const productsPayedRes = await $host.get("/businessdebt/payed");
+    productsPayed.value = productsPayedRes.data;
   } catch (error) {
     console.log(error);
   }

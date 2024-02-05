@@ -8,7 +8,7 @@
         <div class="flex items-center gap-x-[2%]">
           <div class="items-center w-full">
             <VueDatePicker
-              class="border border-gray-500 rounded-[5px] min-w-[350px] -z-0"
+              class="border border-gray-500 rounded-[5px] min-w-[350px] z-1"
               v-model="date"
               range
               :max-date="new Date()"

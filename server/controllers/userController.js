@@ -1062,6 +1062,17 @@ exports.getProductsWithDebts = async (req, res) => {
         $unwind: '$clientId',
       },
       {
+        $lookup: {
+          from: 'sellers',
+          localField: 'sellerId',
+          foreignField: '_id',
+          as: 'sellerId',
+        },
+      },
+      {
+        $unwind: '$sellerId',
+      },
+      {
         $sort: {
           'date.year': -1,
           'date.month': -1,
@@ -2343,6 +2354,14 @@ exports.businessdebtTotalGet = async (req, res) => {
 
     return res.json({ result: totalAmount });
 
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.businessdebtPayedGet = async (req, res) => {
+  try {
+    const result = await CompanyDebt.find({ active: false });
+    return res.json(result);
   } catch (error) {
     return res.status(500).json(error);
   }

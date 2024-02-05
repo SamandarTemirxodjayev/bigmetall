@@ -200,7 +200,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -291,7 +291,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -381,7 +381,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -465,7 +465,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{ item.totalUzunligi.toFixed(2).toFixed(2) }}
+                {{ item.totalUzunligi.toFixed(2) }}
                 m<sup>2</sup>
               </div>
             </td>
@@ -557,7 +557,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -647,7 +647,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -736,7 +736,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -824,7 +824,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -915,7 +915,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -1006,7 +1006,7 @@
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.totalUzunligi.toFixed(2).toFixed(2) }}m</div>
+              <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">

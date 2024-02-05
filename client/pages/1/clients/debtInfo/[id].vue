@@ -153,10 +153,8 @@
     </div>
     <div class="mt-8 bg-white border border-gray-50 px-4 pb-4 shadow-2xl">
       <div class="my-4 flex justify-between">
-        <div class="flex">
-          <button
-            class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
-          >
+        <div class="flex gap-[1%]">
+          <UButton size="xl">
             To'langan:
             {{
               pro.payedAmount
@@ -165,10 +163,8 @@
                 .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
             }}
             so'm
-          </button>
-          <button
-            class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
-          >
+          </UButton>
+          <UButton size="xl">
             Qoldiq:
             {{
               (pro.allAmount - pro.payedAmount)
@@ -177,14 +173,15 @@
                 .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
             }}
             so'm
-          </button>
+          </UButton>
         </div>
-        <button
+        <UButton
+          :disabled="pro.allAmount - pro.payedAmount == 0 ? true : false"
           @click="() => (isPopupOpen = true)"
-          class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
+          size="xl"
         >
           To'lov Qo'shish
-        </button>
+        </UButton>
       </div>
       <table class="w-full text-[14px]">
         <thead>
@@ -243,93 +240,89 @@
         </tbody>
       </table>
     </div>
-    <div
-      v-if="isPopupOpen"
-      class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-    >
-      <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
-        <button
-          @click="() => (isPopupOpen = false)"
-          class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
-        >
-          <Icon name="material-symbols:close" width="25" height="25" />
-        </button>
+    <UModal v-model="isPopupOpen" prevent-close>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Sotuvchi Qo'shish
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isPopupOpen = false"
+            />
+          </div>
+        </template>
 
-        <div>
-          <form @submit="handleSubmit">
-            <div class="mb-4">
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Mijoz Ismi</label
-              >
-              <input
-                v-model="pro.clientId.name"
-                type="text"
-                disabled
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="quantity"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Qabul Qiluvchi</label
-              >
-              <input
-                v-model="clientSaved"
-                required
-                type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="quantity"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                To'lov Summasi</label
-              >
-              <input
-                v-model="amount"
-                required
-                type="number"
-                :max="pro.allAmount - pro.payedAmount"
-                min="0"
-                step="0.01"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="quantity"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                To'lov Turi</label
-              >
-              <select
-                v-model="payedType"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              >
-                <option>Naxt</option>
-                <option>Perechesleniya</option>
-                <option>Kartaga( terminal)</option>
-              </select>
-            </div>
-            <div>
-              <button
-                type="submit"
-                class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-              >
-                Tasdiqlash
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <form @submit="handleSubmit">
+          <div class="mb-4">
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Mijoz Ismi</label
+            >
+            <UInput size="xl" v-model="pro.clientId.name" disabled />
+          </div>
+          <div class="mb-4">
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Qabul Qiluvchi</label
+            >
+            <UInput v-model="clientSaved" required size="xl" />
+          </div>
+          <div class="mb-4">
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              To'lov Summasi</label
+            >
+            <VueNumber
+              v-bind="number"
+              v-model="amount"
+              required
+              :max="pro.allAmount - pro.payedAmount"
+              min="1"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              To'lov Turi</label
+            >
+            <USelect
+              v-model="payedType"
+              :options="['Naxt', 'Perechesleniya', 'Kartaga( terminal)']"
+              size="xl"
+            />
+          </div>
+          <div>
+            <button
+              type="submit"
+              class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+            >
+              Tasdiqlash
+            </button>
+          </div>
+        </form>
+      </UCard>
+    </UModal>
   </div>
   <div v-else>
     <Loader />
@@ -337,6 +330,16 @@
 </template>
 
 <script setup>
+import { component as VueNumber } from "@coders-tm/vue-number-format";
+
+let number = ref({
+  decimal: ".",
+  separator: " ",
+  suffix: " so'm",
+  precision: 2,
+  masked: false,
+  min: 0,
+});
 const route = useRoute();
 
 let isPopupOpen = ref(false);
@@ -347,7 +350,7 @@ let product = ref({});
 let pro = ref({});
 let paymentHistory = ref([]);
 let clientSaved = ref("");
-let amount = ref("");
+let amount = ref(null);
 let payedType = ref("");
 
 onMounted(async () => {
@@ -365,63 +368,13 @@ onMounted(async () => {
   }
   loading.value = false;
 });
-const handleClickDownloadExcel = async () => {
-  loading.value = true;
-  try {
-    const res = await $host.get(`/sklad/${route.params.id}/excel`, {
-      responseType: "blob",
-    });
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `sklad-${datetime}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
-  } catch (error) {
-    console.log(error);
-  }
-  loading.value = false;
-};
-const handleChangeSearch = async () => {
-  loading.value = true;
-  try {
-    if (search.value == "Hammasi") {
-      const res = await $host.post("/products/" + route.params.id);
-      products.value = res.data.products;
-    } else {
-      const d = search.value.split("-");
-      const res = await $host.post("/products/client/" + route.params.id, {
-        date: {
-          day: parseInt(d[0]),
-          month: parseInt(d[1]),
-          year: parseInt(d[2]),
-        },
-      });
-      products.value = res.data;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  loading.value = false;
-};
-const handleAboutClick = async (item) => {
-  product.value = item;
-  isPopupOpen.value = true;
-};
-const summaryQuantity = (items) => {
-  let total = 0;
-  for (const item of items) {
-    total += item.quantity;
-  }
-  return total;
-};
 const handleSubmit = async (e) => {
   e.preventDefault();
   loading.value = true;
   try {
     await $host.put(`/products/debt/${route.params.id}`, {
       clientSaved: clientSaved.value,
-      amount: amount.value,
+      amount: parseFloat(amount.value),
       payedType: payedType.value,
     });
     isPopupOpen.value = false;
@@ -431,6 +384,15 @@ const handleSubmit = async (e) => {
     loading.value = false;
   }
 };
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isPopupOpen],
+    handler: () => {
+      isPopupOpen.value = false;
+    },
+  },
+});
 </script>
 <style scoped>
 @media print {

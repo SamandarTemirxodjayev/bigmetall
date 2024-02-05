@@ -3,11 +3,11 @@
     <div class="mb-2">
       <span class="text-2xl font-semibold">Mijoz - {{ client.name }}</span>
     </div>
-    <div class="shadow items-center bg-white shadow-xl rounded-md">
+    <div class="items-center bg-white shadow-xl rounded-md">
       <div class="flex p-4 justify-between">
         <div class="flex">
           <div
-            class="px-5 flex items-center border border-gray-500 rounded-lg px-2 mr-3"
+            class="flex items-center border border-gray-500 rounded-lg px-2 mr-3"
           >
             <select
               class="text-gray-900 text-sm block w-full p-2.5 outline-none"
@@ -82,12 +82,7 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 <NuxtLink :to="`/1/clients/info/${item._id}`">
-                  <button
-                    type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                  >
-                    Batafsil
-                  </button>
+                  <UButton type="button" size="xl"> Batafsil </UButton>
                 </NuxtLink>
               </div>
             </td>
@@ -148,10 +143,6 @@ const handleChangeSearch = async () => {
     console.log(error);
   }
   loading.value = false;
-};
-const handleAboutClick = async (item) => {
-  product.value = item;
-  isPopupOpen.value = true;
 };
 const summaryQuantity = (items) => {
   let total = 0;

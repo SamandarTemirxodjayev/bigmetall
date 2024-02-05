@@ -5,29 +5,17 @@
     </div>
     <div class="shadow-2xl border border-gray-300 items-center">
       <div class="flex p-4 justify-between">
-        <div
-          class="flex items-center border border-gray-500 rounded-lg px-2 bg-white"
-        >
-          <input
-            type="text"
-            v-model="search"
-            id="first_name"
-            class="text-gray-900 text-sm block w-full p-2.5 outline-none"
-            placeholder="Qidiruv"
-          />
-          <div class="text-gray-500">
-            <Icon name="iconamoon:search-thin" size="1.5rem" />
-          </div>
-        </div>
+        <UInput
+          v-model="search"
+          icon="i-heroicons-magnifying-glass-20-solid"
+          size="xl"
+          :trailing="false"
+          placeholder="Qidiruv"
+        />
         <div>
-          <div>
-            <button
-              @click="() => (isPopupOpen = true)"
-              class="mx-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded-xl font-semibold"
-            >
-              Mijoz Qo'shish
-            </button>
-          </div>
+          <UButton @click="() => (isPopupOpen = true)" size="xl">
+            Mijoz Qo'shish
+          </UButton>
         </div>
       </div>
     </div>
@@ -73,28 +61,12 @@
               </NuxtLink>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text flex">
+              <div class="print-text flex gap-[1%]">
                 <NuxtLink :to="`/1/clients/${item._id}`">
-                  <button
-                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300"
-                  >
-                    <span
-                      class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0"
-                    >
-                      Sotilgan Mahsulotlar
-                    </span>
-                  </button>
+                  <UButton size="xl"> Sotilgan Mahsulotlar </UButton>
                 </NuxtLink>
                 <NuxtLink :to="`/1/clients/debt/${item._id}`">
-                  <button
-                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300"
-                  >
-                    <span
-                      class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0"
-                    >
-                      Qarz
-                    </span>
-                  </button>
+                  <UButton size="xl"> Qarz </UButton>
                 </NuxtLink>
               </div>
             </td>
@@ -127,114 +99,104 @@
         </tbody>
       </table>
     </div>
-    <div
-      v-if="isPopupOpen"
-      class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-    >
-      <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
-        <button
-          @click="() => (isPopupOpen = false)"
-          class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
-        >
-          <Icon name="material-symbols:close" width="25" height="25" />
-        </button>
+    <UModal v-model="isPopupOpen" prevent-close>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Mijoz Qo'shish
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isPopupOpen = false"
+            />
+          </div>
+        </template>
 
-        <div>
-          <form @submit="handleSubmit">
-            <div class="mb-4">
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Mijoz Ismi</label
-              >
-              <input
-                v-model="name"
-                type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="quantity"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Mijoz Telefon Raqami</label
-              >
-              <input
-                v-model="phone"
-                required
-                type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <button
-                type="submit"
-                class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-              >
-                Tasdiqlash
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div
-      v-if="isPopupEditOpen"
-      class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-    >
-      <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
-        <button
-          @click="() => (isPopupEditOpen = false)"
-          class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
-        >
-          <Icon name="material-symbols:close" width="25" height="25" />
-        </button>
+        <form @submit="handleSubmit">
+          <div class="mb-4">
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Mijoz Ismi</label
+            >
+            <UInput v-model="name" required size="xl" />
+          </div>
+          <div class="mb-4">
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Mijoz Telefon Raqami</label
+            >
+            <UInput v-model="phone" required size="xl" />
+          </div>
+          <div>
+            <UButton size="xl" block type="submit"> Tasdiqlash </UButton>
+          </div>
+        </form>
+      </UCard>
+    </UModal>
+    <UModal v-model="isPopupEditOpen" prevent-close>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Mijoz Qo'shish
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isPopupEditOpen = false"
+            />
+          </div>
+        </template>
 
-        <div>
-          <form @submit="handleSubmitEdit">
-            <div class="mb-4">
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Mijoz Ismi</label
-              >
-              <input
-                v-model="editName"
-                type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="quantity"
-                class="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Mijoz Telefon Raqami</label
-              >
-              <input
-                v-model="editPhone"
-                required
-                type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <button
-                type="submit"
-                class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-              >
-                Tasdiqlash
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <form @submit="handleSubmitEdit">
+          <div class="mb-4">
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Mijoz Ismi</label
+            >
+            <UInput v-model="editName" required size="xl" />
+          </div>
+          <div class="mb-4">
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Mijoz Telefon Raqami</label
+            >
+            <UInput v-model="editPhone" required size="xl" />
+          </div>
+          <div>
+            <UButton size="xl" type="submit" block> Tasdiqlash </UButton>
+          </div>
+        </form>
+      </UCard>
+    </UModal>
   </div>
   <div v-else>
     <Loader />
@@ -326,5 +288,23 @@ let filteredClients = computed(() => {
   return clients.value.filter((client) =>
     client.name.toLowerCase().includes(search.value.toLowerCase())
   );
+});
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isPopupOpen],
+    handler: () => {
+      isPopupOpen.value = false;
+    },
+  },
+});
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isPopupEditOpen],
+    handler: () => {
+      isPopupEditOpen.value = false;
+    },
+  },
 });
 </script>
