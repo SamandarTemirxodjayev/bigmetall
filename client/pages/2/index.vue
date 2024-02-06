@@ -1,7 +1,167 @@
 <template>
   <div v-if="!loading" class="body dark:bg-gray-800 bg-gray-50">
     <NewHeaderAdmin2 />
-    <div class="pt-[5%] sm:pt-0" />
+    <div class="pt-[5%] sm:pt-[5%]" />
+    <div>
+      <span class="text-2xl font-semibold mx-[4%]">Qidiruv</span>
+    </div>
+    <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl mx-[4%]">
+      <div class="flex sm:flex-row flex-col sm:justify-around gap-[1%]">
+        <USelect
+          v-model="mahsulotTuri"
+          @change="mahsulotTuriChange"
+          class="w-full my-1 sm:my-0"
+          size="xl"
+          :options="
+            MahsulotName.map((item) => ({
+              name: item,
+            }))
+          "
+          value-attribute="name"
+          :disabled="loadingSearch"
+          placeholder="Mahsulot Turi"
+        />
+        <UInput
+          v-model="olchamlari"
+          class="w-full my-1 sm:my-0"
+          size="xl"
+          placeholder="O'lchamlari"
+          :disabled="loadingSearch"
+        />
+        <UInput
+          v-model="category"
+          class="w-full my-1 sm:my-0"
+          size="xl"
+          placeholder="Kategoriyasi"
+          :disabled="loadingSearch"
+        />
+        <UInput
+          v-model="qalinligi"
+          class="w-full my-1 sm:my-0"
+          size="xl"
+          placeholder="Qalinligi"
+          :disabled="loadingSearch"
+        />
+        <div v-if="mahsulotTuri == 'Dvuxtavr'" class="w-full my-1 sm:my-0">
+          <UInput
+            v-model="qalinligi_ortasi"
+            class="w-full my-1 sm:my-0"
+            size="xl"
+            placeholder="Qalinligi O'rtasi"
+            :disabled="loadingSearch"
+          />
+        </div>
+        <USelect
+          v-model="holati"
+          size="xl"
+          class="w-full my-1 sm:my-0"
+          :options="['Yangi', 'Eski', 'B/U']"
+          placeholder="Holati"
+          :disabled="loadingSearch"
+        />
+        <UButton size="xl" :loading="loadingSearch" @click="handleSearchItems"
+          >Tasdiqlash</UButton
+        >
+      </div>
+      <div class="overflow-x-auto hide-scrollbar">
+        <table class="w-full text-[13px] mt-[2%]">
+          <thead>
+            <tr>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Mahsulot Nomi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                O'lchamlari
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Kategoriyasi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Qalinligi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Holati
+              </th>
+              <th
+                v-if="mahsulotTuri != 'List'"
+                class="px-5 py-3 text-left border-y border-gray-300"
+              >
+                Uzunligi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Umumiy Uzunligi
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300">
+                Ombor
+              </th>
+              <th class="px-5 py-3 text-left border-y border-gray-300"></th>
+            </tr>
+          </thead>
+          <tbody v-for="item in items" :key="item._id">
+            <tr class="hover:bg-gray-200 cursor-pointer w-full">
+              <td class="px-5 py-3 border-b border-gray-300 min-w-[150px]">
+                <template v-if="item.cut">
+                  {{ item.name }} (kesilgan)
+                </template>
+                <template v-else>
+                  {{ item.name }}
+                </template>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>{{ item.olchamlari }}</div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>
+                  {{ item.category }}
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>
+                  <div v-if="item.qalinligi_ortasi">
+                    O'rta: {{ item.qalinligi_ortasi }}mm<br />
+                    Chet: {{ item.qalinligi }}mm
+                  </div>
+                  <div v-else>{{ item.qalinligi }}mm</div>
+                </div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>
+                  {{ item.holati }}
+                </div>
+              </td>
+              <td
+                v-if="mahsulotTuri != 'List'"
+                class="px-5 py-3 border-b border-gray-300"
+              >
+                {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
+              </td>
+
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div>{{ item.quantity }}ta</div>
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300 min-w-[154px]">
+                {{ item.totalUzunligi.toFixed(2) }}
+                {{ item.name == "List" ? "m²" : "m" }}
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300 min-w-[100px]">
+                {{ item.sklad.name }}
+              </td>
+              <td class="px-5 py-3 border-b border-gray-300">
+                <div class="flex">
+                  <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
+                    Batafsil
+                  </UButton>
+                  <UButton @click="downloadExcel(item)" class="px-3 py-2 mx-2">
+                    Excel
+                  </UButton>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <div
       class="justify-between grid sm:grid-cols-3 grid-cols-1 gap-4 sm:mx-[10%] mx-[4%] mt-[15%] sm:mt-[5%]"
     >
@@ -64,6 +224,159 @@
         </NuxtLink>
       </div>
     </div>
+    <UModal v-model="isOpenModal" fullscreen>
+      <UCard
+        :ui="{
+          base: 'h-full flex flex-col',
+          rounded: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+          body: {
+            base: 'grow overflow-auto',
+          },
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              <div class="text-2xl font-bold">Batafsil</div>
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isOpenModal = false"
+            />
+          </div>
+        </template>
+
+        <div class="border border-gray-50">
+          <table class="w-full text-[13px]">
+            <thead>
+              <tr>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Mahsulot Nomi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  O'lchamlari
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Kategoriyasi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Qalinligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Holati
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Uzunligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Soni
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  Umumiy Uzunligi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  1 m Uchun Sotuv Narxi
+                </th>
+              </tr>
+            </thead>
+            <tbody v-for="item in fetchedProducts" :key="item._id">
+              <tr class="hover:bg-gray-200 cursor-pointer w-full">
+                <td class="px-5 py-3 border-b border-gray-300 min-w-[150px]">
+                  <template v-if="item.cut">
+                    {{ item.name }} (kesilgan)
+                  </template>
+                  <template v-else>
+                    {{ item.name }}
+                  </template>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>{{ item.olchamlari }}</div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{ item.category }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    <div v-if="item.qalinligi_ortasi">
+                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
+                      Chet: {{ item.qalinligi }}mm
+                    </div>
+                    <div v-else>{{ item.qalinligi }}mm</div>
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{ item.holati }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <template
+                    v-if="
+                      item.name == 'Palasa' ||
+                      item.name == 'Kvadrat prut' ||
+                      item.name == 'Kvadrad profil'
+                    "
+                  >
+                    <div>
+                      Uzunligi: {{ item.uzunligi }}m <br />
+                      Bo'yi: {{ item.uzunligi_x }}sm <br />
+                      Eni: {{ item.uzunligi_y }}sm
+                    </div>
+                  </template>
+                  <template v-else-if="item.uzunligi">
+                    <div>{{ item.uzunligi }}m</div>
+                  </template>
+                  <template v-else>
+                    <div>
+                      Bo'yi: {{ item.uzunligi_x }}sm <br />
+                      Eni: {{ item.uzunligi_y }}sm
+                    </div>
+                  </template>
+                </td>
+
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>{{ item.quantity }}ta</div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300 min-w-[155px]">
+                  <template v-if="item.uzunligi">
+                    <div>{{ (item.uzunligi * item.quantity).toFixed(2) }}m</div>
+                  </template>
+                  <template v-else>
+                    <div>
+                      {{
+                        (item.uzunligi_y * item.uzunligi_x * item.quantity) /
+                        10000
+                      }}
+                      m<sup>2</sup>
+                    </div>
+                  </template>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300 min-w-[200px]">
+                  <div>
+                    {{
+                      item.saledPrice == null
+                        ? "Narx belgilanmagan"
+                        : `${item.saledPrice
+                            .toFixed(2)
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                    }}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </UCard>
+    </UModal>
   </div>
   <div v-else>
     <Loader />
@@ -73,6 +386,30 @@
 <script setup>
 let loading = ref(true);
 let sklads = ref([]);
+let MahsulotName = ref([
+  "Dvuxtavr",
+  "Shvellir",
+  "Ugalok",
+  "Truba",
+  "List",
+  "Armatura",
+  "Kvadrad profil",
+  "Kvadrat prut",
+  "Prut",
+  "Palasa",
+  "Planka",
+]);
+let mahsulotTuri = ref(null);
+let category = ref("");
+let olchamlari = ref("");
+let qalinligi = ref("");
+let qalinligi_ortasi = ref("");
+let loadingSearch = ref(false);
+let isOpenModal = ref(false);
+let fetchedProducts = ref([]);
+let items = ref([]);
+let holati = ref(null);
+
 onMounted(async () => {
   try {
     const res = await $host.get("/user");
@@ -89,6 +426,81 @@ onMounted(async () => {
 definePageMeta({
   layout: false,
 });
+const mahsulotTuriChange = () => {
+  category.value = "";
+  olchamlari.value = "";
+  qalinligi.value = "";
+  qalinligi_ortasi.value = "";
+  holati.value = null;
+};
+const handleSearchItems = async () => {
+  loadingSearch.value = true;
+  if (mahsulotTuri.value == null) {
+    return (loadingSearch.value = false);
+  }
+  try {
+    const res = await $host2.post("/products/find", {
+      name: mahsulotTuri.value,
+      category: category.value,
+      olchamlari: olchamlari.value,
+      qalinligi: qalinligi.value,
+      holati: holati.value,
+      qalinligi_ortasi: qalinligi_ortasi.value,
+    });
+    items.value = res.data;
+  } catch (error) {
+    console.log(error);
+  }
+  loadingSearch.value = false;
+};
+const openModal = async (item) => {
+  loading.value = true;
+  try {
+    const res = await $host2.post("/sklad/products", {
+      name: item.name,
+      olchamlari: item.olchamlari,
+      category: item.category,
+      qalinligi: item.qalinligi,
+      qalinligi_ortasi: item.qalinligi_ortasi,
+      holati: item.holati,
+      sklad: item.sklad._id,
+    });
+    fetchedProducts.value = res.data;
+  } catch (error) {
+    console.log(error);
+  }
+  loading.value = false;
+  isOpenModal.value = true;
+};
+const downloadExcel = async (item) => {
+  loading.value = true;
+  try {
+    const res = await $host2.post(
+      `/products/excel`,
+      {
+        name: item.name,
+        olchamlari: item.olchamlari,
+        category: item.category,
+        qalinligi: item.qalinligi,
+        qalinligi_ortasi: item.qalinligi_ortasi,
+        holati: item.holati,
+        sklad: item.sklad._id,
+      },
+      {
+        responseType: "blob",
+      }
+    );
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `mahsulotlar-${Date.now()}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    console.log(error);
+  }
+  loading.value = false;
+};
 </script>
 <style scoped>
 .body {
@@ -98,5 +510,13 @@ definePageMeta({
 .body {
   overflow: hidden;
   height: 100%;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
 }
 </style>
