@@ -248,12 +248,11 @@
                 {{ item.sklad.name }}
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
+                </UButton>
+                <UButton @click="downloadExcel(item)" class="px-3 py-2 mx-2">
+                  Excel
                 </UButton>
               </td>
             </tr>
@@ -591,6 +590,35 @@ const mahsulotTuriChange = () => {
   qalinligi.value = "";
   qalinligi_ortasi.value = "";
   holati.value = null;
+};
+const downloadExcel = async (item) => {
+  loading.value = true;
+  try {
+    const res = await $host.post(
+      `/products/excel`,
+      {
+        name: item.name,
+        olchamlari: item.olchamlari,
+        category: item.category,
+        qalinligi: item.qalinligi,
+        qalinligi_ortasi: item.qalinligi_ortasi,
+        holati: item.holati,
+        sklad: item.sklad._id,
+      },
+      {
+        responseType: "blob",
+      }
+    );
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `mahsulotlar-${Date.now()}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    console.log(error);
+  }
+  loading.value = false;
 };
 </script>
 <style scoped>

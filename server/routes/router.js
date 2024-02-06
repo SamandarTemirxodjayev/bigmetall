@@ -38,6 +38,7 @@ router.get('/sklad/:id/excel', UserMiddleware, userController.skladExcelGet);
 router.get('/sklad/price', UserMiddleware, userController.skladPriceGet);
 
 router.get('/products/:id', UserMiddleware, userController.productsGet);
+router.post('/products/excel', UserMiddleware, userController.productsExcelPost);
 router.patch('/products/:id', UserMiddleware, userController.productsPatch);
 router.get('/products', UserMiddleware, userController.productsGetAll);
 router.put('/products', UserMiddleware, userController.productsPut);

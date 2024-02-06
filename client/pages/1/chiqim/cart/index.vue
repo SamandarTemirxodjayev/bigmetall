@@ -494,7 +494,7 @@
           </div>
           <div class="print-text text-[13px]">
             <div class="flex justify-between print-text whitespace-nowrap">
-              <div class="print-text">Hammasi:</div>
+              <div class="print-text">Jami:</div>
               <div class="print-text">
                 {{ formatNumberWithSpaces(total) }} so'm
               </div>

@@ -814,6 +814,148 @@ exports.productsGet = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.productsExcelPost = async (req, res) => {
+  try {
+    const cellStyle = {
+      font: { bold: true },
+      alignment: { horizontal: 'center', vertical: 'middle' },
+      border: {
+        top: { style: 'thin' },
+        right: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+      },
+    };
+    const products = await Products.aggregate([
+      {
+        $match: { 
+          name: req.body.name,
+          olchamlari: req.body.olchamlari,
+          category: req.body.category,
+          qalinligi: req.body.qalinligi,
+          qalinligi_ortasi: req.body.qalinligi_ortasi,
+          holati: req.body.holati,
+          sklad: new mongoose.Types.ObjectId(req.body.sklad),
+          saled: false,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            name: '$name',
+            qalinligi: '$qalinligi',
+            qalinligi_ortasi: '$qalinligi_ortasi',
+            category: '$category',
+            holati: '$holati',
+            olchamlari: '$olchamlari',
+            sklad: '$sklad',
+            uzunligi: '$uzunligi',
+            uzunligi_x: '$uzunligi_x',
+            uzunligi_y: '$uzunligi_y',
+            price: '$price',
+            saledPrice: '$saledPrice',
+            cut: '$cut',
+          },
+          totalQuantity: { $sum: '$quantity' },
+          totalUzunligi: { 
+            $sum: {
+              $cond: {
+                if: { $eq: ['$name', 'List'] },
+                then: {
+                  $multiply: [ 1,
+                    {
+                      $divide: [
+                        { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                        10000,
+                      ],
+                    },
+                  ],
+                },
+                else: { 
+                  $multiply: [ 1, '$uzunligi', ]},
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id.name',
+          qalinligi: '$_id.qalinligi',
+          qalinligi_ortasi: '$_id.qalinligi_ortasi',
+          category: '$_id.category',
+          holati: '$_id.holati',
+          uzunligi: '$_id.uzunligi',
+          uzunligi_x: '$_id.uzunligi_x',
+          uzunligi_y: '$_id.uzunligi_y',
+          sklad: '$_id.sklad',
+          price: '$_id.price',
+          olchamlari: '$_id.olchamlari',
+          saledPrice: '$_id.saledPrice',
+          quantity: '$totalQuantity',
+          totalUzunligi: '$totalUzunligi',
+          cut: '$_id.cut',
+        },
+      },
+      {
+        $sort: {
+          category: 1,
+          olchamlari: 1,
+          qalinligi: 1,
+          qalinligi_ortasi: 1,
+          uzunligi: 1,
+          uzunligi_x: 1,
+          uzunligi_y: 1,
+          quantity: 1,
+        }
+      }
+    ]);
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('MAHSULOTLAR');
+    worksheet.getCell(1, 1).value = 'Mahsulot Nomi';
+    worksheet.getCell(1, 2).value = 'O\'lchamlari';
+    worksheet.getCell(1, 3).value = 'Kategoriyasi';
+    worksheet.getCell(1, 4).value = 'Holati';
+    worksheet.getCell(1, 5).value = 'Qalinligi';
+    worksheet.getCell(1, 6).value = 'O\'lchamlari';
+    worksheet.getCell(1, 7).value = 'Uzunligi';
+    worksheet.getCell(1, 8).value = 'Soni';
+    worksheet.getCell(1, 9).value = 'Umumiy Uzunligi';
+    worksheet.getCell(1, 10).value = '1 m Uchun Narx';
+    products.forEach((item, index) => {
+      worksheet.getCell(index + 2, 1).value = item.name;
+      worksheet.getCell(index + 2, 2).value = item.olchamlari || '';
+      worksheet.getCell(index + 2, 3).value = item.category;
+      worksheet.getCell(index + 2, 4).value = item.holati;
+      worksheet.getCell(index + 2, 5).value = item.qalinligi_ortasi ? `O'rtasi: ${item.qalinligi_ortasi}mm Chet:${item.qalinligi}mm` : `${item.qalinligi}mm`;
+      worksheet.getCell(index + 2, 6).value = item.uzunligi_y || item.uzunligi_x ? `${item.uzunligi_y}mm ${item.uzunligi_x}mm` : '';
+      worksheet.getCell(index + 2, 7).value = `${item.uzunligi ? item.uzunligi : 0}m`;
+      worksheet.getCell(index + 2, 8).value = `${item.quantity ? item.quantity : 0}ta`;
+      worksheet.getCell(index + 2, 9).value = `${item.quantity * item.uzunligi}m`;
+      worksheet.getCell(index + 2, 10).value = item.saledPrice ? `${item.saledPrice}so'm` : 'Narx Belgilanmagan';
+    });
+    worksheet.columns.forEach((column) => {
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength) {
+          maxLength = columnLength + 3;
+        }
+      });
+      column.width = maxLength < 10 ? 10 : maxLength;
+    });
+    worksheet.eachRow((row) => {
+      row.eachCell((cell) => {
+        cell.style = cellStyle;
+      });
+    });
+    await workbook.xlsx.writeFile('./docs/MAHSULOTLAR.xlsx');
+    return res.download('./docs/MAHSULOTLAR.xlsx');
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
 exports.productsPatch = async (req, res) => {
   try {
     const product = await Products.findById(req.params.id).populate('saledClient');
