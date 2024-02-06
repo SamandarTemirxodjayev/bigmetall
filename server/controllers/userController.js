@@ -664,9 +664,13 @@ exports.skladProductsPost = async (req, res) => {
       {
         $sort: {
           category: 1,
+          olchamlari: 1,
           qalinligi: 1,
           qalinligi_ortasi: 1,
-          uzunligi: -1,
+          uzunligi: 1,
+          uzunligi_x: 1,
+          uzunligi_y: 1,
+          quantity: 1,
         }
       }
     ]);
