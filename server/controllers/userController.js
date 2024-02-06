@@ -2506,7 +2506,18 @@ exports.businessdebtTotalGet = async (req, res) => {
 };
 exports.businessdebtPayedGet = async (req, res) => {
   try {
-    const result = await CompanyDebt.find({ active: false });
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDay() - 7);
+    const startDate = req.body.startDate || threeDaysAgo;
+    const endDate = req.body.endDate || new Date();
+
+    const result = await CompanyDebt.find({ 
+      active: false,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      }
+    });
     return res.json(result);
   } catch (error) {
     return res.status(500).json(error);

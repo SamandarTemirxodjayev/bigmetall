@@ -3,6 +3,21 @@
     <div class="mb-2">
       <span class="text-2xl font-semibold">Kompaniya Qarzdorliklari</span>
     </div>
+    <div class="shadow-2xl border border-gray-300 items-center">
+      <div class="flex p-4 justify-between">
+        <div class="flex items-center gap-x-[2%]">
+          <div class="items-center w-full">
+            <VueDatePicker
+              class="border border-gray-500 rounded-[5px] min-w-[350px] z-1"
+              v-model="date"
+              range
+              :max-date="new Date()"
+              time-picker-inline
+            />
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
       <table class="w-full text-[14px]">
         <thead>
@@ -197,6 +212,9 @@
 let loading = ref(true);
 let products = ref([]);
 let productsPayed = ref([]);
+let date = ref([]);
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 onMounted(async () => {
   try {
     const res = await $host.get("/user");
@@ -205,10 +223,29 @@ onMounted(async () => {
     }
     const productsRes = await $host.get("/businessdebt");
     products.value = productsRes.data;
-    const productsPayedRes = await $host.get("/businessdebt/payed");
+    const endDate = new Date();
+    const startDate = new Date(new Date().setDate(endDate.getDate() - 7));
+    date.value = [startDate, endDate];
+    const productsPayedRes = await $host.post("/businessdebt/payed", {
+      startDate,
+      endDate,
+    });
     productsPayed.value = productsPayedRes.data;
   } catch (error) {
     console.log(error);
+  }
+  loading.value = false;
+});
+watchEffect(async () => {
+  loading.value = true;
+  try {
+    const productsPayedRes = await $host.post("/businessdebt/payed", {
+      startDate: date.value && date.value[0] ? date.value[0] : null,
+      endDate: date.value && date.value[1] ? date.value[1] : null,
+    });
+    productsPayed.value = productsPayedRes.data;
+  } catch (error) {
+    return console.log(error);
   }
   loading.value = false;
 });
