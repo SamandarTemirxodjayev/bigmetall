@@ -31,6 +31,7 @@ router.post('/sklad/products', UserMiddleware, userController.skladProductsPost)
 router.patch('/sklad', UserMiddleware, userController.skladPatchPrice);
 router.get('/sklads', UserMiddleware, userController.skladsGet);
 router.put('/sklad', UserMiddleware, userController.skladPut);
+router.patch('/sklad/product', UserMiddleware, userController.skladDeleteProducts);
 router.delete('/sklad/:id', UserMiddleware, userController.skladDelete);
 router.patch('/sklad/:id', UserMiddleware, userController.skladPatch);
 router.post('/sklad/find', UserMiddleware, userController.skladFinder);
@@ -55,6 +56,7 @@ router.put('/products/debt/:id', UserMiddleware, userController.putProductsDebt)
 router.get('/products/seller/:id', UserMiddleware, userController.productsGetSeller);
 router.post('/products/seller/:id', UserMiddleware, userController.productsPostSeller);
 router.get('/products/debts/price', UserMiddleware, userController.getProductsWithDebtsPrice);
+router.post('/edit/product', UserMiddleware, userController.editProduct);
 
 
 router.get('/clients', UserMiddleware, userController.clientsGet);

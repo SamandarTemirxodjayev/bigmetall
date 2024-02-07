@@ -698,6 +698,20 @@ exports.skladPut = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.skladDeleteProducts = async (req, res) => {
+  try {
+    const product = await Products.findOne(req.body);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    console.log(req.body);
+    console.log(product);
+    await product.deleteOne();
+    res.json({ message: 'Deleted successfully' });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
 exports.skladDelete = async (req, res) => {
   try {
     const sklad = await Sklads.findById(req.params.id);
@@ -1398,6 +1412,56 @@ exports.getProductsWithDebtsPrice = async (req, res) => {
     const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
     
     return res.status(200).json({result: totalAmount});
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+exports.editProduct = async (req, res) => {
+  try {
+    for( let i = 0; i < req.body.to.quantity; i++ ){
+      let update = await Products.findOne(req.body.from);
+      if (!update) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+
+      if(req.body.to.qalinligi){
+        update.qalinligi = req.body.to.qalinligi;
+      }
+      if(req.body.to.qalinligi_ortasi){
+        update.qalinligi_ortasi = req.body.to.qalinligi_ortasi;
+      }
+      if(req.body.to.category){
+        update.category = req.body.to.category;
+      }
+      if(req.body.to.olchamlari){
+        update.olchamlari = req.body.to.olchamlari;
+      }
+      if(req.body.to.holati){
+        update.holati = req.body.to.holati;
+      }
+      if(req.body.to.uzunligi){
+        update.uzunligi = req.body.to.uzunligi;
+      }
+      if(req.body.to.uzunligi_x){
+        update.uzunligi_x = req.body.to.uzunligi_x;
+      }
+      if(req.body.to.uzunligi_y){
+        update.uzunligi_y = req.body.to.uzunligi_y;
+      }
+      if(req.body.to.sklad){
+        update.sklad = new mongoose.Types.ObjectId(req.body.to.sklad);
+      }
+      if(req.body.to.price){
+        update.price = req.body.to.price;
+      }
+      if(req.body.to.saledPrice){
+        update.saledPrice = req.body.to.saledPrice;
+      }
+
+      await update.save();
+    }
+
+    return res.json({ message: 'Products updated successfully' });
   } catch (error) {
     return res.status(500).json(error);
   }

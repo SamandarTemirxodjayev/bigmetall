@@ -24,11 +24,7 @@
           </div>
         </form>
         <div>
-          <UButton
-            @click="handleClickDownloadExcel"
-            :ui="{ rounded: 'rounded-xl' }"
-            class="px-3 py-2 mx-2"
-          >
+          <UButton @click="handleClickDownloadExcel" class="px-3 py-2 mx-2">
             Excelda Yuklab Olish
           </UButton>
         </div>
@@ -113,11 +109,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -204,11 +196,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -295,11 +283,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -385,11 +369,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -471,11 +451,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -561,11 +537,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -651,11 +623,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -740,11 +708,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -828,11 +792,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -919,11 +879,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -1010,11 +966,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                <UButton
-                  @click="openModal(item)"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  class="px-3 py-2 mx-2"
-                >
+                <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
                   Batafsil
                 </UButton>
               </div>
@@ -1082,6 +1034,7 @@
                 <th class="px-5 py-3 text-left border-y border-gray-300">
                   1 m Uchun Sotuv Narxi
                 </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300"></th>
               </tr>
             </thead>
             <tbody v-for="item in fetchedProducts" :key="item._id">
@@ -1170,10 +1123,282 @@
                     }}
                   </div>
                 </td>
+                <td
+                  class="px-5 py-3 border-b border-gray-300 text-right w-[10%] text-gray-400"
+                >
+                  <div>
+                    <Icon
+                      name="clarity:pencil-line"
+                      class="mr-4 hover:text-black"
+                      size="1.5rem"
+                      @click="handleEditHarajat(item)"
+                    />
+                    <Icon
+                      name="ant-design:delete-outlined"
+                      class="hover:text-black"
+                      size="1.5rem"
+                      @click="handleDeleteHarajat(item)"
+                    />
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
+      </UCard>
+    </UModal>
+    <UModal v-model="isOpenEditModal" fullscreen>
+      <UCard
+        :ui="{
+          base: 'h-full flex flex-col',
+          rounded: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+          body: {
+            base: 'grow overflow-auto',
+          },
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              <div class="text-2xl font-bold">Tahrirlash</div>
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isOpenEditModal = false"
+            />
+          </div>
+        </template>
+
+        <form @submit="handleEditProduct">
+          <div class="grid grid-cols-2 gap-[5%]">
+            <div
+              class="w-[100%] grid grid-cols-4 gap-x-[7%] grid-span-2 grid-rows-5"
+            >
+              <div class="w-full col-span-4 mb-4">
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Temir Mahsulot Turi</label
+                >
+                <div>
+                  <USelect
+                    v-model="editProduct.name"
+                    class="w-full"
+                    size="xl"
+                    :options="
+                      MahsulotName.map((item) => ({
+                        name: item,
+                      }))
+                    "
+                    option-attribute="name"
+                    value-attribute="name"
+                    disabled
+                  />
+                </div>
+              </div>
+              <div class="col-span-4 mb-4">
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >O'lchamlari</label
+                >
+                <UInput v-model="editProduct.olchamlari" size="lg" required />
+              </div>
+
+              <div class="col-span-4 mb-4">
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Kategoriyasi</label
+                >
+                <UInput v-model="editProduct.category" size="lg" required />
+              </div>
+
+              <div
+                class="w-full col-span-2 mb-4"
+                v-if="editProduct.name == 'Dvuxtavr'"
+              >
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Qalinligi o'rtasi(mm)</label
+                >
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  v-model="editProduct.qalinligiOrtasi"
+                  required
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                />
+              </div>
+
+              <div
+                class="w-full col-span-2 mb-4"
+                v-if="editProduct.name == 'Dvuxtavr'"
+              >
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Qalinligi chetlari(mm)</label
+                >
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  required
+                  v-model="editProduct.qalinligi"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                />
+              </div>
+
+              <div
+                class="w-full col-span-4 mb-4"
+                v-if="editProduct.name != 'Dvuxtavr'"
+              >
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Qalinligi(mm)</label
+                >
+                <input
+                  type="number"
+                  required
+                  step="0.01"
+                  v-model="editProduct.qalinligi"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                />
+              </div>
+              <div class="w-full col-span-4 mb-4">
+                <label class="block mb-2 text-sm font-medium text-gray-900"
+                  >Tan Narxi(1m uchun)</label
+                >
+                <VueNumber
+                  v-model="editProduct.price"
+                  v-bind="number"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            <div
+              class="w-[100%] grid grid-cols-4 gap-x-[7%] grid-span-2 grid-rows-5"
+            >
+              <div class="w-full col-span-2 mb-4">
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Holati</label
+                >
+                <USelect
+                  v-model="editProduct.holati"
+                  size="lg"
+                  :options="['Yangi', 'Eski', 'B/U']"
+                  required
+                />
+              </div>
+
+              <div class="w-full col-span-2 mb-4">
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Ombor</label
+                >
+                <USelect
+                  v-model="editProduct.sklad"
+                  size="lg"
+                  :options="
+                    ombors.map((item) => ({
+                      name: item.name,
+                      id: item._id,
+                    }))
+                  "
+                  option-attribute="name"
+                  value-attribute="id"
+                  required
+                >
+                </USelect>
+              </div>
+
+              <div
+                class="w-full col-span-2 mb-4"
+                v-if="
+                  editProduct.name == 'List' ||
+                  editProduct.name == 'Kvadrad profil' ||
+                  editProduct.name == 'Kvadrat prut' ||
+                  editProduct.name == 'Palasa'
+                "
+              >
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Uzunligi Bo'yi(sm)</label
+                >
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  v-model="editProduct.uzunligi_x"
+                  required
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                />
+              </div>
+              <div
+                class="w-full col-span-2 mb-4"
+                v-if="
+                  editProduct.name == 'List' ||
+                  editProduct.name == 'Kvadrad profil' ||
+                  editProduct.name == 'Kvadrat prut' ||
+                  editProduct.name == 'Palasa'
+                "
+              >
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Uzunligi Eni(sm)</label
+                >
+                <input
+                  type="number"
+                  step="0.01"
+                  v-model="editProduct.uzunligi_y"
+                  required
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                />
+              </div>
+
+              <div
+                class="w-full col-span-4 mb-4"
+                v-if="editProduct.name != 'List'"
+              >
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Uzunligi(m)</label
+                >
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  v-model="editProduct.uzunligi"
+                  required
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                />
+              </div>
+
+              <div class="w-full col-span-4 mb-4">
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Soni</label
+                >
+                <UInput
+                  type="number"
+                  v-model="editProduct.quantity"
+                  :max="editedProduct.quantity"
+                  size="lg"
+                  required
+                />
+              </div>
+
+              <div class="w-full col-span-4 mb-4">
+                <label class="mb-[6px] block text-sm font-medium text-gray-900"
+                  >Sotuv Narxi(1m uchun)</label
+                >
+                <VueNumber
+                  v-model="editProduct.saledPrice"
+                  v-bind="number"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <UButton type="submit" size="lg"> Tasdiqlash </UButton>
+          </div>
+        </form>
       </UCard>
     </UModal>
   </div>
@@ -1185,15 +1410,29 @@
 <script setup>
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import { component as VueNumber } from "@coders-tm/vue-number-format";
 
 const route = useRoute();
 
 let loading = ref(true);
+let number = ref({
+  decimal: ".",
+  separator: " ",
+  suffix: " so'm",
+  precision: 2,
+  masked: false,
+  min: 0,
+});
 let isOpenModal = ref(false);
+let isOpenEditModal = ref(false);
 let products = ref([]);
 let fetchedProducts = ref([]);
 let search = ref("Hammasi");
 let name = ref("");
+let ombors = ref([]);
+let sellers = ref([]);
+let editProduct = ref({});
+let editedProduct = ref({});
 let MahsulotName = ref([
   "Dvuxtavr",
   "Shvellir",
@@ -1216,6 +1455,10 @@ onMounted(async () => {
     }
     const productsRes = await $host.get(`/products/${route.params.id}`);
     products.value = productsRes.data;
+    const omborsRes = await $host.get("/sklad");
+    ombors.value = omborsRes.data;
+    const resSellers = await $host.get("/sellers");
+    sellers.value = resSellers.data;
   } catch (error) {
     console.log(error);
   }
@@ -1269,6 +1512,63 @@ const openModal = async (item) => {
   }
   loading.value = false;
   isOpenModal.value = true;
+};
+const handleDeleteHarajat = async (item) => {
+  try {
+    const object = { ...item };
+    object.quantity = 1;
+    delete object.totalUzunligi;
+    Swal.fire({
+      title: "Haqiqatdan ham o'chirmoqchimisiz?",
+      showCancelButton: true,
+      confirmButtonText: "O'chirish",
+      confirmButtonColor: "#D11A2A",
+      cancelButtonText: "Bekor Qilish",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        loading.value = true;
+        await $host.patch("/sklad/product", object);
+        await Swal.fire("O'chirildi", "O'chirildi", "success");
+        const reps = await $host.post("/sklad/products", {
+          name: item.name,
+          olchamlari: item.olchamlari,
+          category: item.category,
+          qalinligi: item.qalinligi,
+          qalinligi_ortasi: item.qalinligi_ortasi,
+          holati: item.holati,
+          sklad: item.sklad,
+        });
+        fetchedProducts.value = reps.data;
+        loading.value = false;
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+const handleEditHarajat = async (item) => {
+  const object = { ...item };
+  delete object.totalUzunligi;
+  editProduct.value = JSON.parse(JSON.stringify(object));
+  editedProduct.value = JSON.parse(JSON.stringify(object));
+  object.quantity = 1;
+  localStorage.setItem("item", JSON.stringify(object));
+  isOpenEditModal.value = true;
+};
+const handleEditProduct = async (e) => {
+  e.preventDefault();
+  loading.value = true;
+  try {
+    await $host.post("/edit/product", {
+      to: { ...editProduct.value },
+      from: JSON.parse(localStorage.getItem("item")),
+    });
+    await Swal.fire("O'zgartirildi", "Muvaffiqatli o'zgartirildi", "success");
+    window.location.reload();
+  } catch (error) {
+    console.log(error);
+    loading.value = false;
+  }
 };
 </script>
 <style scoped>
