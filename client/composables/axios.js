@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api/";
+const API_URL = "http://188.92.28.212:3001/api/";
 let accessToken = null;
 let headers = {
   "Content-Type": "application/json",
@@ -36,7 +36,7 @@ $host.interceptors.response.use(
 
 // user 3
 
-const API_URL2 = "http://localhost:3001/api/user2/";
+const API_URL2 = "http://188.92.28.212:3001/api/user2/";
 
 if (typeof window !== "undefined") {
   accessToken = localStorage.getItem("token");
