@@ -5,7 +5,7 @@
         >Sotuvchi - {{ seller.name }} - Sotilgan Mahsulotlar</span
       >
     </div>
-    <div class="shadow items-center bg-white shadow-xl rounded-md">
+    <div class="items-center bg-white shadow-xl rounded-md">
       <div class="flex w-[30%] p-4 justify-between">
         <VueDatePicker
           v-model="date"

@@ -219,10 +219,6 @@ let search = ref("");
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const clientsRes = await $host.get("/clients");
     clients.value = clientsRes.data;
   } catch (error) {

@@ -217,10 +217,6 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const productsRes = await $host.get("/businessdebt");
     products.value = productsRes.data;
     const endDate = new Date();

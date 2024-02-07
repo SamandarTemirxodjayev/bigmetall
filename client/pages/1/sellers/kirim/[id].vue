@@ -279,10 +279,6 @@ let product = ref({});
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     seller.value = (await $host.get("/seller/" + route.params.id)).data;
     const resProducts = await $host.get("/products/seller/" + route.params.id);
     products = resProducts.data;

@@ -576,10 +576,6 @@ let saledPrice = ref();
 let phones = ref({});
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const clientRes = await $host.get("/clients");
     clients = clientRes.data.sort((a, b) => a.name.localeCompare(b.name));
     const sellerRes = await $host.get("/sellers");

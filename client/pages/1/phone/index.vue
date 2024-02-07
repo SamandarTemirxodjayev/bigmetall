@@ -48,10 +48,6 @@ let two = ref("");
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const resPhone = await $host.get("/phone");
     one.value = resPhone.data.one;
     two.value = resPhone.data.two;

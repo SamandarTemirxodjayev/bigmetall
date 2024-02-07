@@ -297,10 +297,6 @@ let user_level = ref("");
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const resUsers = await $host.get("/users");
     users.value = resUsers.data;
   } catch (error) {

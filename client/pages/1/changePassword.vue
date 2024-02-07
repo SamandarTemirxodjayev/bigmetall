@@ -53,10 +53,6 @@ let password = ref("");
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     loading.value = false;
   } catch (error) {
     console.log(error);

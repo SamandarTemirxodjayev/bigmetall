@@ -1449,10 +1449,6 @@ let MahsulotName = ref([
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const productsRes = await $host.get(`/products/${route.params.id}`);
     products.value = productsRes.data;
     const omborsRes = await $host.get("/sklad");

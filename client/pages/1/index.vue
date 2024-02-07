@@ -486,10 +486,6 @@ let companyDebt = ref(null);
 let items = ref([]);
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const resHarajats = await $host.get("/harajat/year");
     xarajats.value = resHarajats.data.totalAmount;
     const resOmbor = await $host.get("/sklad/price");

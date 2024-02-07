@@ -255,10 +255,6 @@ const clickFive = () => {
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     const resOmbor = await $host.get("/sklad");
     ombors.value = resOmbor.data;
     const endDate = new Date();

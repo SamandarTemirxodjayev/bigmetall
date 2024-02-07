@@ -329,10 +329,6 @@ let number = ref({
 onMounted(async () => {
   try {
     count.value = localStorage.getItem("count") || 100;
-    const res = await $host.get("/user");
-    if (res.data.user.user_level !== 1) {
-      window.location.href = "/";
-    }
     const harajatRes = await $host.get("/harajat?limit=" + count.value);
     harajats.value = harajatRes.data;
 

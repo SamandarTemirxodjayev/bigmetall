@@ -2685,10 +2685,6 @@ let cutRange = ref(0);
 
 onMounted(async () => {
   try {
-    const res = await $host.get("/user");
-    if (res.data.user.user_level != 1) {
-      window.location.href = "/";
-    }
     storeItems.value = counterStore.get();
     const productsRes = await $host.get(`/products`);
     products.value = productsRes.data;
