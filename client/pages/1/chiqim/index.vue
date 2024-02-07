@@ -5,112 +5,80 @@
     </div>
     <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
       <div class="flex justify-between text-center">
-        <div class="flex gap-10">
+        <div class="flex gap-[2%]">
           <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900"
               >Temir Mahsulot Turi</label
             >
-            <select
+            <USelect
               v-model="mahsulotTuri"
               @change="handleChangeMahsulotTuri"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option
-                v-for="(item, id) in MahsulotName"
-                :key="id"
-                :value="item"
-              >
-                {{ item }}
-              </option>
-            </select>
+              size="xl"
+              :options="['Hammasi', ...MahsulotName]"
+              placeholder="Temir mahsulot turi"
+              class="max-w-[180px]"
+            />
           </div>
           <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900"
               >Kategoriyasi</label
             >
-            <select
+            <USelect
               v-model="category"
               @change="handleChangeCategory"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option v-for="(item, id) in categories" :key="id" :value="item">
-                {{ item }}
-              </option>
-            </select>
+              size="xl"
+              :options="['Hammasi', ...categories]"
+              placeholder="Kategoriyasi"
+              class="max-w-[180px]"
+            />
           </div>
           <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900"
               >Qalinligi</label
             >
-            <select
+            <USelect
               v-model="qalinligi"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option
-                v-for="(item, id) in qalinliglari"
-                :key="id"
-                :value="item"
-              >
-                {{ item }}
-              </option>
-            </select>
+              :options="['Hammasi', ...qalinliglari]"
+              size="xl"
+              class="max-w-[180px]"
+            />
           </div>
           <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900"
               >Holati</label
             >
-            <select
+            <USelect
               v-model="holati"
               @change="handleChangeMahsulotTuri"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              <option>Hammasi</option>
-              <option>Yangi</option>
-              <option>Eski</option>
-              <option>B/U</option>
-            </select>
+              :options="['Hammasi', 'Yangi', 'Eski', 'B/U']"
+              size="xl"
+              class="max-w-[180px]"
+            />
           </div>
+          <!-- <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-900"
+              >Uzunligi</label
+            >
+            <UInput size="xl" v-model="uzunligi" />
+          </div> -->
         </div>
         <div class="mt-7">
           <template v-if="totalQuantity == 0">
-            <button
-              type="button"
-              class="opacity-50 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-            >
+            <!-- <UButton size="xl" disabled class="mx-1 mb-1">
               Umumiy Soni {{ totalQuantity }} ta
-            </button>
-            <button
-              type="button"
-              class="opacity-50 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-            >
+            </UButton> -->
+            <UButton size="xl" disabled class="mx-1 mb-1">
               Umumiy Summasi
               {{ totalSummary }}
               so'm
-            </button>
-            <button
-              type="button"
-              class="hover:shadow-2xl text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 me-2 mb-2 focus:outline-none"
-            >
-              <Icon
-                name="fluent:text-bullet-list-square-48-regular"
-                size="1.5rem"
-              />
-            </button>
+            </UButton>
+            <UButton size="xl" disabled class="mx-1 mb-1"> Tasdiqlash </UButton>
           </template>
           <template v-else>
-            <button
-              type="button"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-            >
+            <!-- <UButton size="xl" class="mx-1 mb-1">
               Umumiy Soni {{ totalQuantity }} ta
-            </button>
-            <button
-              type="button"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-            >
+            </UButton> -->
+            <UButton size="xl" class="mx-1 mb-1">
               Umumiy Summasi
               {{
                 totalSummary
@@ -119,17 +87,19 @@
                   .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
               }}
               so'm
-            </button>
-            <NuxtLink to="/1/chiqim/cart">
-              <button
-                type="button"
-                class="hover:shadow-2xl text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 me-2 mb-2 focus:outline-none"
-              >
-                <Icon
-                  name="fluent:text-bullet-list-square-48-regular"
-                  size="1.5rem"
-                />
-              </button>
+            </UButton>
+            <UButton size="xl" class="mx-1 mb-1">
+              Umumiy Uzunligi
+              {{
+                totalUzunligi
+                  .toFixed(2)
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+              }}
+              m
+            </UButton>
+            <NuxtLink to="/1/chiqim/cart" class="mx-1">
+              <UButton size="xl" class=""> Tasdiqlash </UButton>
             </NuxtLink>
           </template>
         </div>
@@ -240,7 +210,7 @@
                     {{
                       item.saledPrice == null
                         ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
+                        : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
                     }}
                   </div>
                 </td>
@@ -283,7 +253,6 @@
                       >
                         <button
                           @click="deleteProduct(item._id)"
-                          type="button"
                           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
                         >
                           -
@@ -412,9 +381,7 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Ugalok') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' ||
-                    (qalinligi.split('/')[0] == item.qalinligi_ortasi &&
-                      qalinligi.split('/')[1] == item.qalinligi))
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -636,9 +603,7 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Shvellir') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' ||
-                    (qalinligi.split('/')[0] == item.qalinligi_ortasi &&
-                      qalinligi.split('/')[1] == item.qalinligi))
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -860,9 +825,7 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Truba') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' ||
-                    (qalinligi.split('/')[0] == item.qalinligi_ortasi &&
-                      qalinligi.split('/')[1] == item.qalinligi))
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1084,9 +1047,7 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Armatura') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' ||
-                    (qalinligi.split('/')[0] == item.qalinligi_ortasi &&
-                      qalinligi.split('/')[1] == item.qalinligi))
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1306,7 +1267,8 @@
                 v-if="
                   item.name == 'List' &&
                   (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati)
+                  (holati == 'Hammasi' || holati == item.holati) &&
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1516,7 +1478,8 @@
                 v-if="
                   item.name == 'Kvadrad profil' &&
                   (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati)
+                  (holati == 'Hammasi' || holati == item.holati) &&
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1733,7 +1696,8 @@
                 v-if="
                   item.name == 'Kvadrat prut' &&
                   (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati)
+                  (holati == 'Hammasi' || holati == item.holati) &&
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1950,7 +1914,8 @@
                 v-if="
                   item.name == 'Palasa' &&
                   (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati)
+                  (holati == 'Hammasi' || holati == item.holati) &&
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -2165,7 +2130,8 @@
                   item.name == 'Prut' &&
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Prut') &&
                   (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati)
+                  (holati == 'Hammasi' || holati == item.holati) &&
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -2386,7 +2352,8 @@
                   item.name == 'Planka' &&
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Planka') &&
                   (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati)
+                  (holati == 'Hammasi' || holati == item.holati) &&
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -2655,6 +2622,15 @@ const totalSummary = computed(() => {
     }
   }, 0);
 });
+const totalUzunligi = computed(() => {
+  return storeItems.value.reduce((total, item) => {
+    if (item.name !== "List") {
+      return total + item.uzunligi * item.quantity;
+    } else {
+      return 0;
+    }
+  }, 0);
+});
 
 let loading = ref(true);
 let mahsulotTuri = ref("Hammasi");
@@ -2682,6 +2658,7 @@ let qalinligi = ref("Hammasi");
 let saledType = ref("");
 let sklads = ref([]);
 let cutRange = ref(0);
+let uzunligi = ref("");
 
 onMounted(async () => {
   try {

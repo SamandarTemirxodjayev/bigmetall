@@ -1029,6 +1029,7 @@ exports.productsGetAll = async (req, res) => {
       {
         $sort: {
           name: 1,
+          olchamlari: 1,
           category: 1,
           qalinligi: 1,
           qalinligi_ortasi: 1,
