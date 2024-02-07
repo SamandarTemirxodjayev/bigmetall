@@ -815,6 +815,7 @@ exports.productsGet = async (req, res) => {
       },
       {
         $sort: {
+          olchamlari: 1,
           category: 1,
           qalinligi: 1,
           qalinligi_ortasi: 1,
