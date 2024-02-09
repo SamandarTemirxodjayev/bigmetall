@@ -55,18 +55,15 @@
               class="max-w-[180px]"
             />
           </div>
-          <!-- <div class="mb-6">
+          <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900"
               >Uzunligi</label
             >
             <UInput size="xl" v-model="uzunligi" />
-          </div> -->
+          </div>
         </div>
         <div class="mt-7">
           <template v-if="totalQuantity == 0">
-            <!-- <UButton size="xl" disabled class="mx-1 mb-1">
-              Umumiy Soni {{ totalQuantity }} ta
-            </UButton> -->
             <UButton size="xl" disabled class="mx-1 mb-1">
               Umumiy Summasi
               {{ totalSummary }}
@@ -75,9 +72,6 @@
             <UButton size="xl" disabled class="mx-1 mb-1"> Tasdiqlash </UButton>
           </template>
           <template v-else>
-            <!-- <UButton size="xl" class="mx-1 mb-1">
-              Umumiy Soni {{ totalQuantity }} ta
-            </UButton> -->
             <UButton size="xl" class="mx-1 mb-1">
               Umumiy Summasi
               {{
@@ -158,7 +152,8 @@
                   (holati == 'Hammasi' || holati == item.holati) &&
                   (qalinligi == 'Hammasi' ||
                     (qalinligi.split('/')[0] == item.qalinligi_ortasi &&
-                      qalinligi.split('/')[1] == item.qalinligi))
+                      qalinligi.split('/')[1] == item.qalinligi)) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -381,7 +376,8 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Ugalok') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -603,7 +599,8 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Shvellir') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -825,7 +822,8 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Truba') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1047,7 +1045,8 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Armatura') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1479,7 +1478,8 @@
                   item.name == 'Kvadrad profil' &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -1915,7 +1915,8 @@
                   item.name == 'Palasa' &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
@@ -2131,7 +2132,8 @@
                   (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Prut') &&
                   (category == 'Hammasi' || category == item.category) &&
                   (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
+                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
+                  (uzunligi == '' || uzunligi == item.uzunligi)
                 "
               >
                 <td class="px-5 py-3 border-b border-gray-300">
