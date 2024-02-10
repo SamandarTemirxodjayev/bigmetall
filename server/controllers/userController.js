@@ -984,10 +984,17 @@ exports.productsPatch = async (req, res) => {
 };
 exports.productsGetAll = async (req, res) => {
   try {
-    const products = await Products.aggregate([
-      {
-        $match: { saled: false },
-      },
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const search = {
+
+    }
+
+    // Base aggregation stages that are common for both total count and pagination
+    const baseAggregationStages = [
+      { $match: { saled: false } },
       {
         $group: {
           _id: {
@@ -1008,6 +1015,20 @@ exports.productsGetAll = async (req, res) => {
           totalQuantity: { $sum: '$quantity' },
         },
       },
+    ];
+
+    // Fetch total count for pagination calculation
+    const totalCount = await Products.aggregate([
+      ...baseAggregationStages,
+      { $count: 'totalCount' },
+    ]);
+
+    const totalDocuments = totalCount.length > 0 ? totalCount[0].totalCount : 0;
+    const totalPages = Math.ceil(totalDocuments / limit);
+
+    // Fetch paginated products
+    const products = await Products.aggregate([
+      ...baseAggregationStages,
       {
         $project: {
           name: '$_id.name',
@@ -1026,26 +1047,122 @@ exports.productsGetAll = async (req, res) => {
           cut: '$_id.cut',
         },
       },
-      {
-        $sort: {
-          name: 1,
-          olchamlari: 1,
-          category: 1,
-          qalinligi: 1,
-          qalinligi_ortasi: 1,
-          quantity: 1,
-          uzunligi: 1,
-          uzunligi_x: 1,
-          uzunligi_y: 1,
-          saledPrice: 1,
-        }
-      }
+      { $sort: { name: 1, olchamlari: 1, category: 1, qalinligi: 1, qalinligi_ortasi: 1, quantity: 1, uzunligi: 1, uzunligi_x: 1, uzunligi_y: 1, saledPrice: 1 } },
+      { $skip: skip },
+      { $limit: limit },
     ]);
-    return res.json(products);
+
+    // Respond with the paginated list of products, current page, total count, and total pages
+    res.json({
+      currentPage: page,
+      totalPages,
+      totalCount: totalDocuments,
+      products,
+    });
   } catch (error) {
     return res.status(500).json(error);
   }
 };
+exports.productsPatchAlls = async (req, res) => {
+  try {
+    const page = parseInt(req.body.page) || 1;
+    const limit = parseInt(req.body.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const search = {
+      saled: false,
+    }
+    if(req.body.mahsulot){
+      search.name = req.body.mahsulot;
+    }
+    if(req.body.category){
+      search.category = new RegExp(req.body.category, 'i');
+    }
+    if(req.body.holati){
+      search.holati = req.body.holati;
+    }
+    if(req.body.qalinligi){
+      search.qalinligi = +req.body.qalinligi;
+    }
+    if(req.body.qalinligi_ortasi){
+      search.qalinligi_ortasi = +req.body.qalinligi_ortasi;
+    }
+    if(req.body.uzunligi){
+      search.uzunligi = +req.body.uzunligi;
+    }
+    console.log(search);
+    // Base aggregation stages that are common for both total count and pagination
+    const baseAggregationStages = [
+      { $match: search },
+      {
+        $group: {
+          _id: {
+            name: '$name',
+            qalinligi: '$qalinligi',
+            qalinligi_ortasi: '$qalinligi_ortasi',
+            category: '$category',
+            holati: '$holati',
+            uzunligi: '$uzunligi',
+            uzunligi_x: '$uzunligi_x',
+            olchamlari: '$olchamlari',
+            uzunligi_y: '$uzunligi_y',
+            sklad: '$sklad',
+            price: '$price',
+            saledPrice: '$saledPrice',
+            cut: '$cut',
+          },
+          totalQuantity: { $sum: '$quantity' },
+        },
+      },
+    ];
+
+    // Fetch total count for pagination calculation
+    const totalCount = await Products.aggregate([
+      ...baseAggregationStages,
+      { $count: 'totalCount' },
+    ]);
+
+    const totalDocuments = totalCount.length > 0 ? totalCount[0].totalCount : 0;
+    const totalPages = Math.ceil(totalDocuments / limit);
+
+    // Fetch paginated products
+    const products = await Products.aggregate([
+      ...baseAggregationStages,
+      {
+        $project: {
+          name: '$_id.name',
+          qalinligi: '$_id.qalinligi',
+          qalinligi_ortasi: '$_id.qalinligi_ortasi',
+          category: '$_id.category',
+          holati: '$_id.holati',
+          uzunligi: '$_id.uzunligi',
+          uzunligi_x: '$_id.uzunligi_x',
+          uzunligi_y: '$_id.uzunligi_y',
+          sklad: '$_id.sklad',
+          price: '$_id.price',
+          olchamlari: '$_id.olchamlari',
+          saledPrice: '$_id.saledPrice',
+          quantity: '$totalQuantity',
+          cut: '$_id.cut',
+        },
+      },
+      { $sort: { name: 1, olchamlari: 1, category: 1, qalinligi: 1, qalinligi_ortasi: 1, quantity: 1, uzunligi: 1, uzunligi_x: 1, uzunligi_y: 1, saledPrice: 1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    // Respond with the paginated list of products, current page, total count, and total pages
+    res.json({
+      currentPage: page,
+      totalPages,
+      totalCount: totalDocuments,
+      products,
+    });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
+
 exports.productsPut = async (req, res) => {
   try {
     for (let i = 0; i < req.body.quantity; i += 1) {

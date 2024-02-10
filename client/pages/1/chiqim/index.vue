@@ -7,9 +7,6 @@
       <div class="flex justify-between text-center">
         <div class="flex gap-[2%]">
           <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Temir Mahsulot Turi</label
-            >
             <USelect
               v-model="mahsulotTuri"
               @change="handleChangeMahsulotTuri"
@@ -17,52 +14,65 @@
               :options="['Hammasi', ...MahsulotName]"
               placeholder="Temir mahsulot turi"
               class="max-w-[180px]"
+              :disabled="isSearchLoading"
             />
           </div>
           <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Kategoriyasi</label
-            >
-            <USelect
+            <UInput
               v-model="category"
-              @change="handleChangeCategory"
               size="xl"
-              :options="['Hammasi', ...categories]"
               placeholder="Kategoriyasi"
               class="max-w-[180px]"
+              :disabled="isSearchLoading"
             />
           </div>
           <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Qalinligi</label
-            >
-            <USelect
+            <UInput
               v-model="qalinligi"
-              :options="['Hammasi', ...qalinliglari]"
               size="xl"
               class="max-w-[180px]"
+              placeholder="Qalinligi"
+              :disabled="isSearchLoading"
+            />
+          </div>
+          <div class="mb-6" v-if="mahsulotTuri == 'Dvuxtavr'">
+            <UInput
+              v-model="qalinligi_ortasi"
+              size="xl"
+              class="max-w-[180px]"
+              placeholder="Qalinligi O'rtasi"
+              :disabled="isSearchLoading"
             />
           </div>
           <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Holati</label
-            >
             <USelect
               v-model="holati"
-              @change="handleChangeMahsulotTuri"
-              :options="['Hammasi', 'Yangi', 'Eski', 'B/U']"
               size="xl"
+              placeholder="Holati"
+              :options="['Hammasi', 'Yangi', 'Eski', 'B/U']"
               class="max-w-[180px]"
+              :disabled="isSearchLoading"
             />
           </div>
           <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900"
-              >Uzunligi</label
-            >
-            <UInput size="xl" v-model="uzunligi" />
+            <UInput
+              size="xl"
+              v-model="uzunligi"
+              :disabled="isSearchLoading"
+              lass="max-w-[180px]"
+              placeholder="Uzunligi"
+            />
+          </div>
+          <div class="mb-6">
+            <UButton
+              size="xl"
+              icon="i-heroicons-magnifying-glass-20-solid"
+              :loading="isSearchLoading"
+              @click="handleSearchItems"
+            />
           </div>
         </div>
-        <div class="mt-7">
+        <div class="mb-7">
           <template v-if="totalQuantity == 0">
             <UButton size="xl" disabled class="mx-1 mb-1">
               Umumiy Summasi
@@ -93,135 +103,171 @@
               m
             </UButton>
             <NuxtLink to="/1/chiqim/cart" class="mx-1">
-              <UButton size="xl" class=""> Tasdiqlash </UButton>
+              <UButton size="xl"> Tasdiqlash </UButton>
             </NuxtLink>
           </template>
         </div>
       </div>
-      <div class="text-[12px]">
-        <!-- DVUXTAVR -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Dvuxtavr'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Sotuv Narxi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
+
+      <table class="w-full text-[12px]">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Mahsulot Nomi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              O'lchamlari
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Kategoriyasi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Qalinligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Uzunligi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1 m Uchun Sotuv Narxi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Ombor</th>
+            <th
+              class="px-5 py-3 text-left border-y border-gray-300 hidden-print"
+            >
+              O'zgartirish
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in products" :key="item._id">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td class="px-5 py-3 border-b border-gray-300">
+              <template v-if="item.cut"> {{ item.name }} (kesilgan) </template>
+              <template v-else>
+                {{ item.name }}
+              </template>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div>{{ item.olchamlari }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div>
+                {{ item.category }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div>
+                <div v-if="item.qalinligi_ortasi">
+                  O'rta: {{ item.qalinligi_ortasi }}mm<br />
+                  Chet: {{ item.qalinligi }}mm
+                </div>
+                <div v-else>{{ item.qalinligi }}mm</div>
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div>
+                {{ item.holati }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <template
                 v-if="
-                  item.name == 'Dvuxtavr' &&
-                  (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Dvuxtavr') &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' ||
-                    (qalinligi.split('/')[0] == item.qalinligi_ortasi &&
-                      qalinligi.split('/')[1] == item.qalinligi)) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
+                  item.name == 'Palasa' ||
+                  item.name == 'Kvadrat prut' ||
+                  item.name == 'Kvadrad profil'
                 "
               >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template v-if="item.cut">
-                      {{ item.name }} (kesilgan)
-                    </template>
-                    <template v-else>
-                      {{ item.name }}
-                    </template>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <div v-if="item.qalinligi_ortasi">
-                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                      Chet: {{ item.qalinligi }}mm
-                    </div>
-                    <div v-else>{{ item.qalinligi }}mm</div>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
+                <div>
+                  Uzunligi: {{ item.uzunligi }}m <br />
+                  Bo'yi: {{ item.uzunligi_x }}sm <br />
+                  Eni: {{ item.uzunligi_y }}sm
+                </div>
+              </template>
+              <template v-else-if="item.uzunligi">
+                <div>{{ item.uzunligi }}m</div>
+              </template>
+              <template v-else>
+                <div>
+                  Bo'yi: {{ item.uzunligi_x }}sm <br />
+                  Eni: {{ item.uzunligi_y }}sm
+                </div>
+              </template>
+            </td>
 
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${numberFormat(item.saledPrice.toFixed(2))} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div>{{ item.quantity }}ta</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <template v-if="item.uzunligi">
+                <div>{{ (item.uzunligi * item.quantity).toFixed() }}m</div>
+              </template>
+              <template v-else>
+                <div>
+                  {{
+                    (item.uzunligi_y * item.uzunligi_x * item.quantity) / 10000
+                  }}
+                  m<sup>2</sup>
+                </div>
+              </template>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div>
+                {{
+                  item.saledPrice == null
+                    ? "Narx belgilanmagan"
+                    : `${item.saledPrice
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                }}
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              {{ sklads.find((x) => (x._id == item.sklad ? x : false)).name }}
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div>
+                <template
+                  v-if="
+                    storeItems.some((p) => {
+                      if (
+                        p.name == item.name &&
+                        p.qalinligi == item.qalinligi &&
+                        p.qalinligi_ortasi == item.qalinligi_ortasi &&
+                        p.olchamlari == item.olchamlari &&
+                        p.category == item.category &&
+                        p.holati == item.holati &&
+                        p.uzunligi == item.uzunligi &&
+                        p.uzunligi_y == item.uzunligi_y &&
+                        p.uzunligi_x == item.uzunligi_x &&
+                        p.sklad == item.sklad &&
+                        p.price == item.price &&
+                        p.saledPrice == item.saledPrice &&
+                        p.cut == item.cut
+                      ) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    })
+                  "
+                >
+                  <div
+                    class="flex items-center justify-center gap-2 text-center"
+                  >
+                    <button
+                      @click="deleteProduct(item._id)"
+                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+                    >
+                      -
+                    </button>
+                    <div class="mr-2 mb-1">
+                      {{
+                        storeItems.find(
+                          (p) =>
                             p.name == item.name &&
                             p.qalinligi == item.qalinligi &&
                             p.qalinligi_ortasi == item.qalinligi_ortasi &&
@@ -235,215 +281,16 @@
                             p.price == item.price &&
                             p.saledPrice == item.saledPrice &&
                             p.cut == item.cut
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Ugalok -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Ugalok'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Sotuv Narxi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Ugalok' &&
-                  (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Ugalok') &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <div v-if="item.qalinligi_ortasi">
-                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                      Chet: {{ item.qalinligi }}mm
+                        ).quantity
+                      }}
                     </div>
-                    <div v-else>{{ item.qalinligi }}mm</div>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
+                    <button
+                      @click="add(item._id)"
+                      type="button"
+                      :disabled="
+                        item.quantity ==
+                        storeItems.find(
+                          (p) =>
                             p.name == item.name &&
                             p.qalinligi == item.qalinligi &&
                             p.qalinligi_ortasi == item.qalinligi_ortasi &&
@@ -457,2074 +304,56 @@
                             p.price == item.price &&
                             p.saledPrice == item.saledPrice &&
                             p.cut == item.cut
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
+                        ).quantity
                       "
+                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
                     >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
+                      +
+                    </button>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Shvellir -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Shvellir'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Sotuv Narxi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Shvellir' &&
-                  (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Shvellir') &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <div v-if="item.qalinligi_ortasi">
-                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                      Chet: {{ item.qalinligi }}mm
-                    </div>
-                    <div v-else>{{ item.qalinligi }}mm</div>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice &&
-                            p.cut == item.cut
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
+                </template>
+                <template v-else>
+                  <div class="flex">
+                    <button
+                      @click="add(item._id)"
+                      type="button"
+                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
                     >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Truba -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Truba'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Sotuv Narxi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Truba' &&
-                  (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Truba') &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <div v-if="item.qalinligi_ortasi">
-                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                      Chet: {{ item.qalinligi }}mm
-                    </div>
-                    <div v-else>{{ item.qalinligi }}mm</div>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice &&
-                            p.cut == item.cut
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
+                      Qo'shish
+                    </button>
+                    <button
+                      @click="handleCutItem(item._id)"
+                      type="button"
+                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
                     >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
+                      <Icon name="mdi:hand-saw" size="1.5em" />
+                    </button>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </template>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-        <!-- Armartura -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Armatura'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Sotuv Narxi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Armatura' &&
-                  (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Armatura') &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <div v-if="item.qalinligi_ortasi">
-                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                      Chet: {{ item.qalinligi }}mm
-                    </div>
-                    <div v-else>{{ item.qalinligi }}mm</div>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice &&
-                            p.cut == item.cut
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- LIST -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'List'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Maydoni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m<sup>2</sup> Uchun Narx
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'List' &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.qalinligi }}mm</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    Bo'yi: {{ item.uzunligi_x }}sm <br />
-                    Eni: {{ item.uzunligi_y }}sm
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      (item.uzunligi_y * item.uzunligi_x * item.quantity) /
-                      10000
-                    }}
-                    m<sup>2</sup>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <button
-                        @click="add(item._id)"
-                        type="button"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                      >
-                        Qo'shish
-                      </button>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- Kvadrad prut -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Kvadrad profil'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Narx
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Kvadrad profil' &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.category }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.qalinligi }}mm</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    Bo'yi: {{ item.uzunligi_x }}sm <br />
-                    Eni: {{ item.uzunligi_y }}sm
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Kvadrad prut -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Kvadrat prut'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Narx
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Kvadrat prut' &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.category }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.qalinligi }}mm</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    Bo'yi: {{ item.uzunligi_x }}sm <br />
-                    Eni: {{ item.uzunligi_y }}sm
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Palasa -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Palasa'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Narx
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Palasa' &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.category }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.qalinligi }}mm</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    Bo'yi: {{ item.uzunligi_x }}sm <br />
-                    Eni: {{ item.uzunligi_y }}sm
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Prut -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Prut'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Sotuv Narxi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Prut' &&
-                  (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Prut') &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi) &&
-                  (uzunligi == '' || uzunligi == item.uzunligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <div v-if="item.qalinligi_ortasi">
-                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                      Chet: {{ item.qalinligi }}mm
-                    </div>
-                    <div v-else>{{ item.qalinligi }}mm</div>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice &&
-                            p.cut == item.cut
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Planka -->
-        <div
-          class="bg-white border border-gray-50 shadow-2xl"
-          v-if="mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Planka'"
-        >
-          <table class="w-full">
-            <thead>
-              <tr class="sticky top-16 bg-white">
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Mahsulot Nomi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  O'lchamlari
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Kategoriyasi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Qalinligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Holati
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Soni
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Umumiy Uzunligi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  1 m Uchun Sotuv Narxi
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Ombor
-                </th>
-                <th class="px-5 py-3 text-left border-y border-gray-300">
-                  Batafsil
-                </th>
-              </tr>
-            </thead>
-            <tbody v-for="item in products" :key="item._id">
-              <tr
-                class="hover:bg-gray-200 cursor-pointer w-full"
-                v-if="
-                  item.name == 'Planka' &&
-                  (mahsulotTuri == 'Hammasi' || mahsulotTuri == 'Planka') &&
-                  (category == 'Hammasi' || category == item.category) &&
-                  (holati == 'Hammasi' || holati == item.holati) &&
-                  (qalinligi == 'Hammasi' || qalinligi == item.qalinligi)
-                "
-              >
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <template v-if="item.cut">
-                    {{ item.name }} (kesilgan)
-                  </template>
-                  <template v-else>
-                    {{ item.name }}
-                  </template>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.olchamlari }}</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.category }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <div v-if="item.qalinligi_ortasi">
-                      O'rta: {{ item.qalinligi_ortasi }}mm<br />
-                      Chet: {{ item.qalinligi }}mm
-                    </div>
-                    <div v-else>{{ item.qalinligi }}mm</div>
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ item.holati }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.uzunligi }}m</div>
-                </td>
-
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">{{ item.quantity }}ta</div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{ (item.uzunligi * item.quantity).toFixed(2) }}m
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      item.saledPrice == null
-                        ? "Narx belgilanmagan"
-                        : `${item.saledPrice} so'm`
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    {{
-                      sklads.find((x) => (x._id == item.sklad ? x : false)).name
-                    }}
-                  </div>
-                </td>
-                <td class="px-5 py-3 border-b border-gray-300">
-                  <div class="print-text">
-                    <template
-                      v-if="
-                        storeItems.some((p) => {
-                          if (
-                            p.name == item.name &&
-                            p.qalinligi == item.qalinligi &&
-                            p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                            p.olchamlari == item.olchamlari &&
-                            p.category == item.category &&
-                            p.holati == item.holati &&
-                            p.uzunligi == item.uzunligi &&
-                            p.uzunligi_y == item.uzunligi_y &&
-                            p.uzunligi_x == item.uzunligi_x &&
-                            p.sklad == item.sklad &&
-                            p.price == item.price &&
-                            p.saledPrice == item.saledPrice &&
-                            p.cut == item.cut
-                          ) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                      "
-                    >
-                      <div
-                        class="flex items-center justify-center gap-2 text-center"
-                      >
-                        <button
-                          @click="deleteProduct(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          -
-                        </button>
-                        <div class="mr-2 mb-1">
-                          {{
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          }}
-                        </div>
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          :disabled="
-                            item.quantity ==
-                            storeItems.find(
-                              (p) =>
-                                p.name == item.name &&
-                                p.qalinligi == item.qalinligi &&
-                                p.qalinligi_ortasi == item.qalinligi_ortasi &&
-                                p.olchamlari == item.olchamlari &&
-                                p.category == item.category &&
-                                p.holati == item.holati &&
-                                p.uzunligi == item.uzunligi &&
-                                p.uzunligi_y == item.uzunligi_y &&
-                                p.uzunligi_x == item.uzunligi_x &&
-                                p.sklad == item.sklad &&
-                                p.price == item.price &&
-                                p.saledPrice == item.saledPrice &&
-                                p.cut == item.cut
-                            ).quantity
-                          "
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="flex">
-                        <button
-                          @click="add(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          Qo'shish
-                        </button>
-                        <button
-                          @click="handleCutItem(item._id)"
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
-                        >
-                          <Icon name="mdi:hand-saw" size="1.5em" />
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="items-center justify-center flex mt-10">
+        <UPagination
+          size="xl"
+          :prev-button="{
+            icon: 'i-heroicons-arrow-small-left-20-solid',
+            label: 'Oldingisi',
+            color: 'gray',
+          }"
+          :next-button="{
+            icon: 'i-heroicons-arrow-small-right-20-solid',
+            trailing: true,
+            label: 'Keyingisi',
+            color: 'gray',
+          }"
+          v-model="page"
+          :page-count="1"
+          :total="maxPage"
+        />
       </div>
     </div>
     <div
@@ -2593,8 +422,6 @@
 </template>
 
 <script setup>
-import Swal from "sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
 import { useCounterStore } from "~/store";
 
 const counterStore = useCounterStore();
@@ -2635,7 +462,8 @@ const totalUzunligi = computed(() => {
 });
 
 let loading = ref(true);
-let mahsulotTuri = ref("Hammasi");
+let isSearchLoading = ref(false);
+let mahsulotTuri = ref("");
 let products = ref([]);
 let product = ref();
 let isPopupOpen = ref(false);
@@ -2653,20 +481,30 @@ let MahsulotName = ref([
   "Planka",
 ]);
 let categories = ref([]);
-let category = ref("Hammasi");
+let category = ref("");
 let holati = ref("Hammasi");
 let qalinliglari = ref([]);
-let qalinligi = ref("Hammasi");
+let qalinligi = ref("");
+let qalinligi_ortasi = ref("");
 let saledType = ref("");
 let sklads = ref([]);
 let cutRange = ref(0);
 let uzunligi = ref("");
+let page = ref(1);
+let maxPage = ref(100);
 
 onMounted(async () => {
   try {
     storeItems.value = counterStore.get();
-    const productsRes = await $host.get(`/products`);
-    products.value = productsRes.data;
+    const productsRes = await $host.get(`/products`, {
+      params: {
+        page: page.value,
+        limit: 30,
+      },
+    });
+    products.value = productsRes.data.products;
+    page.value = productsRes.data.currentPage;
+    maxPage.value = productsRes.data.totalPages;
     categories.value = products.value.map((item) => item.category);
     categories.value = [...new Set(categories.value)];
     qalinliglari.value = products.value.map((item) =>
@@ -2682,46 +520,6 @@ onMounted(async () => {
   }
   loading.value = false;
 });
-const handleChangeMahsulotTuri = () => {
-  if (mahsulotTuri.value == "Hammasi") {
-    categories.value = products.value.map((item) => item.category);
-  } else {
-    categories.value = products.value
-      .filter((item) => item.name == mahsulotTuri.value)
-      .map((item) => item.category);
-  }
-
-  categories.value = [...new Set(categories.value)];
-};
-const handleChangeCategory = () => {
-  if (category.value == "Hammasi" && mahsulotTuri.value == "Hammasi") {
-    qalinliglari.value = products.value.map((item) =>
-      item.qalinligi_ortasi
-        ? `${item.qalinligi_ortasi}/${item.qalinligi}`
-        : `${item.qalinligi}`
-    );
-  } else if (category.value == "Hammasi") {
-    qalinliglari.value =
-      products.value &&
-      mahsulotTuri.value !=
-        "Hammasi"
-          .filter((item) => item.category == category.value)
-          .map((item) =>
-            item.qalinligi_ortasi
-              ? `${item.qalinligi_ortasi}/${item.qalinligi}`
-              : `${item.qalinligi}`
-          );
-  } else {
-    qalinliglari.value = products.value
-      .filter((item) => item.category == category.value)
-      .map((item) =>
-        item.qalinligi_ortasi
-          ? `${item.qalinligi_ortasi}/${item.qalinligi}`
-          : `${item.qalinligi}`
-      );
-  }
-  qalinliglari.value = [...new Set(qalinliglari.value)];
-};
 const handleCutItem = async (item) => {
   isPopupOpen.value = true;
   product.value = item;
@@ -2739,5 +537,96 @@ const handleSubmitCut = async (e) => {
     console.log(error);
     loading.value = false;
   }
+};
+watch(page, async () => {
+  loading.value = true;
+  try {
+    if (
+      (mahsulotTuri.value == "" || mahsulotTuri.value == "Hammasi") &&
+      category.value == "" &&
+      holati.value == "Hammasi" &&
+      qalinligi.value == "" &&
+      qalinligi_ortasi.value == "" &&
+      uzunligi.value == ""
+    ) {
+      let productsRes = await $host.get(`/products`, {
+        params: {
+          page: page.value,
+          limit: 30,
+        },
+      });
+      products.value = productsRes.data.products;
+      page.value = productsRes.data.currentPage;
+      maxPage.value = productsRes.data.totalPages;
+      isSearchLoading.value = false;
+      return (loading.value = false);
+    }
+    let productsRes = await $host.patch("/products", {
+      mahsulot: mahsulotTuri.value,
+      category: category.value,
+      holati: holati.value == "Hammasi" ? "" : holati.value,
+      qalinligi: qalinligi.value,
+      qalinligi_ortasi: qalinligi_ortasi.value,
+      uzunligi: uzunligi.value,
+      page: page.value,
+      limit: 30,
+    });
+    products.value = productsRes.data.products;
+    page.value = productsRes.data.currentPage;
+    maxPage.value = productsRes.data.totalPages;
+    return (loading.value = false);
+  } catch (error) {
+    return console.log(error);
+  }
+});
+const handleSearchItems = async () => {
+  isSearchLoading.value = true;
+  try {
+    if (
+      (mahsulotTuri.value == "" || mahsulotTuri.value == "Hammasi") &&
+      category.value == "" &&
+      holati.value == "Hammasi" &&
+      qalinligi.value == "" &&
+      qalinligi_ortasi.value == "" &&
+      uzunligi.value == ""
+    ) {
+      isSearchLoading.value = true;
+      let productsRes = await $host.get(`/products`, {
+        params: {
+          page: page.value,
+          limit: 30,
+        },
+      });
+      products.value = productsRes.data.products;
+      page.value = productsRes.data.currentPage;
+      maxPage.value = productsRes.data.totalPages;
+      isSearchLoading.value = false;
+      return (isSearchLoading.value = false);
+    }
+    let productsRes = await $host.patch("/products", {
+      mahsulot: mahsulotTuri.value,
+      category: category.value,
+      holati: holati.value == "Hammasi" ? "" : holati.value,
+      qalinligi: qalinligi.value,
+      qalinligi_ortasi: qalinligi_ortasi.value,
+      uzunligi: uzunligi.value,
+      page: page.value,
+      limit: 30,
+    });
+    products.value = productsRes.data.products;
+    page.value = 1;
+    maxPage.value = productsRes.data.totalPages;
+  } catch (error) {
+    products.value = [];
+    return console.log(error);
+  }
+  isSearchLoading.value = false;
+};
+const handleChangeMahsulotTuri = () => {
+  category.value = "";
+  holati.value = "Hammasi";
+  qalinligi.value = "";
+  qalinligi_ortasi.value = "";
+  uzunligi.value = "";
 };
 </script>

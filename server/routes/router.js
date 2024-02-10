@@ -42,6 +42,7 @@ router.get('/products/:id', UserMiddleware, userController.productsGet);
 router.post('/products/excel', UserMiddleware, userController.productsExcelPost);
 router.patch('/products/:id', UserMiddleware, userController.productsPatch);
 router.get('/products', UserMiddleware, userController.productsGetAll);
+router.patch('/products', UserMiddleware, userController.productsPatchAlls);
 router.put('/products', UserMiddleware, userController.productsPut);
 router.post('/products/find', UserMiddleware, userController.productsFinder);
 router.post('/products/:id', UserMiddleware, userController.productsGetClients);
