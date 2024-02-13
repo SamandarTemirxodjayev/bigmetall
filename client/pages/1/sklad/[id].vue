@@ -6,8 +6,8 @@
     <div class="items-center bg-white shadow-xl rounded-md">
       <div class="flex p-4 justify-between">
         <form @submit="handleSearchSubmit">
-          <div class="flex">
-            <div class="px-2 mr-3">
+          <form @submit="handleSearchItems" class="flex gap-[5%]">
+            <div class="px-2">
               <USelect
                 v-model="search"
                 :options="
@@ -21,7 +21,17 @@
                 size="lg"
               />
             </div>
-          </div>
+            <div>
+              <UInput
+                size="lg"
+                placeholder="O'lchamilari"
+                v-model="olchamlari"
+              />
+            </div>
+            <div>
+              <UButton size="lg" type="submiy">Qidirish</UButton>
+            </div>
+          </form>
         </form>
         <div>
           <UButton @click="handleClickDownloadExcel" class="px-3 py-2 mx-2">
@@ -1433,6 +1443,7 @@ let ombors = ref([]);
 let sellers = ref([]);
 let editProduct = ref({});
 let editedProduct = ref({});
+let olchamlari = ref("");
 let MahsulotName = ref([
   "Dvuxtavr",
   "Shvellir",
@@ -1565,6 +1576,20 @@ const handleEditProduct = async (e) => {
     console.log(error);
     loading.value = false;
   }
+};
+const handleSearchItems = async () => {
+  loading.value = true;
+  try {
+    const res = await $host.post("/products/find", {
+      name: search.value == "Hammasi" ? "" : search.value,
+      olchamlari: olchamlari.value,
+      sklad: route.params.id,
+    });
+    products.value = res.data;
+  } catch (error) {
+    return console.log(error);
+  }
+  loading.value = false;
 };
 </script>
 <style scoped>

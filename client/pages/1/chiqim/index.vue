@@ -356,20 +356,31 @@
         />
       </div>
     </div>
-    <div
-      v-if="isPopupOpen"
-      class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-25"
-    >
-      <div class="bg-white p-10 rounded-md shadow-lg w-[400px]">
-        <button
-          @click="() => (isPopupOpen = false)"
-          class="relative -top-8 -right-8 float-right text-gray-500 hover:text-gray-700"
-        >
-          <Icon name="material-symbols:close" width="25" height="25" />
-        </button>
+    <UModal v-model="isPopupOpen" prevent-close>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Kesish
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isPopupOpen = false"
+            />
+          </div>
+        </template>
 
         <div>
-          <div class="text-2xl font-bold my-4">Kesish</div>
           <div>Mahsulot Nomi: {{ product.name }}</div>
           <div>O'lchamlari: {{ product.olchamlari }}</div>
           <div>Kategoriyasi: {{ product.category }}</div>
@@ -386,13 +397,10 @@
           <div>1M uchun Sotuv Narxi: {{ product.saledPrice }} so'm</div>
           <form @submit="handleSubmitCut">
             <div class="my-4">
-              <input
-                type="range"
-                v-model="cutRange"
+              <UMeter
+                :value="cutRange"
+                :min="0"
                 :max="product.uzunligi - 0.01"
-                step="0.01"
-                min="0"
-                class="w-full h-2 bg-gray-400 rounded-lg appearance-none cursor-pointer"
               />
             </div>
             <div class="my-4">
@@ -413,8 +421,8 @@
             </button>
           </form>
         </div>
-      </div>
-    </div>
+      </UCard>
+    </UModal>
   </div>
   <div v-else>
     <Loader />
@@ -629,4 +637,13 @@ const handleChangeMahsulotTuri = () => {
   qalinligi_ortasi.value = "";
   uzunligi.value = "";
 };
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isPopupOpen],
+    handler: () => {
+      isPopupOpen.value = false;
+    },
+  },
+});
 </script>

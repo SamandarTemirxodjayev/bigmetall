@@ -570,17 +570,39 @@ exports.skladPatchPrice = async (req, res) => {
                 },
               },
             },
+            totalSaledPrice: {
+              $sum: {
+                $cond: {
+                  if: { $eq: ['$name', 'List'] },
+                  then: {
+                    $multiply: [ '$saledPrice',
+                      {
+                        $divide: [
+                          { $multiply: ['$uzunligi_x', '$uzunligi_y'] },
+                          10000,
+                        ],
+                      },
+                    ],
+                  },
+                  else: { 
+                    $multiply: [ '$saledPrice', '$uzunligi', ]},
+                },
+              },
+            },
           },
         },
         {
           $project: {
             _id: 0,
             totalAmount: '$totalPrice',
+            totalSaledPrice: '$totalSaledPrice',
           },
         },
       ]);
       const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
       sklad.totalAmount = totalAmount;
+      const totalSaledPrice = result.length > 0 ? result[0].totalSaledPrice : 0;
+      sklad.totalSaledPrice = totalSaledPrice;
     }));
     return res.json(sklads);
   } catch (error) {
@@ -598,7 +620,7 @@ exports.skladProductsPost = async (req, res) => {
           qalinligi: req.body.qalinligi,
           qalinligi_ortasi: req.body.qalinligi_ortasi,
           holati: req.body.holati,
-          sklad: new mongoose.Types.ObjectId(req.body.sklad),
+          sklad: new mongoose.Types.ObjectId(req.body.sklad._id ? req.body.sklad._id : req.body.sklad),
           saled: false,
         },
       },
@@ -1590,16 +1612,21 @@ exports.productsFinder = async (req, res) => {
     const category = new RegExp(req.body.category, 'i');
     const olchamlari = new RegExp(req.body.olchamlari, 'i');
     const query = {
-      name: req.body.name,
       saled: false,
       category,
       olchamlari,
+    }
+    if(req.body.name){
+      query.name = req.body.name;
     }
     if(req.body.qalinligi){
       query.qalinligi = parseFloat(req.body.qalinligi);
     }
     if(req.body.qalinligi_ortasi){
       query.qalinligi_ortasi = parseFloat(req.body.qalinligi_ortasi);
+    }
+    if(req.body.sklad){
+      query.sklad = new mongoose.Types.ObjectId(req.body.sklad);
     }
     if(req.body.holati){
       query.holati = req.body.holati;

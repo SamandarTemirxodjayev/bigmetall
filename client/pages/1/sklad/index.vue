@@ -53,6 +53,7 @@
                   {{ item.name }} ({{
                     numberFormat(item.totalAmount.toFixed(2))
                   }}
+                  so'm) ({{ numberFormat(item.totalSaledPrice.toFixed(2)) }}
                   so'm)
                 </div>
               </NuxtLink>

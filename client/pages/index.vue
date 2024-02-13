@@ -15,4 +15,7 @@ onMounted(async () => {
   const res = await $host.get("/user");
   window.location.href = `/${res.data.user.user_level}`;
 });
+definePageMeta({
+  layout: false,
+});
 </script>
