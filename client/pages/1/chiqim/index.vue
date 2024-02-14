@@ -393,32 +393,50 @@
             }}mm
           </div>
           <div>Holati: {{ product.holati }}</div>
-          <div>Uzunligi: {{ product.uzunligi }}m</div>
+          <div v-if="product.name == 'List'">
+            <div>Bo'yi: {{ product.uzunligi_x }}sm</div>
+            <div>Eni: {{ product.uzunligi_y }}sm</div>
+          </div>
+          <div v-else>Uzunligi: {{ product.uzunligi }}m</div>
           <div>1M uchun Sotuv Narxi: {{ product.saledPrice }} so'm</div>
+          <div class="flex gap-[1%]" v-if="product.name == 'List'">
+            <UButton size="xl" @click="handleCutByList('x')">Bo'yi</UButton>
+            <UButton size="xl" @click="handleCutByList('y')">Eni</UButton>
+          </div>
           <form @submit="handleSubmitCut">
             <div class="my-4">
               <UMeter
                 :value="cutRange"
                 :min="0"
-                :max="product.uzunligi - 0.01"
+                :max="
+                  product.name == 'List'
+                    ? list == 'x'
+                      ? product.uzunligi_x
+                      : product.uzunligi_y
+                    : product.uzunligi - 0.01
+                "
               />
             </div>
             <div class="my-4">
-              <input
+              <label v-if="product.name == 'List'">{{
+                list == "x" ? "Bo'yi(sm)" : "Eni(sm)"
+              }}</label>
+              <UInput
                 type="number"
-                :max="product.uzunligi - 0.01"
+                :max="
+                  product.name == 'List'
+                    ? list == 'x'
+                      ? product.uzunligi_x - 1
+                      : product.uzunligi_y - 1
+                    : product.uzunligi - 0.01
+                "
                 min="0.01"
                 step="0.01"
                 v-model="cutRange"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                size="xl"
               />
             </div>
-            <button
-              @click="handleSubmit"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-            >
-              Tasdiqlash
-            </button>
+            <UButton type="submit" block size="xl"> Tasdiqlash </UButton>
           </form>
         </div>
       </UCard>
@@ -474,6 +492,7 @@ let isSearchLoading = ref(false);
 let mahsulotTuri = ref("");
 let products = ref([]);
 let product = ref();
+let list = ref(null);
 let isPopupOpen = ref(false);
 let MahsulotName = ref([
   "Dvuxtavr",
@@ -530,6 +549,9 @@ onMounted(async () => {
 });
 const handleCutItem = async (item) => {
   isPopupOpen.value = true;
+  if (item.name === "List") {
+    list.value = "x";
+  }
   product.value = item;
 };
 const handleSubmitCut = async (e) => {
@@ -539,6 +561,7 @@ const handleSubmitCut = async (e) => {
     await $host.post("/cut", {
       product: product.value,
       cut: cutRange.value,
+      list: list.value,
     });
     window.location.reload();
   } catch (error) {
@@ -637,12 +660,17 @@ const handleChangeMahsulotTuri = () => {
   qalinligi_ortasi.value = "";
   uzunligi.value = "";
 };
+const handleCutByList = (item) => {
+  list.value = item;
+};
 defineShortcuts({
   escape: {
     usingInput: true,
     whenever: [isPopupOpen],
     handler: () => {
       isPopupOpen.value = false;
+      cutRange.value = null;
+      item.value = null;
     },
   },
 });

@@ -6,8 +6,6 @@ const ExcelJS = require('exceljs');
 const moment = require('moment');
 const Users = require('../models/Users');
 const Harajats = require('../models/Harajats');
-const HarajatHistoryDeleted = require('../models/HarajatsHistoryDeleted');
-const HarajatHistoryEdited = require('../models/HarajatsHistoryEdited');
 const Sklads = require('../models/Sklad');
 const Products = require('../models/Products');
 const Clients = require('../models/Clients');
@@ -173,14 +171,6 @@ exports.harajatDelete = async (req, res) => {
     if (!harajat) {
       return res.status(404).json({ message: 'Harajat not found' });
     }
-    const history = new HarajatHistoryDeleted({
-      user: req.userId,
-      deletedFrom: {
-        name: harajat.name,
-        amount: harajat.amount,
-      },
-    });
-    await history.save();
     await harajat.deleteOne();
     return res.json({ message: 'Deleted successfully' });
   } catch (error) {
@@ -2196,11 +2186,27 @@ exports.cutPost = async (req, res) => {
   try {
     const product = await Products.findOne(req.body.product);
     product.cut = true;
-    product.uzunligi = parseFloat(req.body.cut);
+    if(req.body.list){
+      if(req.body.list == 'x'){
+        product.uzunligi_x = parseFloat(req.body.cut);
+      } else if(req.body.list == 'y'){
+        product.uzunligi_y = parseFloat(req.body.cut);
+      }
+    }else{
+      product.uzunligi = parseFloat(req.body.cut);
+    }
     await product.save();
     const newProduct = new Products(req.body.product);
     newProduct.cut = true;
-    newProduct.uzunligi = (parseFloat(newProduct.uzunligi) - parseFloat(req.body.cut)).toFixed(2);
+    if(req.body.list){
+      if(req.body.list == 'x'){
+        newProduct.uzunligi_x -= parseFloat(req.body.cut);
+      } else if(req.body.list == 'y'){
+        newProduct.uzunligi_y -= parseFloat(req.body.cut);
+      }
+    }else{
+      newProduct.uzunligi = (parseFloat(newProduct.uzunligi) - parseFloat(req.body.cut)).toFixed(2);
+    }
     newProduct.quantity = 1;
     await newProduct.save();
     return res.json({ cutted: true });
@@ -2493,7 +2499,11 @@ exports.hisobotGet = async (req, res) => {
         },
       },
     ]);
-
+    delete query.date;
+    query.saledDate = {
+      $gte: startDate,
+      $lte: endDate,
+    }
     query.saled = true;
 
     const foyda = await Products.aggregate([
@@ -2547,6 +2557,8 @@ exports.hisobotGet = async (req, res) => {
       },
     ]);
 
+
+    
     const savdoTushumi = await Products.aggregate([
       {
         $match: query
@@ -2630,6 +2642,8 @@ exports.hisobotGet = async (req, res) => {
     
       return dateA - dateB;
     });
+
+    console.log(query)
     
     return res.json({ harajat, foyda, savdoTushumi, sofFoyda, kirimTushumi });
   } catch (error) {
