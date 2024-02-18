@@ -849,7 +849,7 @@ exports.productsGetSaledPost = async (req, res) => {
 
     const products = await Products.find({
       saled: true,
-      date: {
+      saledDate: {
         $gte: startDate,
         $lte: endDate,
       }
@@ -858,7 +858,7 @@ exports.productsGetSaledPost = async (req, res) => {
       .populate('saledClient')
       .populate('saledSeller')
       .sort({
-        date: -1,
+        saledDate: -1,
         category: 1,
         olchamlari: 1,
         qalinligi: 1,
@@ -2821,7 +2821,7 @@ exports.historyExcelGet = async (req, res) => {
       .populate('saledClient')
       .populate('saledSeller')
       .sort({
-        date: -1,
+        saledDate: -1,
         category: 1,
         olchamlari: 1,
         qalinligi: 1,
