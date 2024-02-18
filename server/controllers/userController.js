@@ -196,7 +196,7 @@ exports.harajatFinder = async (req, res) => {
   try {
     const regexPattern = new RegExp(req.body.search, 'i');
     const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDay() - 31);
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 31);
     const startDate = req.body.startDate || threeDaysAgo;
     const endDate = req.body.endDate || new Date();
     
@@ -716,8 +716,6 @@ exports.skladDeleteProducts = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    console.log(req.body);
-    console.log(product);
     await product.deleteOne();
     res.json({ message: 'Deleted successfully' });
   } catch (error) {
@@ -841,6 +839,40 @@ exports.productsGet = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+exports.productsGetSaledPost = async (req, res) => {
+  try {
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    const startDate = req.body.startDate || threeDaysAgo;
+    const endDate = req.body.endDate || new Date();
+
+    const products = await Products.find({
+      saled: true,
+      date: {
+        $gte: startDate,
+        $lte: endDate,
+      }
+    })
+      .populate('sklad')
+      .populate('saledClient')
+      .populate('saledSeller')
+      .sort({
+        date: -1,
+        category: 1,
+        olchamlari: 1,
+        qalinligi: 1,
+        qalinligi_ortasi: 1,
+        uzunligi: 1,
+        uzunligi_x: 1,
+        uzunligi_y: 1,
+        quantity: 1,
+      });
+    return res.json(products);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
 exports.productsExcelPost = async (req, res) => {
   try {
     const cellStyle = {
@@ -1502,7 +1534,7 @@ exports.productsGetSeller = async (req, res) => {
 exports.productsPostSeller = async (req, res) => {
   try {
     const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDay() - 31);
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 31);
 
     const startDate = req.body.startDate || threeDaysAgo;
     const endDate = req.body.endDate || new Date();
@@ -2217,7 +2249,7 @@ exports.cutPost = async (req, res) => {
 exports.getSellerProducts = async (req, res) => {
   try {
     const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDay() - 31);
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 31);
 
     const startDate = req.body.startDate || threeDaysAgo;
     const endDate = req.body.endDate || new Date();
@@ -2731,7 +2763,7 @@ exports.businessdebtTotalGet = async (req, res) => {
 exports.businessdebtPayedGet = async (req, res) => {
   try {
     const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDay() - 7);
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 7);
     const startDate = req.body.startDate || threeDaysAgo;
     const endDate = req.body.endDate || new Date();
 
@@ -2763,4 +2795,108 @@ exports.phonePost = async (req, res) => {
   } catch (error) {
     return res.status(500).json(error);
   }
-}
+};
+exports.historyExcelGet = async (req, res) => {
+  try {
+    const cellStyle = {
+      font: { bold: true },
+      alignment: { horizontal: 'center', vertical: 'middle' },
+      border: {
+        top: { style: 'thin' },
+        right: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+      },
+    };
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('SKLAD');
+    const products = await Products.find({
+      saled: true,
+      date: {
+        $gte: new Date(req.query.startDate),
+        $lte: new Date(req.query.endDate),
+      }
+    })
+      .populate('sklad')
+      .populate('saledClient')
+      .populate('saledSeller')
+      .sort({
+        date: -1,
+        category: 1,
+        olchamlari: 1,
+        qalinligi: 1,
+        qalinligi_ortasi: 1,
+        uzunligi: 1,
+        uzunligi_x: 1,
+        uzunligi_y: 1,
+        quantity: 1,
+      });
+
+
+    worksheet.getCell(1, 1).value = '#';
+    worksheet.getCell(1, 2).value = 'Mahsulot Nomi';
+    worksheet.getCell(1, 3).value = 'Sotuvchi';
+    worksheet.getCell(1, 4).value = 'Mijoz';
+    worksheet.getCell(1, 5).value = 'O\'lchamlari';
+    worksheet.getCell(1, 6).value = 'Kategoriyasi';
+    worksheet.getCell(1, 7).value = 'Qalinligi';
+    worksheet.getCell(1, 8).value = 'Holati';
+    worksheet.getCell(1, 9).value = 'Uzunligi';
+    worksheet.getCell(1, 10).value = '1 m Uchun Narx';
+    worksheet.getCell(1, 11).value = 'Soni';
+    worksheet.getCell(1, 12).value = 'Umumiy Narxi';
+    worksheet.getCell(1, 13).value = 'Sotilgan Sanasi va Vaqti';
+    worksheet.getCell(1, 14).value = 'To\'lov Turi';
+    products.forEach((item, index) => {
+      worksheet.getCell(index + 2, 1).value = index + 1;
+      worksheet.getCell(index + 2, 2).value = item.name;
+      worksheet.getCell(index + 2, 3).value = item.saledSeller ? item.saledSeller.name : "";
+      worksheet.getCell(index + 2, 4).value = item.saledClient ? item.saledClient.name : "";
+      worksheet.getCell(index + 2, 5).value = item.olchamlari || '';
+      worksheet.getCell(index + 2, 6).value = item.category;
+      worksheet.getCell(index + 2, 7).value = item.qalinligi_ortasi ? `O'rtasi: ${item.qalinligi_ortasi}mm Chet:${item.qalinligi}mm` : `${item.qalinligi}mm`;
+      worksheet.getCell(index + 2, 8).value = item.holati;
+      worksheet.getCell(index + 2, 9).value = 
+      item.name == 'Palasa' ||
+      item.name == 'Kvadrat prut' ||
+      item.name == 'Kvadrad profil' ? `Uzunligi: ${ item.uzunligi }m Bo\'yi: ${item.uzunligi_x}sm <br /> Eni: ${item.uzunligi_y}sm` 
+      : item.uzunligi ? `${item.uzunligi}m` : `Bo'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`;
+      worksheet.getCell(index + 2, 10).value = item.saledPrice ? `${item.saledPrice}so'm` : 'Narx Belgilanmagan';
+      worksheet.getCell(index + 2, 11).value = `${item.quantity ? item.quantity : 0}ta`;
+      worksheet.getCell(index + 2, 12).value = item.uzunligi ? item.saledPrice == null ? "Narx belgilanmagan"
+      : `${(item.saledPrice * item.uzunligi * item.quantity)
+          .toFixed(2)
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm` : item.saledPrice == null ? "Narx belgilanmagan" : `${(
+            ((item.saledPrice *
+              (item.uzunligi_x * item.uzunligi_y)) /
+              10000) *
+            item.quantity
+          )
+            .toFixed(2)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`;
+      worksheet.getCell(index + 2, 13).value = formatTime(item.saledDate);
+      worksheet.getCell(index + 2, 14).value = item.saledType;
+    });
+    worksheet.columns.forEach((column) => {
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength) {
+          maxLength = columnLength + 3;
+        }
+      });
+      column.width = maxLength < 10 ? 10 : maxLength;
+    });
+    worksheet.eachRow((row) => {
+      row.eachCell((cell) => {
+        cell.style = cellStyle;
+      });
+    });
+    await workbook.xlsx.writeFile('./docs/HISOBOT.xlsx');
+    return res.download('./docs/HISOBOT.xlsx');
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};

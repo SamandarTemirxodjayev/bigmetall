@@ -1,9 +1,9 @@
 <template>
-  <div v-if="!loading" class="">
+  <div v-if="!loading">
     <div>
       <span class="text-2xl font-semibold">Hisobot</span>
     </div>
-    <div class="shadow-2xl border border-gray-300 items-center">
+    <div class="shadow-2xl border border-gray-300 items-center mt-4">
       <div class="flex p-4 justify-between">
         <div class="flex items-center gap-x-[2%]">
           <div class="items-center w-full">

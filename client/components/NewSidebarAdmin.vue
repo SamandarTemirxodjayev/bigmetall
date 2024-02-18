@@ -137,6 +137,9 @@ const router = useRoute();
               class="text-left submenu absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
             >
               <div class="hover:text-[#34a3f1] px-3">
+                <NuxtLink to="/1/history">Tarix</NuxtLink>
+              </div>
+              <div class="hover:text-[#34a3f1] px-3">
                 <NuxtLink to="/1/addAlert">Xabar Yuborish</NuxtLink>
               </div>
               <div class="hover:text-[#34a3f1] px-3">

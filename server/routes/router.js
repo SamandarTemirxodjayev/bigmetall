@@ -39,6 +39,7 @@ router.get('/sklad/:id/excel', UserMiddleware, userController.skladExcelGet);
 router.get('/sklad/price', UserMiddleware, userController.skladPriceGet);
 
 router.get('/products/:id', UserMiddleware, userController.productsGet);
+router.post('/products/saled', UserMiddleware, userController.productsGetSaledPost);
 router.post('/products/excel', UserMiddleware, userController.productsExcelPost);
 router.patch('/products/:id', UserMiddleware, userController.productsPatch);
 router.get('/products', UserMiddleware, userController.productsGetAll);
@@ -95,5 +96,7 @@ router.post('/businessdebt/:id', UserMiddleware, userController.businessdebtById
 
 router.get("/phone", UserMiddleware, userController.phoneGet);
 router.post("/phone", UserMiddleware, userController.phonePost);
+
+router.get('/history/excel', UserMiddleware, userController.historyExcelGet)
 
 module.exports = router;
