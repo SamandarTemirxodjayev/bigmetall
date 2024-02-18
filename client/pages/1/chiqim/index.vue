@@ -203,7 +203,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <template v-if="item.uzunligi">
-                <div>{{ (item.uzunligi * item.quantity).toFixed() }}m</div>
+                <div>{{ (item.uzunligi * item.quantity).toFixed(2) }}m</div>
               </template>
               <template v-else>
                 <div>

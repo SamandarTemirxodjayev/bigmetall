@@ -2809,7 +2809,7 @@ exports.historyExcelGet = async (req, res) => {
       },
     };
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('SKLAD');
+    const worksheet = workbook.addWorksheet('Sotuvlar');
     const products = await Products.find({
       saled: true,
       date: {
