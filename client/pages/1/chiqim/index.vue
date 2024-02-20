@@ -590,7 +590,8 @@ watch(page, async () => {
       page.value = productsRes.data.currentPage;
       maxPage.value = productsRes.data.totalPages;
       isSearchLoading.value = false;
-      return (loading.value = false);
+      loading.value = false;
+      return;
     }
     let productsRes = await $host.patch("/products", {
       mahsulot: mahsulotTuri.value,
@@ -605,7 +606,8 @@ watch(page, async () => {
     products.value = productsRes.data.products;
     page.value = productsRes.data.currentPage;
     maxPage.value = productsRes.data.totalPages;
-    return (loading.value = false);
+    loading.value = false;
+    return;
   } catch (error) {
     return console.log(error);
   }
@@ -632,7 +634,7 @@ const handleSearchItems = async () => {
       page.value = productsRes.data.currentPage;
       maxPage.value = productsRes.data.totalPages;
       isSearchLoading.value = false;
-      return (isSearchLoading.value = false);
+      return;
     }
     let productsRes = await $host.patch("/products", {
       mahsulot: mahsulotTuri.value,
