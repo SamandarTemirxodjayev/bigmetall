@@ -1120,9 +1120,6 @@ exports.productsGetAll = async (req, res) => {
 		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
 
-		const search = {};
-
-		// Base aggregation stages that are common for both total count and pagination
 		const baseAggregationStages = [
 			{$match: {saled: false}},
 			{
@@ -1147,7 +1144,6 @@ exports.productsGetAll = async (req, res) => {
 			},
 		];
 
-		// Fetch total count for pagination calculation
 		const totalCount = await Products.aggregate([
 			...baseAggregationStages,
 			{$count: "totalCount"},
@@ -1156,7 +1152,6 @@ exports.productsGetAll = async (req, res) => {
 		const totalDocuments = totalCount.length > 0 ? totalCount[0].totalCount : 0;
 		const totalPages = Math.ceil(totalDocuments / limit);
 
-		// Fetch paginated products
 		const products = await Products.aggregate([
 			...baseAggregationStages,
 			{
