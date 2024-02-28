@@ -1358,7 +1358,11 @@ exports.productsPut = async (req, res) => {
 							date: req.body.date,
 							seller: req.body.seller,
 							products: [newProduct],
-							allAmount: newProduct.price * req.body.quantity,
+							allAmount:
+								req.body.name === "List"
+									? ((req.body.uzunligi_x * req.body.uzunligi_y) / 10000) *
+									  req.body.price
+									: req.body.price * req.body.uzunligi,
 						});
 						await newDebt.save();
 					}
@@ -3009,7 +3013,7 @@ exports.historyExcelGet = async (req, res) => {
 				item.name == "Palasa" ||
 				item.name == "Kvadrat prut" ||
 				item.name == "Kvadrad profil"
-					? `Uzunligi: ${item.uzunligi}m Bo\'yi: ${item.uzunligi_x}sm <br /> Eni: ${item.uzunligi_y}sm`
+					? `Uzunligi: ${item.uzunligi}m Bo'yi: ${item.uzunligi_x}sm <br /> Eni: ${item.uzunligi_y}sm`
 					: item.uzunligi
 					? `${item.uzunligi}m`
 					: `Bo'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`;

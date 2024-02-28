@@ -1,3 +1,3 @@
 <template>
-  <div>Versiya: 1.0.0</div>
+  <div>Versiya: 1.0.1</div>
 </template>

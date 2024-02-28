@@ -413,10 +413,4 @@ watchEffect(() => {
     uzunligi_y.value = "";
   }
 });
-const HandleChangeTanNarxi = (e) => {
-  tanNarxi.value = parseInt(e.target.value.replace(",", ""));
-};
-const HandleChangeSotuvNarxi = (e) => {
-  sotuvNarxi.value = parseInt(e.target.value.replace(",", ""));
-};
 </script>

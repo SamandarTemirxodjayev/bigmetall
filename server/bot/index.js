@@ -495,7 +495,7 @@ bot.on("callback_query", async (callbackQuery) => {
 					item.name == "Palasa" ||
 					item.name == "Kvadrat prut" ||
 					item.name == "Kvadrad profil"
-						? `Uzunligi: ${item.uzunligi}m Bo\'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`
+						? `Uzunligi: ${item.uzunligi}m Bo'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`
 						: item.uzunligi
 						? `${item.uzunligi}m`
 						: `Bo'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`;
@@ -627,7 +627,7 @@ bot.on("callback_query", async (callbackQuery) => {
 				item.name == "Palasa" ||
 				item.name == "Kvadrat prut" ||
 				item.name == "Kvadrad profil"
-					? `Uzunligi: ${item.uzunligi}m Bo\'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`
+					? `Uzunligi: ${item.uzunligi}m Bo'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`
 					: item.uzunligi
 					? `${item.uzunligi}m`
 					: `Bo'yi: ${item.uzunligi_x}sm Eni: ${item.uzunligi_y}sm`;

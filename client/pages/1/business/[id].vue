@@ -23,10 +23,16 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Uzunligi
             </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
             <th class="px-5 py-3 text-left border-y border-gray-300">
               1m uchun sotuv narxi
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Umumiy Narxi
+            </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              1m uchun tan narxi
+            </th>
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Umumiy Narxi
             </th>
@@ -99,11 +105,18 @@
               </template>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.saledPrice }}so'm</div>
+              <div class="print-text">
+                {{ item.quantity }}
+              </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{ item.quantity }}
+                {{
+                  item.saledPrice
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
@@ -127,6 +140,46 @@
                       : `${(
                           ((item.saledPrice *
                             (item.uzunligi_x * item.uzunligi_y)) /
+                            10000) *
+                          item.quantity
+                        )
+                          .toFixed(2)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                  }}
+                </div>
+              </template>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <div class="print-text">
+                {{
+                  item.price
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}so'm
+              </div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <template v-if="item.uzunligi">
+                <div class="print-text">
+                  {{
+                    item.price == null
+                      ? "Narx belgilanmagan"
+                      : `${(item.price * item.uzunligi * item.quantity)
+                          .toFixed(2)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                  }}
+                </div>
+              </template>
+              <template v-else>
+                <div class="print-text">
+                  {{
+                    item.price == null
+                      ? "Narx belgilanmagan"
+                      : `${(
+                          ((item.price * (item.uzunligi_x * item.uzunligi_y)) /
                             10000) *
                           item.quantity
                         )
@@ -343,7 +396,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   loading.value = true;
   try {
-    const res = await $host.post("/businessdebt/" + route.params.id, {
+    await $host.post("/businessdebt/" + route.params.id, {
       amount: parseFloat(amount.value),
       payedType: payedType.value,
     });
