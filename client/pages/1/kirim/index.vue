@@ -165,6 +165,7 @@
               class="w-full col-span-2 mb-4"
               v-if="
                 mahsulotTuri == 'List' ||
+                mahsulotTuri == 'Planka' ||
                 mahsulotTuri == 'Kvadrad profil' ||
                 mahsulotTuri == 'Kvadrat prut' ||
                 mahsulotTuri == 'Palasa'
@@ -186,6 +187,7 @@
               class="w-full col-span-2 mb-4"
               v-if="
                 mahsulotTuri == 'List' ||
+                mahsulotTuri == 'Planka' ||
                 mahsulotTuri == 'Kvadrad profil' ||
                 mahsulotTuri == 'Kvadrat prut' ||
                 mahsulotTuri == 'Palasa'
@@ -203,7 +205,10 @@
               />
             </div>
 
-            <div class="w-full col-span-4 mb-4" v-if="mahsulotTuri != 'List'">
+            <div
+              class="w-full col-span-4 mb-4"
+              v-if="mahsulotTuri != 'List' && mahsulotTuri != 'Planka'"
+            >
               <label class="mb-[6px] block text-sm font-medium text-gray-900"
                 >Uzunligi(m)</label
               >

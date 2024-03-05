@@ -60,17 +60,18 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               To'lov Turi
             </th>
+            <th class="px-5 py-3 text-left border-y border-gray-300"></th>
           </tr>
         </thead>
         <tbody v-for="(item, i) in products" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ i + 1 }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 <template v-if="item.cut">
                   {{ item.name }} (kesilgan)
                 </template>
@@ -80,27 +81,27 @@
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ item.saledSeller ? item.saledSeller.name : "" }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ item.saledClient ? item.saledClient.name : "" }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ item.olchamlari }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ item.category }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 <template v-if="item.name == 'Dvuxtavr'">
                   O'rta: {{ item.qalinligi_ortasi }}mm <br />
                   Chet: {{ item.qalinligi }}mm
@@ -109,7 +110,7 @@
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ item.holati }}
               </div>
             </td>
@@ -121,33 +122,40 @@
                   item.name == 'Kvadrad profil'
                 "
               >
-                <div class="print-text">
+                <div>
                   Uzunligi: {{ item.uzunligi }}m <br />
                   Bo'yi: {{ item.uzunligi_x }}sm <br />
                   Eni: {{ item.uzunligi_y }}sm
                 </div>
               </template>
               <template v-else-if="item.uzunligi">
-                <div class="print-text">{{ item.uzunligi }}m</div>
+                <div>{{ item.uzunligi }}m</div>
               </template>
               <template v-else>
-                <div class="print-text">
+                <div>
                   Bo'yi: {{ item.uzunligi_x }}sm <br />
                   Eni: {{ item.uzunligi_y }}sm
                 </div>
               </template>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.saledPrice }}so'm</div>
+              <div>
+                {{
+                  item.saledPrice
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                }}so'm
+              </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ item.quantity }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <template v-if="item.uzunligi">
-                <div class="print-text">
+                <div>
                   {{
                     item.saledPrice == null
                       ? "Narx belgilanmagan"
@@ -159,7 +167,7 @@
                 </div>
               </template>
               <template v-else>
-                <div class="print-text">
+                <div>
                   {{
                     item.saledPrice == null
                       ? "Narx belgilanmagan"
@@ -177,12 +185,17 @@
               </template>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
+              <div>
                 {{ formatTime(item.saledDate) }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.saledType }}</div>
+              <div>{{ item.saledType }}</div>
+            </td>
+            <td class="px-5 py-3 border-b border-gray-300">
+              <UButton @click="handleReturnProduct(item._id)" size="lg"
+                >Qaytarish</UButton
+              >
             </td>
           </tr>
         </tbody>
@@ -197,6 +210,9 @@
 <script setup>
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
+import { reloadNuxtApp } from "nuxt/app";
 
 let loading = ref(true);
 let products = ref([]);
@@ -249,5 +265,25 @@ const handleDownloadExcel = async () => {
     return console.error(error);
   }
   loading.value = false;
+};
+const handleReturnProduct = async (id) => {
+  Swal.fire({
+    title: "Haqiqatdan ham qaytarmoqchimisiz?",
+    showCancelButton: true,
+    confirmButtonText: "Qaytarish",
+    confirmButtonColor: "#D11A2A",
+    cancelButtonText: "Bekor Qilish",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      loading.value = true;
+      await $host.delete(`/return/${id}`).then(async () => {
+        await Swal.fire("Qaytarildi", "", "success");
+        reloadNuxtApp({
+          path: "/1/history",
+          ttl: 1000,
+        });
+      });
+    }
+  });
 };
 </script>

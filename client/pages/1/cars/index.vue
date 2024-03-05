@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading">
     <div class="my-4">
-      <span class="text-2xl font-semibold">Sotuvchilar</span>
+      <span class="text-2xl font-semibold">Moshinalar</span>
     </div>
     <div class="shadow-2xl border border-gray-300 items-center">
       <div class="flex p-4 justify-between">
@@ -15,7 +15,7 @@
         <div>
           <div>
             <UButton @click="() => (isPopupOpen = true)" size="xl">
-              Sotuvchi Qo'shish
+              Moshina Qo'shish
             </UButton>
           </div>
         </div>
@@ -27,16 +27,16 @@
           <tr>
             <th class="px-5 py-3 text-left border-y border-gray-300">#</th>
             <th class="px-5 py-3 text-left border-y border-gray-300">
-              Sotuvchi Ismi
+              Moshina
             </th>
-            <th class="px-5 py-2 text-left border-y border-gray-300">
-              Telefon Raqami
-            </th>
-            <th class="px-5 py-2 text-left border-y border-gray-300">
-              Ma'lumotlar
+            <th class="px-5 py-3 text-left border-y border-gray-300">
+              Moshina Raqami
             </th>
             <th class="px-5 py-2 text-left border-y border-gray-300">
               Tizimga Kiritilgan Vaqti
+            </th>
+            <th class="px-5 py-2 text-left border-y border-gray-300">
+              Ma'lumotlar
             </th>
             <th class="px-5 py-2 text-left border-y border-gray-300"></th>
           </tr>
@@ -48,39 +48,28 @@
             class="hover:bg-gray-200 cursor-pointer"
           >
             <td class="px-5 py-3 border-b border-gray-300 w-10 text-center">
-              <NuxtLink :to="`/1/clients/${item._id}`">
-                <div class="print-text">{{ i + 1 }}</div>
-              </NuxtLink>
+              <div class="print-text">{{ i + 1 }}</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <NuxtLink :to="`/1/clients/${item._id}`">
-                <div class="print-text">{{ item.name }}</div>
-              </NuxtLink>
+              <div class="print-text">{{ item.name }}</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <NuxtLink :to="`/1/clients/${item._id}`">
-                <div class="print-text">{{ item.phone }}</div>
-              </NuxtLink>
+              <div class="print-text">{{ item.number }}</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text flex items-center gap-[1%]">
-                <NuxtLink :to="`/1/sellers/products/${item._id}`">
-                  <UButton size="xl"> Sotilgan Mahsulotlar </UButton>
-                </NuxtLink>
-                <NuxtLink :to="`/1/sellers/kirim/${item._id}`">
-                  <UButton size="xl"> Kirim Qilingan Mahsulotlar </UButton>
-                </NuxtLink>
-                <NuxtLink :to="`/1/sellers/${item._id}`">
-                  <UButton size="xl">Hisobot</UButton>
-                </NuxtLink>
+              <div class="print-text">
+                {{ formatTime(item.date) }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <NuxtLink :to="`/1/clients/${item._id}`">
-                <div class="print-text">
-                  {{ formatTime(item.date) }}
-                </div>
-              </NuxtLink>
+              <div class="print-text flex items-center gap-[1%]">
+                <NuxtLink :to="`/1/cars/${item._id}`">
+                  <UButton size="xl">Hisobot</UButton>
+                </NuxtLink>
+                <NuxtLink :to="`/1/cars/more/${item._id}`">
+                  <UButton size="xl">Batafsil</UButton>
+                </NuxtLink>
+              </div>
             </td>
             <td
               class="px-5 py-3 border-b border-gray-300 text-right w-[10%] text-gray-400"
@@ -90,7 +79,7 @@
                   name="clarity:pencil-line"
                   class="mr-4 hover:text-black"
                   size="1.5rem"
-                  @click="handleEditClient(item._id, item.name, item.phone)"
+                  @click="handleEditClient(item._id, item.name, item.number)"
                 />
                 <Icon
                   name="ant-design:delete-outlined"
@@ -116,7 +105,7 @@
             <h3
               class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
             >
-              Sotuvchi Qo'shish
+              Moshina Qo'shish
             </h3>
             <UButton
               color="gray"
@@ -134,18 +123,23 @@
               for="name"
               class="block mb-2 text-sm font-medium text-gray-700"
             >
-              Sotuvchi Ismi</label
+              Moshinani Tanglang</label
             >
-            <UInput v-model="name" required size="xl" />
+            <USelect
+              v-model="name"
+              required
+              size="xl"
+              :options="['Gazel', 'Volga', 'Shalanda']"
+            />
           </div>
           <div class="mb-4">
             <label
               for="quantity"
               class="block mb-2 text-sm font-medium text-gray-700"
             >
-              Sotuvchi Telefon Raqami</label
+              Moshina Raqami</label
             >
-            <UInput v-model="phone" required size="xl" />
+            <UInput v-model="number" required size="xl" />
           </div>
           <div>
             <UButton type="submit" size="xl" block> Tasdiqlash </UButton>
@@ -165,7 +159,7 @@
             <h3
               class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
             >
-              Sotuvchini Tahrirlash
+              Moshinani Tahrirlash
             </h3>
             <UButton
               color="gray"
@@ -183,18 +177,23 @@
               for="name"
               class="block mb-2 text-sm font-medium text-gray-700"
             >
-              Sotuvchi Ismi</label
+              Moshinani Tanglang</label
             >
-            <UInput v-model="editName" required size="xl" />
+            <USelect
+              v-model="editName"
+              required
+              size="xl"
+              :options="['Gazel', 'Volga', 'Shalanda']"
+            />
           </div>
           <div class="mb-4">
             <label
               for="quantity"
               class="block mb-2 text-sm font-medium text-gray-700"
             >
-              Sotuvchi Telefon Raqami</label
+              Moshina Raqami</label
             >
-            <UInput v-model="editPhone" required size="xl" />
+            <UInput v-model="editNumber" required size="xl" />
           </div>
           <div>
             <UButton size="xl" type="submit" block> Tasdiqlash </UButton>
@@ -211,21 +210,21 @@
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 
-let clients = ref("");
+let cars = ref(null);
 let isPopupOpen = ref(false);
 let isPopupEditOpen = ref(false);
 let editName = ref("");
-let editPhone = ref("");
-let clientId = ref("");
+let editNumber = ref("");
+let carId = ref("");
 let loading = ref(true);
 let name = ref("");
-let phone = ref("");
+let number = ref("");
 let search = ref("");
 
 onMounted(async () => {
   try {
-    const clientsRes = await $host.get("/sellers");
-    clients.value = clientsRes.data;
+    const carsRes = await $host.get("/cars");
+    cars.value = carsRes.data;
   } catch (error) {
     console.log(error);
   }
@@ -236,9 +235,9 @@ const handleSubmit = async (e) => {
   loading.value = true;
   e.preventDefault();
   try {
-    await $host.put("/sellers", {
+    await $host.put("/cars", {
       name: name.value,
-      phone: phone.value,
+      number: number.value,
     });
     window.location.reload();
   } catch (error) {
@@ -256,7 +255,7 @@ const handleDeleteClient = async (_id) => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       loading.value = true;
-      await $host.delete(`/sellers/${_id}`).then(async () => {
+      await $host.delete(`/cars/${_id}`).then(async () => {
         await Swal.fire("O'chirildi", "", "success");
         window.location.reload();
       });
@@ -266,16 +265,16 @@ const handleDeleteClient = async (_id) => {
 const handleEditClient = (_id, name, phone) => {
   isPopupEditOpen.value = true;
   editName.value = name;
-  editPhone.value = phone;
-  clientId.value = _id;
+  editNumber.value = phone;
+  carId.value = _id;
 };
 const handleSubmitEdit = async (e) => {
   loading.value = true;
   e.preventDefault();
   try {
-    await $host.post(`/sellers/${clientId.value}`, {
+    await $host.post(`/cars/${carId.value}`, {
       name: editName.value,
-      phone: editPhone.value,
+      number: editNumber.value,
     });
     await Swal.fire("O'zgartildi", "", "success");
     window.location.reload();
@@ -285,9 +284,9 @@ const handleSubmitEdit = async (e) => {
   }
 };
 let filteredClients = computed(() => {
-  if (!search.value) return clients.value;
-  return clients.value.filter((client) =>
-    client.name.toLowerCase().includes(search.value.toLowerCase())
+  if (!search.value) return cars.value;
+  return cars.value.filter((car) =>
+    car.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 defineShortcuts({

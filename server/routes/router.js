@@ -27,7 +27,6 @@ router.get(
 	UserMiddleware,
 	userController.harajatExcelByDate,
 );
-router.get("/harajat/year", UserMiddleware, userController.harajatYearGet);
 router.get(
 	"/harajat/graph",
 	UserMiddleware,
@@ -156,11 +155,6 @@ router.get(
 router.post("/hisobot", UserMiddleware, userController.hisobotGet);
 
 router.get("/businessdebt", UserMiddleware, userController.businessdebtGet);
-router.get(
-	"/businessdebt/total",
-	UserMiddleware,
-	userController.businessdebtTotalGet,
-);
 router.post(
 	"/businessdebt/payed",
 	UserMiddleware,
@@ -181,5 +175,26 @@ router.get("/phone", UserMiddleware, userController.phoneGet);
 router.post("/phone", UserMiddleware, userController.phonePost);
 
 router.get("/history/excel", UserMiddleware, userController.historyExcelGet);
+
+router.post("/dashboard", UserMiddleware, userController.dashboardPost);
+
+router.delete("/return/:id", UserMiddleware, userController.returnDelete);
+
+router.get("/car/harajats/:id", UserMiddleware, userController.carharajatsGet);
+router.post("/car/harajat", UserMiddleware, userController.carharajatPost);
+router.delete("/car/harajat/:id", UserMiddleware, userController.carharajatDelete);
+router.patch("/car/harajat/:id", UserMiddleware, userController.carharajatPatch);
+
+router.get("/car/savdo/:id", UserMiddleware, userController.carsavdoGet);
+router.post("/car/savdo", UserMiddleware, userController.carsavdoPost);
+router.delete("/car/savdo/:id", UserMiddleware, userController.carsavdoDelete);
+router.patch("/car/savdo/:id", UserMiddleware, userController.carsavdoPatch);
+
+router.get("/cars", UserMiddleware, userController.carsGet);
+router.get("/cars/:id", UserMiddleware, userController.carGetById);
+router.post("/cars/:id/results", UserMiddleware, userController.carResultsPost);
+router.put("/cars", UserMiddleware, userController.carsPut);
+router.post("/cars/:id", UserMiddleware, userController.carsPost);
+router.delete("/cars/:id", UserMiddleware, userController.carsDelete);
 
 module.exports = router;

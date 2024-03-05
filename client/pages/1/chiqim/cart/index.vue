@@ -615,7 +615,7 @@ const total = computed(() => {
     }
 
     return products.reduce((total, product) => {
-      if (product.name === "List") {
+      if (product.name === "List" || product.name === "Planka") {
         return (
           total +
           ((product.uzunligi_y * product.uzunligi_x) / 10000) *

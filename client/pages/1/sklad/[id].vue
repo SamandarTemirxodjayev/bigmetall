@@ -55,9 +55,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -90,11 +90,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 O'rta: {{ item.qalinligi_ortasi }}mm<br />
@@ -144,9 +144,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -179,11 +179,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.qalinligi }}mm</div>
             </td>
@@ -231,9 +231,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -266,11 +266,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.qalinligi }}mm</div>
             </td>
@@ -318,9 +318,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -353,11 +353,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.qalinligi }}mm</div>
             </td>
@@ -404,9 +404,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -436,11 +436,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.qalinligi }}mm</div>
             </td>
@@ -486,9 +486,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -521,11 +521,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.qalinligi }}mm</div>
             </td>
@@ -572,9 +572,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -658,9 +658,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -743,9 +743,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -827,9 +827,9 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
@@ -862,11 +862,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.qalinligi }}mm</div>
             </td>
@@ -914,20 +914,20 @@
             <th class="px-5 py-3 text-left border-y border-gray-300">
               O'lchamlari
             </th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Kategoriyasi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">
               Qalinligi
             </th>
             <th class="px-5 py-3 text-left border-y border-gray-300">Holati</th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Uzunligi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300">Soni</th>
-            <th class="px-5 py-3 text-left border-y border-gray-300">
+            <!-- <th class="px-5 py-3 text-left border-y border-gray-300">
               Umumiy Uzunligi
-            </th>
+            </th> -->
             <th class="px-5 py-3 text-left border-y border-gray-300"></th>
           </tr>
         </thead>
@@ -949,11 +949,11 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.olchamlari }}</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.category }}
               </div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.qalinligi }}mm</div>
             </td>
@@ -962,18 +962,18 @@
                 {{ item.holati }}
               </div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 {{ item.minUzunligi }} - {{ item.maxUzunligi }}m
               </div>
-            </td>
+            </td> -->
 
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.quantity }}ta</div>
             </td>
-            <td class="px-5 py-3 border-b border-gray-300">
+            <!-- <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">{{ item.totalUzunligi.toFixed(2) }}m</div>
-            </td>
+            </td> -->
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 <UButton @click="openModal(item)" class="px-3 py-2 mx-2">
@@ -1043,6 +1043,9 @@
                 </th>
                 <th class="px-5 py-3 text-left border-y border-gray-300">
                   1 m Uchun Sotuv Narxi
+                </th>
+                <th class="px-5 py-3 text-left border-y border-gray-300">
+                  1 dona Uchun Sotuv Narxi
                 </th>
                 <th class="px-5 py-3 text-left border-y border-gray-300"></th>
               </tr>
@@ -1127,6 +1130,22 @@
                       item.saledPrice == null
                         ? "Narx belgilanmagan"
                         : `${item.saledPrice
+                            .toFixed(2)
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                    }}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-b border-gray-300">
+                  <div>
+                    {{
+                      item.saledPrice == null
+                        ? "Narx belgilanmagan"
+                        : `${(item.name == "List" || item.name == "Planka"
+                            ? ((item.uzunligi_y * item.uzunligi_x) / 10000) *
+                              item.saledPrice
+                            : item.saledPrice * item.uzunligi
+                          )
                             .toFixed(2)
                             .toString()
                             .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
@@ -1325,6 +1344,7 @@
                 class="w-full col-span-2 mb-4"
                 v-if="
                   editProduct.name == 'List' ||
+                  editProduct.name == 'Planka' ||
                   editProduct.name == 'Kvadrad profil' ||
                   editProduct.name == 'Kvadrat prut' ||
                   editProduct.name == 'Palasa'
@@ -1346,6 +1366,7 @@
                 class="w-full col-span-2 mb-4"
                 v-if="
                   editProduct.name == 'List' ||
+                  editProduct.name == 'Planka' ||
                   editProduct.name == 'Kvadrad profil' ||
                   editProduct.name == 'Kvadrat prut' ||
                   editProduct.name == 'Palasa'
@@ -1365,7 +1386,9 @@
 
               <div
                 class="w-full col-span-4 mb-4"
-                v-if="editProduct.name != 'List'"
+                v-if="
+                  editProduct.name != 'List' && editProduct.name != 'Planka'
+                "
               >
                 <label class="mb-[6px] block text-sm font-medium text-gray-900"
                   >Uzunligi(m)</label
@@ -1507,7 +1530,7 @@ const openModal = async (item) => {
     const res = await $host.post("/sklad/products", {
       name: item.name,
       olchamlari: item.olchamlari,
-      category: item.category,
+      // category: item.category,
       qalinligi: item.qalinligi,
       qalinligi_ortasi: item.qalinligi_ortasi,
       holati: item.holati,

@@ -3,7 +3,7 @@
     <div class="my-4">
       <span class="text-2xl font-semibold">Mijozlar</span>
     </div>
-    <div class="shadow-2xl border border-gray-300 items-center">
+    <div class="shadow-2xl bg-white border border-gray-300 items-center">
       <div class="flex p-4 justify-between">
         <UInput
           v-model="search"

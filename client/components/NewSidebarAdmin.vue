@@ -1,5 +1,16 @@
 <script setup>
 const router = useRoute();
+const isOpenSubMenu = ref(false);
+const isOpenSubMenu2 = ref(false);
+
+const toggleSubMenu = () => {
+  isOpenSubMenu.value = !isOpenSubMenu.value;
+  isOpenSubMenu2.value = false;
+};
+const toggleSubMenu2 = () => {
+  isOpenSubMenu2.value = !isOpenSubMenu2.value;
+  isOpenSubMenu.value = false;
+};
 </script>
 <template>
   <div>
@@ -67,13 +78,14 @@ const router = useRoute();
             <div>Sotuvchilar</div>
           </NuxtLink>
         </li>
+
         <li
-          :class="
-            router.path.indexOf('/1/clients') !== -1 ||
-            router.path.indexOf('/1/business') !== -1
-              ? 'opacity-100 text-[#34a3f1]'
-              : 'hover:text-[#34a3f1] hover:opacity-100 opacity-50 text-black'
-          "
+          @click="toggleSubMenu2"
+          :class="{
+            'opacity-100 text-[#34a3f1]': isOpenSubMenu2,
+            'hover:text-[#34a3f1] hover:opacity-100 opacity-50 text-black':
+              !isOpenSubMenu2,
+          }"
         >
           <div>
             <div>
@@ -81,14 +93,15 @@ const router = useRoute();
             </div>
             <div>Qarzdorliklar</div>
             <div
-              class="text-left submenu absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
+              :class="isOpenSubMenu2 ? 'block' : 'hidden'"
+              class="text-left absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
             >
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/1/clients">Mijozlar</NuxtLink>
-              </div>
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/1/business">Kompaniya</NuxtLink>
-              </div>
+              <NuxtLink to="/1/clients">
+                <div class="hover:text-[#34a3f1] px-3">Mijozlar</div>
+              </NuxtLink>
+              <NuxtLink to="/1/business">
+                <div class="hover:text-[#34a3f1] px-3">Kompaniya</div>
+              </NuxtLink>
             </div>
           </div>
         </li>
@@ -106,6 +119,20 @@ const router = useRoute();
         </li>
         <li
           :class="
+            router.path.indexOf('/1/cars') !== -1
+              ? 'opacity-100 text-[#34a3f1]'
+              : 'hover:text-[#34a3f1] hover:opacity-100 opacity-50 text-black'
+          "
+        >
+          <NuxtLink to="/1/cars">
+            <div>
+              <Icon name="mdi:car-outline" size="28px" />
+            </div>
+            <div>Moshinalar</div>
+          </NuxtLink>
+        </li>
+        <li
+          :class="
             router.path == '/1/hisobot'
               ? 'opacity-100 text-[#34a3f1]'
               : 'hover:text-[#34a3f1] hover:opacity-100 opacity-50 text-black'
@@ -119,14 +146,12 @@ const router = useRoute();
           </NuxtLink>
         </li>
         <li
-          :class="
-            router.path == '/1/addAlert' ||
-            router.path == '/1/changePassword' ||
-            router.path == '/1/users' ||
-            router.path == '/1/phone'
-              ? 'opacity-100 text-[#34a3f1]'
-              : 'hover:text-[#34a3f1] hover:opacity-100 opacity-50 text-black'
-          "
+          @click="toggleSubMenu"
+          :class="{
+            'opacity-100 text-[#34a3f1]': isOpenSubMenu,
+            'hover:text-[#34a3f1] hover:opacity-100 opacity-50 text-black':
+              !isOpenSubMenu,
+          }"
         >
           <div>
             <div>
@@ -134,26 +159,27 @@ const router = useRoute();
             </div>
             <div>Qo'shimcha</div>
             <div
-              class="text-left submenu absolute top-0 left-full bg-white border-l border-gray-300 shadow-inner py-4 min-w-[200px] block min-h-full text-gray-500"
+              class="text-left absolute top-0 left-full bg-white border-l border-gray-300 py-4 min-w-[200px] block min-h-full text-gray-500"
+              :class="isOpenSubMenu ? 'block' : 'hidden'"
             >
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/1/history">Tarix</NuxtLink>
-              </div>
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/1/addAlert">Xabar Yuborish</NuxtLink>
-              </div>
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/1/changePassword">Parolni O'zgartish</NuxtLink>
-              </div>
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/1/users">Foydalanuvchilar</NuxtLink>
-              </div>
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/1/phone">Telefon Raqam</NuxtLink>
-              </div>
-              <div class="hover:text-[#34a3f1] px-3">
-                <NuxtLink to="/about">CRM Haqida</NuxtLink>
-              </div>
+              <NuxtLink to="/1/history">
+                <div class="hover:text-[#34a3f1] px-3">Tarix</div>
+              </NuxtLink>
+              <NuxtLink to="/1/addAlert">
+                <div class="hover:text-[#34a3f1] px-3">Xabar Yuborish</div>
+              </NuxtLink>
+              <NuxtLink to="/1/changePassword">
+                <div class="hover:text-[#34a3f1] px-3">Parolni O'zgartish</div>
+              </NuxtLink>
+              <NuxtLink to="/1/users">
+                <div class="hover:text-[#34a3f1] px-3">Foydalanuvchilar</div>
+              </NuxtLink>
+              <NuxtLink to="/1/phone">
+                <div class="hover:text-[#34a3f1] px-3">Telefon Raqam</div>
+              </NuxtLink>
+              <NuxtLink to="/about">
+                <div class="hover:text-[#34a3f1] px-3">CRM Haqida</div>
+              </NuxtLink>
             </div>
           </div>
         </li>
@@ -173,11 +199,5 @@ ul li div {
 ul li {
   margin-bottom: 20px;
   cursor: pointer;
-}
-ul li:hover .submenu {
-  display: block;
-}
-.submenu {
-  display: none;
 }
 </style>

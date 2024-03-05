@@ -1,21 +1,21 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const harajatSchema = new mongoose.Schema({
-  name: {
-    type: String,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-  active: {
-    type: Boolean,
-    default: true,
-  }
+	name: {
+		type: String,
+	},
+	date: {
+		type: Date,
+		default: Date.now,
+	},
+	active: {
+		type: Boolean,
+		default: true,
+	},
 });
 
-harajatSchema.set('timestamps', true);
+harajatSchema.set("timestamps", true);
 
-const Sklads = mongoose.model('sklad', harajatSchema);
+const Sklads = mongoose.model("sklad", harajatSchema);
 
 module.exports = Sklads;

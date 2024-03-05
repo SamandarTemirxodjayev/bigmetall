@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-const sellersSchema = new mongoose.Schema({
+const carsSchema = new mongoose.Schema({
 	name: {
 		type: String,
 	},
-	phone: {
+	number: {
 		type: String,
 	},
 	active: {
@@ -17,8 +17,8 @@ const sellersSchema = new mongoose.Schema({
 	},
 });
 
-sellersSchema.set("timestamps", true);
+carsSchema.set("timestamps", true);
 
-const Sellers = mongoose.model("seller", sellersSchema);
+const Cars = mongoose.model("cars", carsSchema);
 
-module.exports = Sellers;
+module.exports = Cars;

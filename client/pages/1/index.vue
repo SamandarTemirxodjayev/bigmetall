@@ -486,16 +486,12 @@ let companyDebt = ref(null);
 let items = ref([]);
 onMounted(async () => {
   try {
-    const resHarajats = await $host.get("/harajat/year");
-    xarajats.value = resHarajats.data.totalAmount;
-    const resOmbor = await $host.get("/sklad/price");
-    ombors.value = resOmbor.data.result;
-    const resDebts = await $host.get("/products/debts/price");
-    debts.value = resDebts.data.result;
-    const resFoyda = await $host.get("/productsYear");
-    foyda.value = resFoyda.data.totalAmount;
-    const companyDebtRes = await $host.get("/businessdebt/total");
-    companyDebt.value = companyDebtRes.data.result;
+    const res = await $host.post("/dashboard");
+    xarajats.value = res.data.harajat;
+    ombors.value = res.data.sklad;
+    debts.value = res.data.debts;
+    foyda.value = res.data.foyda;
+    companyDebt.value = res.data.companydebts;
     const resFoydaGraph = await $host.get("/productsYear/graph");
     data.value = {
       labels: resFoydaGraph.data.map(
@@ -544,7 +540,8 @@ onMounted(async () => {
 const handleSearchItems = async () => {
   loadingSearch.value = true;
   if (mahsulotTuri.value == null) {
-    return (loadingSearch.value = false);
+    loadingSearch.value = false;
+    return;
   }
   try {
     const res = await $host.post("/products/find", {

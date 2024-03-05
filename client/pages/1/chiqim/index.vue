@@ -322,6 +322,7 @@
                       Qo'shish
                     </button>
                     <button
+                      v-if="item.name != 'Planka'"
                       @click="handleCutItem(item._id)"
                       type="button"
                       class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 focus:outline-none"
@@ -465,7 +466,7 @@ const totalQuantity = computed(() => {
 });
 const totalSummary = computed(() => {
   return storeItems.value.reduce((total, item) => {
-    if (item.name !== "List") {
+    if (item.name !== "List" && item.name !== "Planka") {
       return total + item.uzunligi * item.saledPrice * item.quantity;
     } else {
       return (
@@ -479,7 +480,7 @@ const totalSummary = computed(() => {
 });
 const totalUzunligi = computed(() => {
   return storeItems.value.reduce((total, item) => {
-    if (item.name !== "List") {
+    if (item.name !== "List" || item.name !== "Planka") {
       return total + item.uzunligi * item.quantity;
     } else {
       return 0;

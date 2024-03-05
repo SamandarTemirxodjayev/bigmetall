@@ -2,3 +2,5 @@ node_modules
 log
 dist
 docs
+backup
+package-lock.json

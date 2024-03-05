@@ -20,7 +20,10 @@
             size="lg"
             class="min-w-[350px]"
             :options="
-              [{ name: 'Hammasi', id: null }].concat(
+              [
+                { name: 'Hammasi', id: null },
+                { name: 'Moshinalar', id: null },
+              ].concat(
                 ombors.map((item) => ({
                   name: item.name,
                   id: item._id,
@@ -111,7 +114,7 @@
       <div
         :class="[
           isActive
-            ? `transition duration-[500] ease-in w-[15%] bg-white p-4 ${classObject}`
+            ? `transition duration-[500] ease-in w-[15%] bg-white p-4 ${classObject} -mt-1`
             : '',
         ]"
       ></div>

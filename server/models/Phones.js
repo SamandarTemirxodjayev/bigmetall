@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const phonesSchema = new mongoose.Schema({
-  phone: {
-    type: String,
-  },
+	phone: {
+		type: String,
+	},
 });
 
-phonesSchema.set('timestamps', true);
-const Phones = mongoose.model('phones', phonesSchema);
+phonesSchema.set("timestamps", true);
+const Phones = mongoose.model("phones", phonesSchema);
 
 module.exports = Phones;
