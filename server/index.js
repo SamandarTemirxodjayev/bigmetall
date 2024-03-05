@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 require("./backuper.js");
-// require("./bot/index.js");
+require("./bot/index.js");
 
 const router = require("./routes/router");
 const user2Router = require("./routes/user2.router");
