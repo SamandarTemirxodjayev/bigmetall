@@ -1759,7 +1759,7 @@ exports.productsFinder = async (req, res) => {
 						name: "$name",
 						qalinligi: "$qalinligi",
 						qalinligi_ortasi: "$qalinligi_ortasi",
-						category: "$category",
+						// category: "$category",
 						holati: "$holati",
 						olchamlari: "$olchamlari",
 						sklad: "$sklad",
@@ -1796,7 +1796,7 @@ exports.productsFinder = async (req, res) => {
 					name: "$_id.name",
 					qalinligi: "$_id.qalinligi",
 					qalinligi_ortasi: "$_id.qalinligi_ortasi",
-					category: "$_id.category",
+					// category: "$_id.category",
 					holati: "$_id.holati",
 					sklad: "$_id.sklad",
 					olchamlari: "$_id.olchamlari",
@@ -1809,7 +1809,8 @@ exports.productsFinder = async (req, res) => {
 			},
 			{
 				$sort: {
-					category: 1,
+					// category: 1,
+					olchamlari: 1,
 					qalinligi: 1,
 					qalinligi_ortasi: 1,
 					quantity: 1,
