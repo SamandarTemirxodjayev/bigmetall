@@ -48,6 +48,16 @@
             </th>
           </tr>
         </thead>
+        <tbody v-if="products.length == 0">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="6"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody v-for="item in products" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">
@@ -55,7 +65,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{ summaryQuantity(item.products) }}
+                {{ item.products.length }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
@@ -139,13 +149,6 @@ const handleChangeSearch = async () => {
     console.log(error);
   }
   loading.value = false;
-};
-const summaryQuantity = (items) => {
-  let total = 0;
-  for (const item of items) {
-    total += item.quantity;
-  }
-  return total;
 };
 </script>
 <style scoped>

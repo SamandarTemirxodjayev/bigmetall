@@ -51,6 +51,16 @@
             </th>
           </tr>
         </thead>
+        <tbody v-if="products.length == 0">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="9"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody v-for="item in products" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">BIG METALL</td>
@@ -62,34 +72,19 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.allAmount
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.allAmount) }}
                 so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.payedAmount
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.payedAmount) }}
                 so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  (item.allAmount - item.payedAmount)
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.allAmount - item.payedAmount) }}
                 so'm
               </div>
             </td>
@@ -143,6 +138,16 @@
             </th>
           </tr>
         </thead>
+        <tbody v-if="productsPayed.length == 0">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="9"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody v-for="item in productsPayed" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">BIG METALL</td>
@@ -154,34 +159,19 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.allAmount
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.allAmount) }}
                 so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.payedAmount
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.payedAmount) }}
                 so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  (item.allAmount - item.payedAmount)
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.allAmount - item.payedAmount) }}
                 so'm
               </div>
             </td>

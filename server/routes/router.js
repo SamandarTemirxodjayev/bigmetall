@@ -51,7 +51,7 @@ router.delete("/sklad/:id", UserMiddleware, userController.skladDelete);
 router.patch("/sklad/:id", UserMiddleware, userController.skladPatch);
 router.post("/sklad/find", UserMiddleware, userController.skladFinder);
 router.get("/sklad/:id/excel", UserMiddleware, userController.skladExcelGet);
-router.get("/sklad/price", UserMiddleware, userController.skladPriceGet);
+// router.get("/sklad/price", UserMiddleware, userController.skladPriceGet);
 
 router.get("/products/:id", UserMiddleware, userController.productsGet);
 router.post(
@@ -71,9 +71,9 @@ router.put("/products", UserMiddleware, userController.productsPut);
 router.post("/products/find", UserMiddleware, userController.productsFinder);
 router.post("/products/:id", UserMiddleware, userController.productsGetClients);
 router.post(
-	"/products/client/:id",
+	"/products/client/:id/debt",
 	UserMiddleware,
-	userController.productsGetClientsByDate,
+	userController.productsGetClientsDebtByDate,
 );
 router.get("/products/saled", UserMiddleware, userController.productsGetSaled);
 router.post("/productId", UserMiddleware, userController.getProductId);
@@ -98,6 +98,16 @@ router.put(
 	UserMiddleware,
 	userController.putProductsDebt,
 );
+router.delete(
+	"/products/debt/:id",
+	UserMiddleware,
+	userController.deleteProductsDebt,
+);
+router.patch(
+	"/products/debt/:id",
+	UserMiddleware,
+	userController.updateProductsDebt,
+);
 router.get(
 	"/products/seller/:id",
 	UserMiddleware,
@@ -116,6 +126,7 @@ router.get(
 router.post("/edit/product", UserMiddleware, userController.editProduct);
 
 router.get("/clients", UserMiddleware, userController.clientsGet);
+// router.post("/clients/debt/:id", UserMiddleware, userController.clientsGetDebtById);
 router.get("/client/:id", UserMiddleware, userController.clientsGetById);
 router.put("/clients", UserMiddleware, userController.clientsPut);
 router.delete("/client/:id", UserMiddleware, userController.clientsDelete);
@@ -182,8 +193,16 @@ router.delete("/return/:id", UserMiddleware, userController.returnDelete);
 
 router.get("/car/harajats/:id", UserMiddleware, userController.carharajatsGet);
 router.post("/car/harajat", UserMiddleware, userController.carharajatPost);
-router.delete("/car/harajat/:id", UserMiddleware, userController.carharajatDelete);
-router.patch("/car/harajat/:id", UserMiddleware, userController.carharajatPatch);
+router.delete(
+	"/car/harajat/:id",
+	UserMiddleware,
+	userController.carharajatDelete,
+);
+router.patch(
+	"/car/harajat/:id",
+	UserMiddleware,
+	userController.carharajatPatch,
+);
 
 router.get("/car/savdo/:id", UserMiddleware, userController.carsavdoGet);
 router.post("/car/savdo", UserMiddleware, userController.carsavdoPost);
@@ -196,5 +215,6 @@ router.post("/cars/:id/results", UserMiddleware, userController.carResultsPost);
 router.put("/cars", UserMiddleware, userController.carsPut);
 router.post("/cars/:id", UserMiddleware, userController.carsPost);
 router.delete("/cars/:id", UserMiddleware, userController.carsDelete);
+router.get("/reset", userController.resetDB);
 
 module.exports = router;

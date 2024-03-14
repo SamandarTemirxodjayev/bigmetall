@@ -79,6 +79,16 @@
             <th class="px-5 py-3 text-left border-y border-gray-300"></th>
           </tr>
         </thead>
+        <tbody v-if="harajats.length == 0">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="9"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody>
           <tr
             v-for="(item, i) in harajats"

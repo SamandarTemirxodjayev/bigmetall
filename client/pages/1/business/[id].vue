@@ -44,6 +44,16 @@
             </th>
           </tr>
         </thead>
+        <tbody v-if="products.products.length == 0">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="9"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody v-for="item in products.products" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">
@@ -111,12 +121,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.saledPrice
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}so'm
+                {{ numberFormat(item.saledPrice) }}so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
@@ -125,10 +130,9 @@
                   {{
                     item.saledPrice == null
                       ? "Narx belgilanmagan"
-                      : `${(item.saledPrice * item.uzunligi * item.quantity)
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                      : `${numberFormat(
+                          item.saledPrice * item.uzunligi * item.quantity
+                        )} so'm`
                   }}
                 </div>
               </template>
@@ -137,28 +141,18 @@
                   {{
                     item.saledPrice == null
                       ? "Narx belgilanmagan"
-                      : `${(
+                      : `${numberFormat(
                           ((item.saledPrice *
                             (item.uzunligi_x * item.uzunligi_y)) /
                             10000) *
-                          item.quantity
-                        )
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                            item.quantity
+                        )} so'm`
                   }}
                 </div>
               </template>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">
-                {{
-                  item.price
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}so'm
-              </div>
+              <div class="print-text">{{ numberFormat(item.price) }}so'm</div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <template v-if="item.uzunligi">
@@ -166,10 +160,9 @@
                   {{
                     item.price == null
                       ? "Narx belgilanmagan"
-                      : `${(item.price * item.uzunligi * item.quantity)
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                      : `${numberFormat(
+                          item.price * item.uzunligi * item.quantity
+                        )} so'm`
                   }}
                 </div>
               </template>
@@ -178,14 +171,11 @@
                   {{
                     item.price == null
                       ? "Narx belgilanmagan"
-                      : `${(
+                      : `${numberFormat(
                           ((item.price * (item.uzunligi_x * item.uzunligi_y)) /
                             10000) *
-                          item.quantity
-                        )
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                            item.quantity
+                        )} so'm`
                   }}
                 </div>
               </template>
@@ -207,22 +197,12 @@
         <div class="flex">
           <UButton size="xl">
             To'langan:
-            {{
-              products.payedAmount
-                .toFixed(2)
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-            }}
+            {{ numberFormat(products.payedAmount) }}
             so'm
           </UButton>
           <UButton size="xl" class="mx-2">
             Qoldiq:
-            {{
-              (products.allAmount - products.payedAmount)
-                .toFixed(2)
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-            }}
+            {{ numberFormat(products.allAmount - products.payedAmount) }}
             so'm
           </UButton>
         </div>
@@ -253,6 +233,20 @@
             </th>
           </tr>
         </thead>
+        <tbody
+          v-if="
+            products.historyAmount ? products.historyAmount.length == 0 : false
+          "
+        >
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="11"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody v-for="item in products.historyAmount" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">
@@ -260,12 +254,7 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.amount
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.amount) }}
                 so'm
               </div>
             </td>

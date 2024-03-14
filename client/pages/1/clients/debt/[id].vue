@@ -6,23 +6,18 @@
       >
     </div>
     <div class="items-center bg-white shadow-xl rounded-md">
-      <div class="flex p-4 justify-between">
-        <div class="flex">
-          <div
-            class="flex items-center border border-gray-500 rounded-lg px-2 mr-3"
-          >
-            <select
-              class="text-gray-900 text-sm block w-full p-2.5 outline-none"
-              placeholder="Qidiruv"
-              v-model="search"
-              @change="handleChangeSearch"
-            >
-              <option value="Hammasi">Hammasi</option>
-              <option v-for="(item, id) in dates" :key="id" :value="item">
-                {{ item }}
-              </option>
-            </select>
+      <div class="flex p-2 justify-between">
+        <div class="flex items-center gap-x-[2%]">
+          <div class="items-center w-full">
+            <VueDatePicker
+              class="border border-gray-500 rounded-[5px] min-w-[350px] z-1"
+              v-model="date"
+              range
+              :max-date="new Date()"
+              time-picker-inline
+            />
           </div>
+          <UButton size="lg" @click="handleSearch"> Qidirish </UButton>
         </div>
       </div>
     </div>
@@ -59,6 +54,16 @@
             </th>
           </tr>
         </thead>
+        <tbody v-if="products.length == 0">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="9"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody v-for="item in products" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">
@@ -71,39 +76,24 @@
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{ summaryQuantity(item.products) }}
+                {{ item.products.length }}
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.allAmount
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.allAmount) }}
                 so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  item.payedAmount
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.payedAmount) }}
                 so'm
               </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
-                {{
-                  (item.allAmount - item.payedAmount)
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                }}
+                {{ numberFormat(item.allAmount - item.payedAmount) }}
                 so'm
               </div>
             </td>
@@ -133,6 +123,8 @@
 </template>
 
   <script setup>
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 const route = useRoute();
 
 let isPopupOpen = ref(false);
@@ -142,6 +134,7 @@ let search = ref("Hammasi");
 let client = ref("");
 let products = ref([]);
 let product = ref({});
+let date = ref();
 
 onMounted(async () => {
   try {
@@ -154,55 +147,23 @@ onMounted(async () => {
   }
   loading.value = false;
 });
-const handleClickDownloadExcel = async () => {
+const handleSearch = async () => {
   loading.value = true;
   try {
-    const res = await $host.get(`/sklad/${route.params.id}/excel`, {
-      responseType: "blob",
-    });
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `sklad-${datetime}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
+    const startDate = date.value && date.value[0] ? date.value[0] : null;
+    const endDate = date.value && date.value[1] ? date.value[1] : null;
+    const res = await $host.post(
+      "/products/client/" + route.params.id + "/debt",
+      {
+        startDate,
+        endDate,
+      }
+    );
+    products.value = res.data;
   } catch (error) {
     console.log(error);
   }
   loading.value = false;
-};
-const handleChangeSearch = async () => {
-  loading.value = true;
-  try {
-    if (search.value == "Hammasi") {
-      const res = await $host.post("/products/" + route.params.id);
-      products.value = res.data.products;
-    } else {
-      const d = search.value.split("-");
-      const res = await $host.post("/products/client/" + route.params.id, {
-        date: {
-          day: parseInt(d[0]),
-          month: parseInt(d[1]),
-          year: parseInt(d[2]),
-        },
-      });
-      products.value = res.data;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  loading.value = false;
-};
-const handleAboutClick = async (item) => {
-  product.value = item;
-  isPopupOpen.value = true;
-};
-const summaryQuantity = (items) => {
-  let total = 0;
-  for (const item of items) {
-    total += item.quantity;
-  }
-  return total;
 };
 </script>
   <style scoped>

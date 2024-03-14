@@ -544,12 +544,15 @@ exports.harajatYearGetGraph = async (req, res) => {
 
 exports.skladGet = async (req, res) => {
 	try {
-		const sklad = await Sklads.find({active: true});
+		sklad = await Sklads.find({active: true});
+
 		return res.json(sklad);
 	} catch (error) {
+		console.error("Error in skladGet:", error);
 		return res.status(500).json(error);
 	}
 };
+
 exports.skladPatchPrice = async (req, res) => {
 	try {
 		const sklads = await Sklads.find({
@@ -1391,18 +1394,29 @@ exports.productsGetClients = async (req, res) => {
 	}
 };
 
-exports.productsGetClientsByDate = async (req, res) => {
+exports.productsGetClientsDebtByDate = async (req, res) => {
 	try {
-		const products = await Saleds.find({
+		let threeDaysAgo = new Date(); // Initialize to today's date
+		threeDaysAgo.setDate(threeDaysAgo.getDate() - 31); // Set to 31 days ago
+
+		const startDate = req.body.startDate
+			? new Date(req.body.startDate)
+			: threeDaysAgo;
+		const endDate = req.body.endDate ? new Date(req.body.endDate) : new Date();
+
+		const products = await Debts.find({
 			clientId: new mongoose.Types.ObjectId(req.params.id),
 			date: {
-				day: req.body.date.day,
-				month: req.body.date.month,
-				year: req.body.date.year,
+				$gte: startDate,
+				$lte: endDate,
 			},
-		}).populate("clientId");
+		})
+			.populate("clientId")
+			.populate("sellerId");
+
 		return res.json(products);
 	} catch (error) {
+		console.error("Error retrieving client debts by date:", error); // Log the error for debugging purposes
 		return res.status(500).json(error);
 	}
 };
@@ -1509,7 +1523,11 @@ exports.getProductsWithDebts = async (req, res) => {
 };
 exports.postProductsInfo = async (req, res) => {
 	try {
-		const saled = await Saleds.findById(req.params.id).populate("clientId");
+		const saled = await Saleds.findById(req.params.id)
+			.populate("clientId")
+			.populate("sellerId")
+			.populate("products")
+			.populate("debt");
 		return res.json(saled);
 	} catch (error) {
 		return res.status(500).json(error);
@@ -1517,7 +1535,9 @@ exports.postProductsInfo = async (req, res) => {
 };
 exports.postProductsDebt = async (req, res) => {
 	try {
-		const debt = await Debts.findById(req.params.id).populate("clientId");
+		const debt = await Debts.findById(req.params.id)
+			.populate("clientId")
+			.populate("products");
 		return res.json(debt);
 	} catch (error) {
 		return res.status(500).json(error);
@@ -1534,13 +1554,10 @@ exports.putProductsDebt = async (req, res) => {
 		if (!update) {
 			return res.status(404).json({message: "Product not found"});
 		}
-		let date = new Date();
-		date = moment(date).format();
 		update.historyAmount.push({
 			clientSaved: req.body.clientSaved,
 			payedType: req.body.payedType,
 			amount: req.body.amount,
-			date,
 		});
 		update.payedAmount += req.body.amount;
 		if (update.payedAmount === update.allAmount) {
@@ -1550,7 +1567,8 @@ exports.putProductsDebt = async (req, res) => {
 				products: update.products,
 				allAmount: update.allAmount,
 				type: "Qarz(To'langan)",
-				debt: update,
+				debt: new mongoose.Types.ObjectId(update._id),
+				skladId: new mongoose.Types.ObjectId(update.skladId),
 			});
 			await newSaled.save();
 			update.active = false;
@@ -1560,6 +1578,53 @@ exports.putProductsDebt = async (req, res) => {
 		return res.json({saved: true});
 	} catch (error) {
 		return res.status(500).json(error);
+	}
+};
+exports.deleteProductsDebt = async (req, res) => {
+	try {
+		const debt = await Debts.findById(req.params.id);
+		if (!debt) {
+			return res.status(404).json({message: "Product not found"});
+		}
+
+		const index = debt.historyAmount.findIndex(
+			(item) => item._id.toString() === req.query.id.toString(),
+		);
+
+		if (index !== -1) {
+			debt.payedAmount -= debt.historyAmount[index].amount;
+			debt.historyAmount.splice(index, 1);
+			await debt.save();
+			return res.status(200).json({message: "Item deleted successfully"});
+		} else {
+			return res.status(404).json({message: "Item not found in history"});
+		}
+	} catch (error) {
+		return res.status(500).json({message: error.message});
+	}
+};
+exports.updateProductsDebt = async (req, res) => {
+	try {
+		const debt = await Debts.findById(req.params.id);
+		if (!debt) {
+			return res.status(404).json({message: "Product not found"});
+		}
+		const index = debt.historyAmount.findIndex(
+			(item) => item._id.toString() === req.query.id.toString(),
+		);
+		if (index !== -1) {
+			debt.payedAmount -= debt.historyAmount[index].amount;
+			debt.payedAmount += req.body.amount;
+			debt.historyAmount[index].amount = req.body.amount;
+			debt.historyAmount[index].clientSaved = req.body.clientSaved;
+			debt.historyAmount[index].payedType = req.body.payedType;
+			await debt.save();
+			return res.status(200).json({message: "Item updated successfully"});
+		} else {
+			return res.status(404).json({message: "Item not found in history"});
+		}
+	} catch (error) {
+		return res.status(500).json({message: error.message});
 	}
 };
 exports.productsGetSeller = async (req, res) => {
@@ -2042,24 +2107,33 @@ exports.clientsPost = async (req, res) => {
 const sellProduct = async (product, clientID, saledType, sellerID, saledId) => {
 	const filter = {...product};
 	delete filter._id;
+	let updatedDocumentIds = [];
 
 	for (let j = 0; j < product.quantity; j++) {
 		delete filter.quantity;
 		let date = new Date();
 		date = moment(date).format();
 
-		await Products.findOneAndUpdate(filter, {
-			$set: {
-				saled: true,
-				saledPrice: product.saledPrice,
-				saledClient: new mongoose.Types.ObjectId(clientID),
-				saledType,
-				saledDate: date,
-				saledSeller: new mongoose.Types.ObjectId(sellerID),
-				saledId,
+		const updatedDocument = await Products.findOneAndUpdate(
+			filter,
+			{
+				$set: {
+					saled: true,
+					saledPrice: product.saledPrice,
+					saledClient: new mongoose.Types.ObjectId(clientID),
+					saledType,
+					saledDate: date,
+					saledSeller: new mongoose.Types.ObjectId(sellerID),
+					saledId,
+				},
 			},
-		});
+			{new: true},
+		);
+		if (updatedDocument) {
+			updatedDocumentIds.push(updatedDocument._id);
+		}
 	}
+	return updatedDocumentIds;
 };
 
 exports.sellPost = async (req, res) => {
@@ -2070,39 +2144,41 @@ exports.sellPost = async (req, res) => {
 			const newSaled = new Saleds({
 				clientId: new mongoose.Types.ObjectId(client._id),
 				sellerId: new mongoose.Types.ObjectId(seller._id),
-				products,
 				allAmount: total,
 				type: saledType,
 			});
 			for (const product of products) {
 				product.saled = false;
 				product.sklad = new mongoose.Types.ObjectId(product.sklad);
-				await sellProduct(
+				const items = await sellProduct(
 					product,
 					client._id,
 					saledType,
 					seller._id,
 					newSaled._id,
 				);
+				newSaled.skladId = new mongoose.Types.ObjectId(product.sklad);
+				newSaled.products = newSaled.products.concat(items);
 			}
 			await newSaled.save();
 		} else {
 			const newDebts = new Debts({
 				sellerId: new mongoose.Types.ObjectId(seller._id),
 				clientId: new mongoose.Types.ObjectId(client._id),
-				products,
 				allAmount: total,
 			});
 			for (const product of products) {
 				product.saled = false;
 				product.sklad = new mongoose.Types.ObjectId(product.sklad);
-				await sellProduct(
+				const items = await sellProduct(
 					product,
 					client._id,
 					saledType,
 					seller._id,
 					newDebts._id,
 				);
+				newDebts.skladId = new mongoose.Types.ObjectId(product.sklad);
+				newDebts.products = newDebts.products.concat(items);
 			}
 			await newDebts.save();
 		}
@@ -2586,6 +2662,7 @@ exports.hisobotGet = async (req, res) => {
 				$lte: endDate,
 			},
 		};
+
 		if (req.body.sklad === "Moshinalar") {
 			const result = await CarSavdo.aggregate([
 				{
@@ -2724,6 +2801,70 @@ exports.hisobotGet = async (req, res) => {
 			},
 		]);
 
+		const matchStage =
+			req.body.sklad == "Hammasi"
+				? {}
+				: {skladId: new mongoose.Types.ObjectId(req.body.sklad)};
+
+		const savdoTushimi2 = await Saleds.aggregate([
+			{
+				$match: {
+					...matchStage,
+					type: {
+						$in: ["Naxt", "Perechesleniya", "Kartaga( terminal)"],
+					},
+				},
+			},
+			{
+				$group: {
+					_id: {
+						year: {$year: "$date"},
+						month: {$month: "$date"},
+						day: {$dayOfMonth: "$date"},
+					},
+					totalAmount: {$sum: "$allAmount"},
+					totalProducts: {$sum: {$size: "$products"}},
+				},
+			},
+			{
+				$sort: {
+					"_id.year": 1,
+					"_id.month": 1,
+					"_id.day": 1,
+				},
+			},
+		]);
+
+		let savdoTushumiQarz = await Debts.aggregate([
+			{
+				$match: {
+					...matchStage,
+					active: true,
+				},
+			},
+			{
+				$unwind: "$historyAmount",
+			},
+			{
+				$group: {
+					_id: {
+						year: {$year: "$historyAmount.date"},
+						month: {$month: "$historyAmount.date"},
+						day: {$dayOfMonth: "$historyAmount.date"},
+					},
+					totalAmount: {$sum: "$historyAmount.amount"},
+					totalProducts: {$sum: {$size: "$products"}},
+				},
+			},
+			{
+				$sort: {
+					"_id.year": 1,
+					"_id.month": 1,
+					"_id.day": 1,
+				},
+			},
+		]);
+
 		const kirimTushumi = await Products.aggregate([
 			{
 				$match: query,
@@ -2771,6 +2912,7 @@ exports.hisobotGet = async (req, res) => {
 				},
 			},
 		]);
+
 		delete query.date;
 		query.saledDate = {
 			$gte: startDate,
@@ -2830,43 +2972,218 @@ exports.hisobotGet = async (req, res) => {
 			},
 		]);
 
-		const savdoTushumi = await Products.aggregate([
+		const savdoTushumi = await Saleds.aggregate([
 			{
-				$match: query,
+				$match: {
+					...matchStage,
+					type: "Qarz(To'langan)",
+				},
+			},
+			{
+				$lookup: {
+					from: "debts",
+					localField: "debt",
+					foreignField: "_id",
+					as: "debt",
+				},
+			},
+			{
+				$lookup: {
+					from: "products",
+					localField: "products",
+					foreignField: "_id",
+					as: "products",
+				},
+			},
+			{
+				$unwind: {
+					path: "$debt",
+				},
+			},
+			{
+				$unwind: {
+					path: "$debt.historyAmount",
+				},
 			},
 			{
 				$group: {
 					_id: {
-						year: {$year: "$saledDate"},
-						month: {$month: "$saledDate"},
-						day: {$dayOfMonth: "$saledDate"},
+						year: {$year: "$debt.historyAmount.date"},
+						month: {$month: "$debt.historyAmount.date"},
+						day: {$dayOfMonth: "$debt.historyAmount.date"},
+					},
+					totalAmount: {$sum: "$debt.historyAmount.amount"},
+					totalProducts: {$sum: {$size: "$debt.products"}},
+				},
+			},
+			{
+				$sort: {
+					"_id.year": 1,
+					"_id.month": 1,
+					"_id.day": 1,
+				},
+			},
+		]);
+
+		const savdoTushumiFoyda = await Saleds.aggregate([
+			{
+				$match: {
+					...matchStage,
+					type: "Qarz(To'langan)",
+				},
+			},
+
+			{
+				$lookup: {
+					from: "products",
+					localField: "products",
+					foreignField: "_id",
+					as: "products",
+				},
+			},
+			{
+				$unwind: {
+					path: "$products",
+				},
+			},
+			{
+				$group: {
+					_id: {
+						year: {$year: "$date"},
+						month: {$month: "$date"},
+						day: {$dayOfMonth: "$date"},
 					},
 					totalAmount: {
 						$sum: {
 							$multiply: [
 								{
 									$cond: {
-										if: {$in: ["$name", ["List", "Planka"]]},
+										if: {$in: ["$products.name", ["List", "Planka"]]},
 										then: {
 											$multiply: [
-												"$saledPrice",
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
 												{
 													$divide: [
-														{$multiply: ["$uzunligi_x", "$uzunligi_y"]},
+														{
+															$multiply: [
+																"$products.uzunligi_x",
+																"$products.uzunligi_y",
+															],
+														},
 														10000,
 													],
 												},
 											],
 										},
 										else: {
-											$multiply: ["$saledPrice", "$uzunligi"],
+											$multiply: [
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
+												"$products.uzunligi",
+											],
 										},
 									},
 								},
+								1,
 							],
 						},
 					},
-					totalProducts: {$sum: 1},
+					totalProducts: {$sum: "$products.quantity"},
+				},
+			},
+			{
+				$sort: {
+					"_id.year": 1,
+					"_id.month": 1,
+					"_id.day": 1,
+				},
+			},
+		]);
+
+		const sofFoyda = await Saleds.aggregate([
+			{
+				$match: {
+					...matchStage,
+					type: {
+						$in: ["Naxt", "Perechesleniya", "Kartaga( terminal)"],
+					},
+				},
+			},
+
+			{
+				$lookup: {
+					from: "products",
+					localField: "products",
+					foreignField: "_id",
+					as: "products",
+				},
+			},
+			{
+				$unwind: {
+					path: "$products",
+				},
+			},
+			{
+				$group: {
+					_id: {
+						year: {$year: "$date"},
+						month: {$month: "$date"},
+						day: {$dayOfMonth: "$date"},
+					},
+					totalAmount: {
+						$sum: {
+							$multiply: [
+								{
+									$cond: {
+										if: {$in: ["$products.name", ["List", "Planka"]]},
+										then: {
+											$multiply: [
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
+												{
+													$divide: [
+														{
+															$multiply: [
+																"$products.uzunligi_x",
+																"$products.uzunligi_y",
+															],
+														},
+														10000,
+													],
+												},
+											],
+										},
+										else: {
+											$multiply: [
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
+												"$products.uzunligi",
+											],
+										},
+									},
+								},
+								1,
+							],
+						},
+					},
+					totalProducts: {$sum: "$products.quantity"},
 				},
 			},
 			{
@@ -3035,29 +3352,35 @@ exports.hisobotGet = async (req, res) => {
 			netProfitMap.set(dateKey, entryNetProfit);
 		});
 
-		const sofFoyda = Array.from(netProfitMap, ([date, netProfit]) => ({
-			_id: {
-				day: new Date(date).getDate(),
-				month: new Date(date).getMonth() + 1,
-				year: new Date(date).getFullYear(),
-			},
-			totalAmount: netProfit,
-		}));
-		sofFoyda.sort((a, b) => {
-			const dateA = a._id.year * 10000 + a._id.month * 100 + a._id.day;
-			const dateB = b._id.year * 10000 + b._id.month * 100 + b._id.day;
+		// const sofFoyda = Array.from(netProfitMap, ([date, netProfit]) => ({
+		// 	_id: {
+		// 		day: new Date(date).getDate(),
+		// 		month: new Date(date).getMonth() + 1,
+		// 		year: new Date(date).getFullYear(),
+		// 	},
+		// 	totalAmount: netProfit,
+		// }));
+		// sofFoyda.sort((a, b) => {
+		// 	const dateA = a._id.year * 10000 + a._id.month * 100 + a._id.day;
+		// 	const dateB = b._id.year * 10000 + b._id.month * 100 + b._id.day;
 
-			return dateA - dateB;
-		});
+		// 	return dateA - dateB;
+		// });
 
-		const savdoTushimi = mergeAndSumResults(savdoTushumi, result2);
-		const harajatlar = mergeAndSumResults(harajat, result);
+		const harajatlar = mergeAndSumResults(harajat, result2);
+		const savdoTushimiresult = mergeAndSumResults(
+			savdoTushimi2,
+			savdoTushumiQarz,
+		);
+		const savdoTushimi2result = mergeAndSumResults(savdoTushimiresult, result);
+		const savdoTushimi = mergeAndSumResults(savdoTushimi2result, savdoTushumi);
+		const sofFoydaresult = mergeAndSumResults(sofFoyda, savdoTushumiFoyda);
 
 		return res.json({
 			harajat: harajatlar,
 			foyda,
 			savdoTushumi: savdoTushimi,
-			sofFoyda,
+			sofFoyda: sofFoydaresult,
 			kirimTushumi,
 		});
 	} catch (error) {
@@ -3483,42 +3806,24 @@ exports.returnDelete = async (req, res) => {
 			product.saledId = null;
 			await product.save();
 
-			delete copyProduct._id;
-			delete copyProduct.userId;
-			delete copyProduct.sellerId;
-			delete copyProduct.isDebt;
-			delete copyProduct.date;
-			delete copyProduct.createdAt;
-			delete copyProduct.updatedAt;
-			delete copyProduct.__v;
-			delete copyProduct.saledClient;
-			delete copyProduct.saledDate;
-			delete copyProduct.saledSeller;
-			delete copyProduct.saledType;
-			delete copyProduct.saledId;
-
 			const productIndex = saleds.products.findIndex(
-				(item) =>
-					item.name == copyProduct.name &&
-					item.qalinligi == copyProduct.qalinligi &&
-					item.qalinligi_ortasi == copyProduct.qalinligi_ortasi &&
-					item.category == copyProduct.category &&
-					item.holati == copyProduct.holati &&
-					item.uzunligi == copyProduct.uzunligi &&
-					item.uzunligi_x == copyProduct.uzunligi_x &&
-					item.uzunligi_y == copyProduct.uzunligi_y &&
-					item.olchamlari == copyProduct.olchamlari &&
-					item.sklad.toString() === copyProduct.sklad.toString() &&
-					item.price == copyProduct.price &&
-					item.saledPrice == copyProduct.saledPrice &&
-					item.cut == copyProduct.cut,
+				(item) => item.toString() === copyProduct._id.toString(),
 			);
 
-			if (saleds.products[productIndex].quantity > 1) {
-				saleds.products[productIndex].quantity -= 1;
+			saleds.products.splice(productIndex, 1);
+
+			let total = 0;
+
+			if (product.name === "List" || product.name === "Planka") {
+				total +=
+					((product.uzunligi_y * product.uzunligi_x) / 10000) *
+					product.saledPrice *
+					product.quantity;
 			} else {
-				saleds.products.splice(productIndex, 1);
+				total +=
+					(product.saledPrice || 0) * product.quantity * product.uzunligi;
 			}
+			saleds.allAmount -= total;
 
 			if (saleds.products.length === 0) {
 				await Saleds.findByIdAndDelete(saleds._id);
@@ -3537,20 +3842,7 @@ exports.returnDelete = async (req, res) => {
 		if (!debt) return res.status(404).json({message: "Debt not found"});
 
 		const productIndex = debt.products.findIndex(
-			(item) =>
-				item.name == copyProduct.name &&
-				item.qalinligi == copyProduct.qalinligi &&
-				item.qalinligi_ortasi == copyProduct.qalinligi_ortasi &&
-				item.category == copyProduct.category &&
-				item.holati == copyProduct.holati &&
-				item.uzunligi == copyProduct.uzunligi &&
-				item.uzunligi_x == copyProduct.uzunligi_x &&
-				item.uzunligi_y == copyProduct.uzunligi_y &&
-				item.olchamlari == copyProduct.olchamlari &&
-				item.sklad.toString() === copyProduct.sklad.toString() &&
-				item.price == copyProduct.price &&
-				item.saledPrice == copyProduct.saledPrice &&
-				item.cut == copyProduct.cut,
+			(item) => item.toString() === copyProduct._id.toString(),
 		);
 
 		product.saled = false;
@@ -3561,51 +3853,19 @@ exports.returnDelete = async (req, res) => {
 		product.saledId = null;
 		await product.save();
 
-		delete copyProduct._id;
-		delete copyProduct.userId;
-		delete copyProduct.sellerId;
-		delete copyProduct.isDebt;
-		delete copyProduct.date;
-		delete copyProduct.createdAt;
-		delete copyProduct.updatedAt;
-		delete copyProduct.__v;
-		delete copyProduct.saledClient;
-		delete copyProduct.saledDate;
-		delete copyProduct.saledSeller;
-		delete copyProduct.saledType;
-		delete copyProduct.saledId;
+		debt.products.splice(productIndex, 1);
 
-		if (debt.products[productIndex].quantity > 1) {
-			debt.products[productIndex].quantity -= 1;
+		let total = 0;
 
-			let total = 0;
-
-			if (product.name === "List" || product.name === "Planka") {
-				total +=
-					((product.uzunligi_y * product.uzunligi_x) / 10000) *
-					product.saledPrice *
-					product.quantity;
-			} else {
-				total +=
-					(product.saledPrice || 0) * product.quantity * product.uzunligi;
-			}
-			debt.allAmount -= total;
+		if (product.name === "List" || product.name === "Planka") {
+			total +=
+				((product.uzunligi_y * product.uzunligi_x) / 10000) *
+				product.saledPrice *
+				product.quantity;
 		} else {
-			debt.products.splice(productIndex, 1);
-
-			let total = 0;
-
-			if (product.name === "List" || product.name === "Planka") {
-				total +=
-					((product.uzunligi_y * product.uzunligi_x) / 10000) *
-					product.saledPrice *
-					product.quantity;
-			} else {
-				total +=
-					(product.saledPrice || 0) * product.quantity * product.uzunligi;
-			}
-			debt.allAmount -= total;
+			total += (product.saledPrice || 0) * product.quantity * product.uzunligi;
 		}
+		debt.allAmount -= total;
 
 		if (debt.products.length === 0) {
 			await Debts.findByIdAndDelete(debt._id);
@@ -3900,6 +4160,17 @@ exports.carResultsPost = async (req, res) => {
 		});
 
 		return res.json({sof: result2, came: result, sales});
+	} catch (error) {
+		return res.status(500).json(error);
+	}
+};
+exports.resetDB = async (req, res) => {
+	try {
+		await Saleds.deleteMany({});
+		await Debts.deleteMany({});
+		return res.json({
+			message: "DB reset",
+		});
 	} catch (error) {
 		return res.status(500).json(error);
 	}

@@ -101,7 +101,9 @@
               </template>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
-              <div class="print-text">{{ item.saledPrice }}so'm</div>
+              <div class="print-text">
+                {{ numberFormat(item.saledPrice) }}so'm
+              </div>
             </td>
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
@@ -114,10 +116,9 @@
                   {{
                     item.saledPrice == null
                       ? "Narx belgilanmagan"
-                      : `${(item.saledPrice * item.uzunligi * item.quantity)
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                      : `${numberFormat(
+                          item.saledPrice * item.uzunligi * item.quantity
+                        )} so'm`
                   }}
                 </div>
               </template>
@@ -126,15 +127,12 @@
                   {{
                     item.saledPrice == null
                       ? "Narx belgilanmagan"
-                      : `${(
+                      : `${numberFormat(
                           ((item.saledPrice *
                             (item.uzunligi_x * item.uzunligi_y)) /
                             10000) *
-                          item.quantity
-                        )
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} so'm`
+                            item.quantity
+                        )} so'm`
                   }}
                 </div>
               </template>
@@ -173,7 +171,7 @@
               </th>
             </tr>
           </thead>
-          <tbody v-for="item in pro.debt[0].historyAmount" :key="item._id">
+          <tbody v-for="item in pro.debt.historyAmount" :key="item._id">
             <tr class="hover:bg-gray-200 cursor-pointer w-full">
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
@@ -187,12 +185,7 @@
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
                 <div class="print-text">
-                  {{
-                    item.amount
-                      .toFixed(2)
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                  }}so'm
+                  {{ numberFormat(item.amount) }}so'm
                 </div>
               </td>
               <td class="px-5 py-3 border-b border-gray-300">
@@ -276,13 +269,6 @@ const handleChangeSearch = async () => {
 const handleAboutClick = async (item) => {
   product.value = item;
   isPopupOpen.value = true;
-};
-const summaryQuantity = (items) => {
-  let total = 0;
-  for (const item of items) {
-    total += item.quantity;
-  }
-  return total;
 };
 </script>
 <style scoped>

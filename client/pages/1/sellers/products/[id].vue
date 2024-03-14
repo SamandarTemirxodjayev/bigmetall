@@ -2,11 +2,11 @@
   <div v-if="!loading">
     <div class="mb-2">
       <span class="text-2xl font-semibold"
-        >Sotuvchi - {{ seller.name }} - Sotilgan Mahsulotlar</span
+        >Sotuvchi - {{ seller ? seller.name : "" }} - Sotilgan Mahsulotlar</span
       >
     </div>
     <div class="items-center bg-white shadow-xl rounded-md">
-      <div class="flex w-[30%] p-4 justify-between">
+      <div class="flex w-[21%] p-2 justify-between">
         <VueDatePicker
           v-model="date"
           range
@@ -37,7 +37,16 @@
             </th>
           </tr>
         </thead>
-
+        <tbody v-if="debtProducts.length == 0">
+          <tr class="hover:bg-gray-200 cursor-pointer w-full">
+            <td
+              class="px-5 py-3 border-b border-gray-300 text-center"
+              colspan="6"
+            >
+              Ma'lumot mavjud emas
+            </td>
+          </tr>
+        </tbody>
         <tbody v-for="item in debtProducts" :key="item._id">
           <tr class="hover:bg-gray-200 cursor-pointer w-full">
             <td class="px-5 py-3 border-b border-gray-300">
@@ -53,12 +62,7 @@
             <td class="px-5 py-3 border-b border-gray-300">
               <div class="print-text">
                 <div>
-                  {{
-                    item.allAmount
-                      .toFixed(2)
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                  }}
+                  {{ numberFormat(item.allAmount) }}
                   so'm
                 </div>
               </div>

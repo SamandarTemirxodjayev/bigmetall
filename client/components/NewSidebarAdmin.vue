@@ -11,6 +11,12 @@ const toggleSubMenu2 = () => {
   isOpenSubMenu2.value = !isOpenSubMenu2.value;
   isOpenSubMenu.value = false;
 };
+const { $router } = useNuxtApp();
+$router.beforeEach((to, from, next) => {
+  isOpenSubMenu.value = false;
+  isOpenSubMenu2.value = false;
+  next();
+});
 </script>
 <template>
   <div>

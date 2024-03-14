@@ -9,8 +9,15 @@ const saledsSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "seller",
 	},
-	products: {
-		type: Array,
+	products: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "products",
+		},
+	],
+	skladId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "sklad",
 	},
 	allAmount: {
 		type: Number,
@@ -23,8 +30,8 @@ const saledsSchema = new mongoose.Schema({
 		default: Date.now,
 	},
 	debt: {
-		type: Array,
-		default: [],
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "debts",
 	},
 });
 
