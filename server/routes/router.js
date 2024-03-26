@@ -51,7 +51,6 @@ router.delete("/sklad/:id", UserMiddleware, userController.skladDelete);
 router.patch("/sklad/:id", UserMiddleware, userController.skladPatch);
 router.post("/sklad/find", UserMiddleware, userController.skladFinder);
 router.get("/sklad/:id/excel", UserMiddleware, userController.skladExcelGet);
-// router.get("/sklad/price", UserMiddleware, userController.skladPriceGet);
 
 router.get("/products/:id", UserMiddleware, userController.productsGet);
 router.post(
@@ -126,7 +125,6 @@ router.get(
 router.post("/edit/product", UserMiddleware, userController.editProduct);
 
 router.get("/clients", UserMiddleware, userController.clientsGet);
-// router.post("/clients/debt/:id", UserMiddleware, userController.clientsGetDebtById);
 router.get("/client/:id", UserMiddleware, userController.clientsGetById);
 router.put("/clients", UserMiddleware, userController.clientsPut);
 router.delete("/client/:id", UserMiddleware, userController.clientsDelete);

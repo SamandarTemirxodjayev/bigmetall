@@ -544,8 +544,7 @@ exports.harajatYearGetGraph = async (req, res) => {
 
 exports.skladGet = async (req, res) => {
 	try {
-		sklad = await Sklads.find({active: true});
-
+		let sklad = await Sklads.find({active: true});
 		return res.json(sklad);
 	} catch (error) {
 		console.error("Error in skladGet:", error);
@@ -2584,35 +2583,55 @@ exports.productsYearGetGraph = async (req, res) => {
 	try {
 		const year = new Date().getFullYear();
 
-		const result = await Products.aggregate([
+		const result = await Saleds.aggregate([
 			{
 				$match: {
-					saled: true,
-					saledDate: {
+					date: {
 						$gte: new Date(`${year}-01-01T00:00:00.000Z`),
 						$lte: new Date(`${year + 1}-01-01T00:00:00.000Z`),
 					},
 				},
 			},
 			{
+				$lookup: {
+					from: "products",
+					localField: "products",
+					foreignField: "_id",
+					as: "products",
+				},
+			},
+			{
+				$unwind: "$products",
+			},
+			{
 				$group: {
 					_id: {
-						year: {$year: "$saledDate"},
-						month: {$month: "$saledDate"},
-						day: {$dayOfMonth: "$saledDate"},
+						year: {$year: "$date"},
+						month: {$month: "$date"},
+						day: {$dayOfMonth: "$date"},
 					},
 					totalAmount: {
 						$sum: {
 							$multiply: [
 								{
 									$cond: {
-										if: {$in: ["$name", ["List", "Planka"]]},
+										if: {$in: ["$products.name", ["List", "Planka"]]},
 										then: {
 											$multiply: [
-												{$subtract: ["$saledPrice", "$price"]},
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
 												{
 													$divide: [
-														{$multiply: ["$uzunligi_x", "$uzunligi_y"]},
+														{
+															$multiply: [
+																"$products.uzunligi_x",
+																"$products.uzunligi_y",
+															],
+														},
 														10000,
 													],
 												},
@@ -2620,8 +2639,13 @@ exports.productsYearGetGraph = async (req, res) => {
 										},
 										else: {
 											$multiply: [
-												{$subtract: ["$saledPrice", "$price"]},
-												"$uzunligi",
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
+												"$products.uzunligi",
 											],
 										},
 									},
@@ -2813,6 +2837,10 @@ exports.hisobotGet = async (req, res) => {
 					type: {
 						$in: ["Naxt", "Perechesleniya", "Kartaga( terminal)"],
 					},
+					date: {
+						$gte: startDate,
+						$lte: endDate,
+					},
 				},
 			},
 			{
@@ -2840,6 +2868,10 @@ exports.hisobotGet = async (req, res) => {
 				$match: {
 					...matchStage,
 					active: true,
+					date: {
+						$gte: startDate,
+						$lte: endDate,
+					},
 				},
 			},
 			{
@@ -2920,29 +2952,50 @@ exports.hisobotGet = async (req, res) => {
 		};
 		query.saled = true;
 
-		const foyda = await Products.aggregate([
+		const foyda = await Saleds.aggregate([
 			{
-				$match: query,
+				$match: {
+					date: {
+						$gte: startDate,
+						$lte: endDate,
+					},
+				},
+			},
+			{
+				$lookup: {
+					from: "products",
+					localField: "products",
+					foreignField: "_id",
+					as: "products",
+				},
+			},
+			{
+				$unwind: "$products",
 			},
 			{
 				$group: {
 					_id: {
-						year: {$year: "$saledDate"},
-						month: {$month: "$saledDate"},
-						day: {$dayOfMonth: "$saledDate"},
+						year: {$year: "$date"},
+						month: {$month: "$date"},
+						day: {$dayOfMonth: "$date"},
 					},
 					totalAmount: {
 						$sum: {
 							$multiply: [
 								{
 									$cond: {
-										if: {$in: ["$name", ["List", "Planka"]]},
+										if: {$in: ["$products.name", ["List", "Planka"]]},
 										then: {
 											$multiply: [
-												{$subtract: ["$saledPrice", "$price"]},
+												{$subtract: ["$products.saledPrice", "$price"]},
 												{
 													$divide: [
-														{$multiply: ["$uzunligi_x", "$uzunligi_y"]},
+														{
+															$multiply: [
+																"$products.uzunligi_x",
+																"$products.uzunligi_y",
+															],
+														},
 														10000,
 													],
 												},
@@ -2950,8 +3003,13 @@ exports.hisobotGet = async (req, res) => {
 										},
 										else: {
 											$multiply: [
-												{$subtract: ["$saledPrice", "$price"]},
-												"$uzunligi",
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
+												"$products.uzunligi",
 											],
 										},
 									},
@@ -2977,6 +3035,10 @@ exports.hisobotGet = async (req, res) => {
 				$match: {
 					...matchStage,
 					type: "Qarz(To'langan)",
+					date: {
+						$gte: startDate,
+						$lte: endDate,
+					},
 				},
 			},
 			{
@@ -3030,6 +3092,10 @@ exports.hisobotGet = async (req, res) => {
 				$match: {
 					...matchStage,
 					type: "Qarz(To'langan)",
+					date: {
+						$gte: startDate,
+						$lte: endDate,
+					},
 				},
 			},
 
@@ -3115,6 +3181,10 @@ exports.hisobotGet = async (req, res) => {
 					...matchStage,
 					type: {
 						$in: ["Naxt", "Perechesleniya", "Kartaga( terminal)"],
+					},
+					date: {
+						$gte: startDate,
+						$lte: endDate,
 					},
 				},
 			},
@@ -3313,6 +3383,60 @@ exports.hisobotGet = async (req, res) => {
 
 			return mergedResults;
 		}
+		function mergeAndSubtractResults(savdoTushumi, result2) {
+			const mergedResultsMap = new Map();
+
+			// Function to create a unified date string key
+			const createDateKey = ({year, month, day}) => `${year}-${month}-${day}`;
+
+			// Summarize savdoTushumi
+			savdoTushumi.forEach((item) => {
+				const dateKey = createDateKey(item._id);
+				if (!mergedResultsMap.has(dateKey)) {
+					mergedResultsMap.set(dateKey, {totalAmount: 0, totalProducts: 0});
+				}
+				const current = mergedResultsMap.get(dateKey);
+				mergedResultsMap.set(dateKey, {
+					totalAmount: current.totalAmount + item.totalAmount,
+					totalProducts: current.totalProducts + item.totalProducts,
+				});
+			});
+
+			// Summarize result2
+			result2.forEach((item) => {
+				const dateKey = createDateKey(item._id);
+				if (!mergedResultsMap.has(dateKey)) {
+					mergedResultsMap.set(dateKey, {totalAmount: 0, totalProducts: 0});
+				}
+				const current = mergedResultsMap.get(dateKey);
+				mergedResultsMap.set(dateKey, {
+					totalAmount: current.totalAmount - item.totalAmount,
+					totalProducts: current.totalProducts + item.totalProducts,
+				});
+			});
+
+			// Convert the map back to an array format similar to the original aggregation results
+			const mergedResults = Array.from(
+				mergedResultsMap,
+				([date, {totalAmount, totalProducts}]) => {
+					const [year, month, day] = date.split("-").map(Number);
+					return {
+						_id: {year, month, day},
+						totalAmount,
+						totalProducts,
+					};
+				},
+			);
+
+			// Optionally, you might want to sort the results by date
+			mergedResults.sort((a, b) => {
+				const dateA = new Date(a._id.year, a._id.month - 1, a._id.day);
+				const dateB = new Date(b._id.year, b._id.month - 1, b._id.day);
+				return dateA - dateB;
+			});
+
+			return mergedResults;
+		}
 
 		const netProfitMap = new Map();
 
@@ -3366,21 +3490,32 @@ exports.hisobotGet = async (req, res) => {
 
 		// 	return dateA - dateB;
 		// });
+		let harajatlar;
 
-		const harajatlar = mergeAndSumResults(harajat, result2);
+		if (req.body.sklad == "Hammasi") {
+			harajatlar = mergeAndSumResults(harajat, result2);
+		} else {
+			harajatlar = harajat;
+		}
 		const savdoTushimiresult = mergeAndSumResults(
 			savdoTushimi2,
 			savdoTushumiQarz,
 		);
-		const savdoTushimi2result = mergeAndSumResults(savdoTushimiresult, result);
+		let savdoTushimi2result;
+		if (req.body.sklad == "Hammasi") {
+			savdoTushimi2result = mergeAndSumResults(savdoTushimiresult, result);
+		} else {
+			savdoTushimi2result = savdoTushimiresult;
+		}
 		const savdoTushimi = mergeAndSumResults(savdoTushimi2result, savdoTushumi);
 		const sofFoydaresult = mergeAndSumResults(sofFoyda, savdoTushumiFoyda);
+		const sofFoyda2result = mergeAndSubtractResults(sofFoydaresult, harajatlar);
 
 		return res.json({
 			harajat: harajatlar,
 			foyda,
 			savdoTushumi: savdoTushimi,
-			sofFoyda: sofFoydaresult,
+			sofFoyda: sofFoyda2result,
 			kirimTushumi,
 		});
 	} catch (error) {
@@ -3688,15 +3823,25 @@ exports.dashboardPost = async (req, res) => {
 
 		const totalAmountDebts = debts.length > 0 ? debts[0].totalAmount : 0;
 
-		const foyda = await Products.aggregate([
+		const foyda = await Saleds.aggregate([
 			{
 				$match: {
-					saled: true,
-					saledDate: {
+					date: {
 						$gte: new Date(`${year}-01-01T00:00:00.000Z`),
 						$lte: new Date(`${year + 1}-01-01T00:00:00.000Z`),
 					},
 				},
+			},
+			{
+				$lookup: {
+					from: "products",
+					localField: "products",
+					foreignField: "_id",
+					as: "products",
+				},
+			},
+			{
+				$unwind: "$products",
 			},
 			{
 				$project: {
@@ -3705,16 +3850,26 @@ exports.dashboardPost = async (req, res) => {
 							$multiply: [
 								{
 									$cond: {
-										if: {$in: ["$name", ["List", "Planka"]]},
+										if: {$in: ["$products.name", ["List", "Planka"]]},
 										then: {
 											$multiply: [
-												{$subtract: ["$saledPrice", "$price"]},
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
 												{
 													$cond: {
-														if: {$ne: ["$uzunligi_x", 0]},
+														if: {$ne: ["$products.uzunligi_x", 0]},
 														then: {
 															$divide: [
-																{$multiply: ["$uzunligi_x", "$uzunligi_y"]},
+																{
+																	$multiply: [
+																		"$products.uzunligi_x",
+																		"$products.uzunligi_y",
+																	],
+																},
 																10000,
 															],
 														},
@@ -3725,8 +3880,13 @@ exports.dashboardPost = async (req, res) => {
 										},
 										else: {
 											$multiply: [
-												{$subtract: ["$saledPrice", "$price"]},
-												"$uzunligi",
+												{
+													$subtract: [
+														"$products.saledPrice",
+														"$products.price",
+													],
+												},
+												"$products.uzunligi",
 											],
 										},
 									},
