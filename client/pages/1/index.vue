@@ -105,7 +105,7 @@
     <div>
       <span class="text-2xl font-semibold">Qidiruv</span>
     </div>
-    <div class="mt-8 bg-white border border-gray-50 p-8 shadow-2xl">
+    <div class="mt-8 border border-gray-50 p-8 shadow-2xl">
       <div class="flex justify-around gap-[1%]">
         <USelect
           v-model="mahsulotTuri"
@@ -117,6 +117,7 @@
               name: item,
             }))
           "
+          option-attribute="name"
           value-attribute="name"
           :disabled="loadingSearch"
           placeholder="Mahsulot Turi"
